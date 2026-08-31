@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Hierarchy Performance Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -23,6 +23,7 @@
     html, body {
       width: 100%;
       height: 100%;
+      height: 100dvh;
       margin: 0;
       padding: 0;
       background: #cbd5e1;
@@ -35,11 +36,11 @@
       align-items: center; 
     }
     
-    /* Desktop Container - Clean 95% Scale */
     .app-wrapper { 
       width: 100%; 
       max-width: 1400px; 
       height: 95vh; 
+      height: 95dvh;
       background: var(--bg); 
       border-radius: 16px; 
       box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
@@ -52,7 +53,7 @@
       -moz-transform-origin: center center;
     }
     
-    /* Real Mobile View Fix - Zero Margins, Zero Gaps, Fits 100% Screen */
+    /* Responsive Mobile Screen Fix (Top Spacing & Fit) */
     @media (max-width: 768px) {
       body {
         padding: 0 !important;
@@ -62,6 +63,7 @@
         width: 100% !important; 
         max-width: 100% !important; 
         height: 100vh !important; 
+        height: 100dvh !important;
         border-radius: 0 !important; 
         border: none !important; 
         box-shadow: none !important;
@@ -75,6 +77,7 @@
       width: 100% !important;
       max-width: 100% !important;
       height: 100vh !important;
+      height: 100dvh !important;
       border-radius: 0 !important;
       border: none !important;
       box-shadow: none !important;
@@ -83,7 +86,19 @@
       -moz-transform: none !important;
     }
 
-    .header-bar { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: relative; z-index: 300; }
+    /* Top Header Padding Fix for Mobile Notch/URL Bar */
+    .header-bar { 
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); 
+      color: white; 
+      padding: 12px 16px; 
+      padding-top: calc(8px + env(safe-area-inset-top, 0px));
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      flex-shrink: 0; 
+      position: relative; 
+      z-index: 300; 
+    }
     .header-title-container { display: flex; flex-direction: column; gap: 2px; }
     .header-title { font-size: 15px; font-weight: 700; line-height: 1.2; }
     .header-subtitle { font-size: 11px; opacity: 0.95; font-weight: 600; letter-spacing: 0.3px; color: #e2e8f0; }
@@ -124,7 +139,6 @@
     th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
     td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
 
-    /* Summary Table Scale in Mobile Mode */
     @media (max-width: 768px) {
       .table-area {
         zoom: 0.85;
@@ -237,7 +251,6 @@
       }
     }
 
-    // Extract Date & Time from Col S (Index 18) with robust fallbacks
     function updateHeaderTimestamp(resData, fullPayload) {
       var subLabel = document.getElementById("updatedDateTimeLabel");
       if (!subLabel) return;
