@@ -21,7 +21,22 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background: #cbd5e1; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
     
-    .app-wrapper { width: 100%; max-width: 1400px; height: 95vh; background: var(--bg); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+    /* Overall Dashboard Container Zoomed Out to 95% */
+    .app-wrapper { 
+      width: 100%; 
+      max-width: 1400px; 
+      height: 95vh; 
+      background: var(--bg); 
+      border-radius: 16px; 
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative; 
+      zoom: 0.95; 
+      -moz-transform: scale(0.95);
+      -moz-transform-origin: center center;
+    }
     
     .app-wrapper.mobile-mode { 
       max-width: 410px; 
