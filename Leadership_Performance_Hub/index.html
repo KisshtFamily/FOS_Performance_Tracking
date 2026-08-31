@@ -1,1 +1,544 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Hierarchy Performance Dashboard</title><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"><style>:root{--primary:#1e3a8a;--accent:#2563eb;--bg:#f8fafc;--card-bg:#ffffff;--text-main:#0f172a;--text-sub:#64748b;--border:#e2e8f0;--green:#16a34a;--red:#dc2626}*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}body{background:#cbd5e1;min-height:100vh;display:flex;justify-content:center;align-items:center;padding:10px}.app-wrapper{width:100%;max-width:1400px;height:95vh;background:var(--bg);border-radius:16px;box-shadow:0 20px 40px rgba(0,0,0,0.15);overflow:hidden;display:flex;flex-direction:column;position:relative}.app-wrapper.mobile-mode{max-width:400px;height:90vh;border-radius:28px;border:5px solid #0f172a;transform:scale(0.92);transform-origin:center center}.header-bar{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;position:relative;z-index:300}.header-title{font-size:15px;font-weight:700}.view-toggle-btn{background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;outline:none}.view-toggle-btn:hover{background:rgba(255,255,255,0.35)}.level-nav{background:#ffffff;padding:8px 12px;border-bottom:1px solid var(--border);display:flex;gap:6px;overflow-x:auto;flex-shrink:0;position:relative;z-index:250}.level-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:#f1f5f9;color:var(--text-sub);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap}.level-btn.active{background:var(--accent);color:white;border-color:var(--accent)}.fixed-search-bar{background:#ffffff;padding:10px;border-bottom:1px solid var(--border);flex-shrink:0;z-index:200;position:relative}.filter-section{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.filter-select,.search-box{padding:7px 10px;border:1px solid var(--border);border-radius:8px;font-size:11px;background:#f8fafc;outline:none;flex:1;min-width:100px}.multi-select{position:relative;flex:1;min-width:100px}.multi-select-btn{width:100%;padding:7px 10px;border-radius:8px;border:1px solid var(--border);background:#f8fafc;color:var(--text-main);font-size:11px;font-weight:600;cursor:pointer;text-align:left;outline:none}.multi-select-menu{display:none;position:absolute;top:calc(100% + 4px);left:0;width:100%;min-width:160px;max-height:200px;overflow:auto;padding:6px;border-radius:8px;background:#ffffff;border:1px solid var(--border);box-shadow:0 10px 25px rgba(0,0,0,0.1);z-index:9999}.multi-select.open .multi-select-menu{display:block}.multi-option{display:flex;align-items:center;gap:6px;padding:6px;border-radius:4px;color:var(--text-main);font-size:11px;cursor:pointer}.multi-option:hover{background:#f1f5f9}.hierarchy-filter{display:none;gap:8px;flex-wrap:wrap;width:100%;margin-top:8px;padding-top:8px;border-top:1px solid var(--border)}.hierarchy-filter.show{display:flex}.scroll-container{flex:1;overflow-y:auto;overflow-x:auto;position:relative;display:flex;flex-direction:column}.kpi-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px;background:#ffffff;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:70!important}.mobile-mode .kpi-container{grid-template-columns:repeat(2,1fr)}.kpi-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:8px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.02)}.kpi-title{font-size:9px;font-weight:600;color:var(--text-sub);text-transform:uppercase;margin-bottom:2px}.kpi-value{font-size:13px;font-weight:700;color:var(--text-main)}.kpi-value.green{color:var(--green)}.kpi-value.red{color:var(--red)}.table-area{flex:1;width:100%;min-width:max-content}table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;background:#ffffff}th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);border-right:1px solid var(--border);white-space:nowrap}th{background:#dbeafe!important;color:#1e3a8a;font-weight:700;position:sticky!important;top:0!important;z-index:80!important;box-shadow:none!important;cursor:pointer}th:first-child,td:first-child{text-align:left!important;position:sticky!important;left:0!important;font-weight:600;border-right:1px solid var(--border)!important;box-shadow:none!important}th:first-child{background:#dbeafe!important;color:#1e3a8a;z-index:90!important}td:first-child{background:#ffffff!important;color:#0f172a;z-index:30!important}tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px solid var(--accent)}tr.total-row td:first-child{background:#dbeafe!important}.res-badge{background:#dcfce7;color:#15803d;padding:3px 6px;border-radius:4px;font-weight:700}.drr-pill{padding:3px 6px;border-radius:4px;background:#fef2f2;border:1px solid #fecaca;color:#dc2626;font-weight:700}.case-value{color:#1d4ed8;font-weight:700}.paid-value{color:#0f766e;font-weight:700}.red{color:#dc2626;font-weight:700}.pagination-bar{padding:10px 14px;background:#ffffff;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}.page-btn{padding:5px 10px;border:1px solid var(--border);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}.page-btn:disabled{opacity:0.5;cursor:not-allowed}</style></head><body><div class="app-wrapper" id="appWrapper"><div class="header-bar"><div class="header-title" id="mainHeaderTitle">Performance Matrix</div><div style="display:flex;align-items:center;gap:8px;"><button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button><button class="view-toggle-btn" id="mobileToggleBtn" onclick="toggleViewMode()"><i class="fa-solid fa-mobile-screen-button"></i><span id="viewModeText">Mobile View</span></button></div></div><div class="level-nav"><button class="level-btn active" onclick="changeLevel('Zonal Head',this)">Zonal Head</button><button class="level-btn" onclick="changeLevel('Deputy Zonal',this)">Deputy Zonal</button><button class="level-btn" onclick="changeLevel('State Head',this)">State Head</button><button class="level-btn" onclick="changeLevel('City Manager',this)">City Manager</button><button class="level-btn" onclick="changeLevel('FOS Wise',this)">FOS</button></div><div class="fixed-search-bar"><div class="filter-section"><div class="multi-select" id="cycleFilter" data-placeholder="Cycle BKT"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('cycleFilter')">Cycle BKT</button><div class="multi-select-menu" id="cycleMenu"><label class="multi-option"><input type="checkbox" value="Overall" checked onchange="toggleOverallCycle(this)"> Overall Cycle</label></div></div><div class="multi-select" id="shortfallTargetFilter" data-placeholder="Set TGT" data-single="true"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('shortfallTargetFilter')">Set TGT: 92.5%</button><div class="multi-select-menu"><label class="multi-option"><input type="checkbox" value="85" onchange="handleTargetChange(this)"> 85%</label><label class="multi-option"><input type="checkbox" value="90" onchange="handleTargetChange(this)"> 90%</label><label class="multi-option"><input type="checkbox" value="92.5" checked onchange="handleTargetChange(this)"> 92.5%</label><label class="multi-option"><input type="checkbox" value="95" onchange="handleTargetChange(this)"> 95%</label></div></div><div class="multi-select" id="productFilter" data-placeholder="Product"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('productFilter')">Product</button><div class="multi-select-menu" id="productMenu"><label class="multi-option"><input type="checkbox" value="Overall" checked onchange="toggleOverallProduct(this)"> Overall Product</label></div></div><input type="text" class="search-box" id="searchInput" placeholder="Search Name..." onkeyup="renderAll()"></div><div class="hierarchy-filter" id="hierarchyFilter"><select id="zonalHeadFilter" class="filter-select" onchange="updateDeputyDropdown(); renderAll();"><option value="">All Zonal Head</option></select><select id="deputyZonalFilter" class="filter-select" onchange="updateStateHeadDropdown(); renderAll();"><option value="">All Deputy Zonal</option></select><select id="stateHeadFilter" class="filter-select" onchange="updateCityManagerDropdown(); renderAll();"><option value="">All State Head</option></select><select id="cityManagerFilter" class="filter-select" onchange="renderAll();"><option value="">All City Manager</option></select></div></div><div class="scroll-container"><div class="kpi-container" id="kpiBox"><div class="kpi-card"><div class="kpi-title">Status</div><div class="kpi-value" id="kpiStatusVal">Loading Data...</div></div></div><div class="table-area"><table><thead><tr id="tableHead"></tr></thead><tbody id="tableDataBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-sub);">Fetching live records...</td></tr></tbody></table></div></div><div class="pagination-bar"><span id="paginationInfo">Showing 0 of 0 entries</span><div id="paginationButtons"></div></div></div><script>var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec",rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="Zonal Head",currentProducts=["Overall"],currentCycles=["Overall"],targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};function toggleViewMode(){var e=document.getElementById("appWrapper"),t=document.getElementById("viewModeText");e&&t&&(e.classList.toggle("mobile-mode"),t.innerText=e.classList.contains("mobile-mode")?"Desktop View":"Mobile View")}function updateMainHeaderTitle(){var e=document.getElementById("mainHeaderTitle");e&&(e.textContent=-1!==currentCycles.indexOf("Overall")||0===currentCycles.length?"Performance Matrix":"Performance Matrix ("+currentCycles.join(", ")+")")}window.handleManagerData=function(e){var t=null;e&&"success"===e.status&&Array.isArray(e.data)?t=e.data.slice(1):Array.isArray(e)&&(t=e.slice(1)),t&&t.length>0?(rawSheetRows=t,populateProductDropdown(),populateCycleDropdown(),updateHierarchyVisibility(),renderAll()):(document.getElementById("kpiStatusVal")&&(document.getElementById("kpiStatusVal").textContent="No Data"),document.getElementById("tableDataBody").innerHTML='<tr><td colspan="7" style="text-align:center;padding:20px;color:red;">No records found or permission denied.</td></tr>')};function fetchLiveData(){var e=document.getElementById("jsonpScript");e&&e.remove();var t=document.createElement("script");t.id="jsonpScript",t.src=SCRIPT_URL+"?callback=handleManagerData&_="+Date.now(),t.onerror=function(){fetch(SCRIPT_URL).then(function(e){return e.json()}).then(function(e){window.handleManagerData(e)}).catch(function(e){document.getElementById("kpiStatusVal")&&(document.getElementById("kpiStatusVal").textContent="Fetch Error"),console.error("Data Fetch Failed",e)})},document.body.appendChild(t)}function handleTargetChange(e){handleSingleCheck(e);var t=e.value;targetShortfallPct=parseFloat(t)||92.5;var a=document.querySelector("#shortfallTargetFilter .multi-select-btn");a&&(a.textContent="Set TGT: "+targetShortfallPct+"%"),renderAll()}function populateProductDropdown(){var e=document.getElementById("productMenu");if(e){for(var t=uniqueValues(rawSheetRows,2),a='<label class="multi-option"><input type="checkbox" value="Overall" '+( -1!==currentProducts.indexOf("Overall")?"checked":"")+' onchange="toggleOverallProduct(this)"> Overall Product</label>',n=0;n<t.length;n++){var r=t[n],l=-1!==currentProducts.indexOf(r)?"checked":"";a+='<label class="multi-option"><input type="checkbox" value="'+String(r).replace(/"/g,"&quot;")+'" '+l+' onchange="handleProductCheck(this)"> '+r+"</label>"}e.innerHTML=a,updateMultiSelectText("productFilter")}}function handleProductCheck(e){var t=document.querySelector('#productMenu input[value="Overall"]');t&&(t.checked=!1),(currentProducts=getCheckedValues("productFilter")).length||(t&&(t.checked=!0),currentProducts=["Overall"]),updateMultiSelectText("productFilter"),renderAll()}function populateCycleDropdown(){var e=document.getElementById("cycleMenu");if(e){for(var t=uniqueValues(rawSheetRows,16),a='<label class="multi-option"><input type="checkbox" value="Overall" '+( -1!==currentCycles.indexOf("Overall")?"checked":"")+' onchange="toggleOverallCycle(this)"> Overall Cycle</label>',n=0;n<t.length;n++){var r=t[n],l=-1!==currentCycles.indexOf(r)?"checked":"";a+='<label class="multi-option"><input type="checkbox" value="'+String(r).replace(/"/g,"&quot;")+'" '+l+' onchange="handleCycleCheck(this)"> '+r+"</label>"}e.innerHTML=a,updateMultiSelectText("cycleFilter")}}function handleCycleCheck(e){var t=document.querySelector('#cycleMenu input[value="Overall"]');t&&(t.checked=!1),(currentCycles=getCheckedValues("cycleFilter")).length||(t&&(t.checked=!0),currentCycles=["Overall"]),updateMultiSelectText("cycleFilter"),updateMainHeaderTitle(),renderAll()}function toggleOverallCycle(e){setCheckedValues("cycleFilter",["Overall"]),currentCycles=["Overall"],updateMultiSelectText("cycleFilter"),updateMainHeaderTitle(),renderAll()}function changeLevel(e,t){currentLevel=e;for(var a=document.querySelectorAll(".level-btn"),n=0;n<a.length;n++)a[n].classList.remove("active");t.classList.add("active"),updateHierarchyVisibility(),renderAll()}function toggleOverallProduct(e){setCheckedValues("productFilter",["Overall"]),currentProducts=["Overall"],updateMultiSelectText("productFilter"),updateHierarchyVisibility(),renderAll()}function setColumnSort(e){activeSort.field===e?activeSort.direction="asc"===activeSort.direction?"desc":"asc":(activeSort.field=e,activeSort.direction="name"===e?"asc":"desc"),renderAll()}function toggleMultiSelect(e){for(var t=document.querySelectorAll(".multi-select"),a=0;a<t.length;a++)t[a].id!==e&&t[a].classList.remove("open");var n=document.getElementById(e);n&&n.classList.toggle("open")}function getCheckedValues(e){for(var t=document.querySelectorAll("#"+e+" input[type=checkbox]:checked"),a=[],n=0;n<t.length;n++)a.push(t[n].value);return a}function setCheckedValues(e,t){for(var a=document.querySelectorAll("#"+e+" input[type=checkbox]"),n=0;n<a.length;n++)a[n].checked=-1!==t.indexOf(a[n].value)}function handleSingleCheck(e){var t=e.closest(".multi-select");if(t&&"true"===t.dataset.single&&e.checked)for(var a=t.querySelectorAll("input[type=checkbox]"),n=0;n<a.length;n++)a[n]!==e&&(a[n].checked=!1)}function updateMultiSelectText(e){var t=document.getElementById(e);if(t){var a=t.querySelector(".multi-select-btn"),n=getCheckedValues(e),r=t.dataset.placeholder||"Select";a.textContent=-1!==n.indexOf("Overall")||0===n.length?r:n.join(", ")}}function cleanNumber(e){return Number(String(e||0).replace(/,/g,"").replace("%",""))||0}function formatNumber(e){return Math.round(Number(e)).toLocaleString("en-IN")}function formatAmount(e){return Math.round(cleanNumber(e)).toLocaleString("en-IN")}function formatTableAmount(e){return Math.round(cleanNumber(e)).toLocaleString("en-IN")}function getLevelIndex(){return"Deputy Zonal"===currentLevel?11:"State Head"===currentLevel?10:"City Manager"===currentLevel?9:"FOS Wise"===currentLevel?6:12}function getDisplayName(e){return e[getLevelIndex()]||""}function nameKey(e){return String(e||"").trim().replace(/\s+/g," ").toLowerCase()}function sameName(e,t){return nameKey(e)===nameKey(t)}function uniqueValues(e,t){for(var a={},n=0;n<e.length;n++){var r=e[n][t];if(r){var l=nameKey(r);a[l]||(a[l]=r)}}var o=[];for(var c in a)o.push(a[c]);return o.sort((function(e,t){return e.localeCompare(t)}))}function parseFlexibleDate(e){if(!e)return null;var t=String(e).trim(),a=new Date(t);if(!isNaN(a.getTime()))return a;var n=t.split(/[-/]/);return 3===n.length?4===n[0].length?new Date(n[0],n[1]-1,n[2]):new Date(n[2],n[1]-1,n[0]):null}function isBKTXSelected(){return-1===currentCycles.indexOf("Overall")&&0!==currentCycles.length&&currentCycles.some((function(e){return-1!==String(e||"").toUpperCase().indexOf("BKT-X")}))}function getRemainingDays(e){if(!isBKTXSelected())return null;for(var t=null,a=0;a<e.length;a++){var n=String(e[a][17]||"").trim();if(n){var r=parseFlexibleDate(n);r&&(t&&!(r>t)||(t=r))}}if(!t)return 1;var l=new Date;l.setHours(0,0,0,0),t.setHours(0,0,0,0);var o=Math.ceil((t.getTime()-l.getTime())/864e5)+1;return o>0?o:1}function aggregateDuplicateNames(e){for(var t={},a=new Date;a.setDate(a.getDate()-1);){var n=a.getFullYear(),r=a.getMonth(),l=a.getDate();break}for(var o=0;o<e.length;o++){var c=e[o],i=getDisplayName(c),s=nameKey(i);if(s){var u=cleanNumber(c[1]),d=cleanNumber(c[13]),g="PAID"===(m=String(c[14]||"").trim().toUpperCase())||"1"===m?u:0,m=String(c[15]||"").trim(),f=0;if(g>0&&m){var v=parseFlexibleDate(m);v&&v.getFullYear()===n&&v.getMonth()===r&&v.getDate()===l&&(f=u)}t[s]?(t[s].pos+=u,t[s].res+=g,t[s].coll+=d,t[s].ydayRes+=f):t[s]={row:c,pos:u,res:g,coll:d,ydayRes:f}}}var y=[];for(var p in t){var D=t[p].row.slice(0);D.pos=t[p].pos,D.res=t[p].res,D.coll=t[p].coll,D.ydayRes=t[p].ydayRes,y.push(D)}return y}function fillSelect(e,t,a,n){if(void 0===n&&(n=!0),e){for(var r=n?e.value:"",l='<option value="">'+a+"</option>",o=0;o<t.length;o++)l+='<option value="'+String(t[o]).replace(/"/g,"&quot;")+'">'+t[o]+"</option>";e.innerHTML=l,e.value=n&&t.some((function(e){return sameName(e,r)}))?t.find((function(e){return sameName(e,r)})):""}}function updateHierarchyVisibility(){var e=document.getElementById("hierarchyFilter");e&&("State Head"===currentLevel||"City Manager"===currentLevel||"FOS Wise"===currentLevel?(e.classList.add("show"),updateZonalDropdown(),updateDeputyDropdown(),updateStateHeadDropdown(),updateCityManagerDropdown()):e.classList.remove("show"))}function updateZonalDropdown(){fillSelect(document.getElementById("zonalHeadFilter"),uniqueValues(rawSheetRows,12),"All Zonal Head")}function updateDeputyDropdown(){var e=document.getElementById("zonalHeadFilter")?document.getElementById("zonalHeadFilter").value:"",t=e?rawSheetRows.filter((function(t){return sameName(t[12],e)})):rawSheetRows;fillSelect(document.getElementById("deputyZonalFilter"),uniqueValues(t,11),"All Deputy Zonal")}function updateStateHeadDropdown(){var e=document.getElementById("zonalHeadFilter")?document.getElementById("zonalHeadFilter").value:"",t=document.getElementById("deputyZonalFilter")?document.getElementById("deputyZonalFilter").value:"",a=rawSheetRows.filter((function(a){return(!e||sameName(a[12],e))&&(!t||sameName(a[11],t))}));fillSelect(document.getElementById("stateHeadFilter"),uniqueValues(a,10),"All State Head")}function updateCityManagerDropdown(){var e=document.getElementById("zonalHeadFilter")?document.getElementById("zonalHeadFilter").value:"",t=document.getElementById("deputyZonalFilter")?document.getElementById("deputyZonalFilter").value:"",a=document.getElementById("stateHeadFilter")?document.getElementById("stateHeadFilter").value:"",n=rawSheetRows.filter((function(n){return(!e||sameName(n[12],e))&&(!t||sameName(n[11],t))&&(!a||sameName(a[10],a))}));fillSelect(document.getElementById("cityManagerFilter"),uniqueValues(n,9),"All City Manager")}function getBaseTableData(){return rawSheetRows||[]}function getFilteredTableData(){var e=document.getElementById("searchInput")?document.getElementById("searchInput").value.toLowerCase().trim():"",t=getBaseTableData();-1===currentProducts.indexOf("Overall")&&currentProducts.length>0&&(t=t.filter((function(e){return-1!==currentProducts.indexOf(String(e[2]||"").trim())}))),-1===currentCycles.indexOf("Overall")&&currentCycles.length>0&&(t=t.filter((function(e){return-1!==currentCycles.indexOf(String(e[16]||"").trim())})));if("State Head"===currentLevel||"City Manager"===currentLevel||"FOS Wise"===currentLevel){var a=document.getElementById("zonalHeadFilter")?document.getElementById("zonalHeadFilter").value:"",n=document.getElementById("deputyZonalFilter")?document.getElementById("deputyZonalFilter").value:"",r=document.getElementById("stateHeadFilter")?document.getElementById("stateHeadFilter").value:"",l=document.getElementById("cityManagerFilter")?document.getElementById("cityManagerFilter").value:"";t=t.filter((function(e){return(!a||sameName(e[12],a))&&(!n||sameName(e[11],n))&&("State Head"===currentLevel||!r||sameName(e[10],r))&&("FOS Wise"!==currentLevel||!l||sameName(e[9],l))}))}return e&&(t=t.filter((function(t){return-1!==t.join(" ").toLowerCase().indexOf(e)}))),(t=aggregateDuplicateNames(t)).sort(compareRows),t}function compareRows(e,t){var a=activeSort.field,n="asc"===activeSort.direction?1:-1;if("name"===a)return getDisplayName(e).localeCompare(getDisplayName(t))*n;var r="cases"===a?"pos":"paid"===a?"res":"visitPending"===a?"coll":"pos";return((e[r]||0)-(t[r]||0))*n}function renderAll(){currentPage=1,updateMainHeaderTitle(),renderKPI(),renderTable()}function renderKPI(){for(var e=getFilteredTableData(),t=e.length,a=0,n=0,r=0;r<e.length;r++)a+=e[r].pos,n+=e[r].res;var l=a>0?(n/a*100).toFixed(1)+"%":"0.0%",o=Math.max(0,targetShortfallPct/100*a-n),c=rawSheetRows.filter((function(e){return(-1!==currentProducts.indexOf("Overall")||-1!==currentProducts.indexOf(String(e[2]||"").trim()))&&(-1!==currentCycles.indexOf("Overall")||-1!==currentCycles.indexOf(String(e[16]||"").trim()))})),i=getRemainingDays(c),s="-",u="DRP";null!==i&&(s=formatAmount(o/i),u="DRP ("+i+" DAYS)");var d="FOS Wise"===currentLevel?"FOS":currentLevel;document.getElementById("kpiBox").innerHTML='<div class="kpi-card"><div class="kpi-title">'+d+' Count</div><div class="kpi-value">'+formatNumber(t)+'</div></div><div class="kpi-card"><div class="kpi-title">Total P O/S</div><div class="kpi-value">₹'+formatAmount(a)+'</div></div><div class="kpi-card"><div class="kpi-title">POS Resolution</div><div class="kpi-value">₹'+formatAmount(n)+'</div></div><div class="kpi-card"><div class="kpi-title">% Resolution</div><div class="kpi-value green">'+l+'</div></div><div class="kpi-card"><div class="kpi-title">Shortfall ('+targetShortfallPct+'%)</div><div class="kpi-value red">₹'+formatAmount(o)+'</div></div><div class="kpi-card"><div class="kpi-title">'+u+'</div><div class="kpi-value">₹'+s+"</div></div>"}function renderTable(e){e&&(currentPage=1);var t=getFilteredTableData(),a=rawSheetRows.filter((function(e){return(-1!==currentProducts.indexOf("Overall")||-1!==currentProducts.indexOf(String(e[2]||"").trim()))&&(-1!==currentCycles.indexOf("Overall")||-1!==currentCycles.indexOf(String(e[16]||"").trim()))})),n=getRemainingDays(a),r=null!==n?"DRP ("+n+" Days)":"DRP",l="FOS Wise"===currentLevel?"FOS":currentLevel;document.getElementById("tableHead").innerHTML='<th id="levelHeaderName" onclick="setColumnSort(\'name\')">'+l+' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y&apos;day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall('+targetShortfallPct+'%)</th><th onclick="setColumnSort(\'drr\')">'+r+"</th>";var o=Math.max(1,Math.ceil(t.length/rowsPerPage));currentPage>o&&(currentPage=o);for(var c=(currentPage-1)*rowsPerPage,i=c+rowsPerPage,s=t.slice(c,i),u="",d=0;d<s.length;d++){var g=getDisplayName(s[d]),m=s[d].pos,f=s[d].res,v=s[d].ydayRes,y=m>0?(f/m*100).toFixed(1):"0.0",p=Math.max(0,targetShortfallPct/100*m-f),D="-";null!==n&&(D=formatTableAmount(p/n)),u+='<tr><td>'+g+'</td><td class="case-value">'+formatTableAmount(m)+'</td><td class="paid-value">'+formatTableAmount(f)+'</td><td><span class="res-badge">'+y+'%</span></td><td class="paid-value">'+formatTableAmount(v)+'</td><td class="red">'+formatTableAmount(p)+'</td><td><span class="drr-pill">'+D+"</span></td></tr>"}document.getElementById("tableDataBody").innerHTML=u,renderPagination(t.length,o,c,Math.min(i,t.length))}function renderPagination(e,t,a,n){var r=document.getElementById("paginationInfo"),l=document.getElementById("paginationButtons");r&&l&&(0===e?(r.innerHTML="Showing 0 of 0 entries",l.innerHTML=""):(r.innerHTML="Showing "+(a+1)+"–"+n+" of "+e+" entries",l.innerHTML='<button class="page-btn" onclick="goToPage('+(currentPage-1)+')" '+(1===currentPage?"disabled":"")+"><i class=\"fa-solid fa-chevron-left\"></i> Prev</button><button class=\"page-btn active\">"+currentPage+'</button><button class="page-btn" onclick="goToPage('+(currentPage+1)+')" '+(currentPage===t?"disabled":"")+">Next <i class=\"fa-solid fa-chevron-right\"></i></button>'))}function goToPage(e){currentPage=e,renderTable()}function exportCSV(){for(var e=getFilteredTableData(),t=[[currentLevel,"P O/S","Resolution","Resolution %","Y'day POS Res","Shortfall ("+targetShortfallPct+"%)","DRP"]],a=rawSheetRows.filter((function(e){return(-1!==currentProducts.indexOf("Overall")||-1!==currentProducts.indexOf(String(e[2]||"").trim()))&&(-1!==currentCycles.indexOf("Overall")||-1!==currentCycles.indexOf(String(e[16]||"").trim()))})),n=getRemainingDays(a),r=0;r<e.length;r++){var l=getDisplayName(e[r]),o=e[r].pos,c=e[r].res,i=e[r].ydayRes,s=o>0?(c/o*100).toFixed(1):"0.0",u=Math.max(0,targetShortfallPct/100*o-c),d="-";null!==n&&(d=Math.round(u/n)),t.push([l,o,c,s+"%",i,u,d])}var g="data:text/csv;charset=utf-8,"+t.map((function(e){return e.join(",")})).join("\n"),m=encodeURI(g),f=document.createElement("a");f.setAttribute("href",m),f.setAttribute("download","Performance_Report_"+currentLevel+".csv"),document.body.appendChild(f),f.click()}document.addEventListener("click",(function(e){if(!e.target.closest(".multi-select"))for(var t=document.querySelectorAll(".multi-select"),a=0;a<t.length;a++)t[a].classList.remove("open")})),updateHierarchyVisibility(),fetchLiveData();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hierarchy Performance Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --accent: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-sub: #64748b;
+      --border: #e2e8f0;
+      --green: #16a34a;
+      --red: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background: #cbd5e1; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
+    .app-wrapper { width: 100%; max-width: 1400px; height: 95vh; background: var(--bg); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+    .app-wrapper.mobile-mode { max-width: 400px; height: 90vh; border-radius: 28px; border: 5px solid #0f172a; transform: scale(0.92); transform-origin: center center; }
+    .header-bar { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: relative; z-index: 300; }
+    .header-title { font-size: 15px; font-weight: 700; }
+    .view-toggle-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; outline: none; }
+    .view-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+    .level-nav { background: #ffffff; padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; position: relative; z-index: 250; }
+    .level-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: #f1f5f9; color: var(--text-sub); font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .level-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .fixed-search-bar { background: #ffffff; padding: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 200; position: relative; }
+    .filter-section { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .filter-select, .search-box { padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; background: #f8fafc; outline: none; flex: 1; min-width: 100px; }
+    .multi-select { position: relative; flex: 1; min-width: 100px; }
+    .multi-select-btn { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: #f8fafc; color: var(--text-main); font-size: 11px; font-weight: 600; cursor: pointer; text-align: left; outline: none; }
+    .multi-select-menu { display: none; position: absolute; top: calc(100% + 4px); left: 0; width: 100%; min-width: 160px; max-height: 200px; overflow: auto; padding: 6px; border-radius: 8px; background: #ffffff; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.1); z-index: 9999; }
+    .multi-select.open .multi-select-menu { display: block; }
+    .multi-option { display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 4px; color: var(--text-main); font-size: 11px; cursor: pointer; }
+    .multi-option:hover { background: #f1f5f9; }
+    .hierarchy-filter { display: none; gap: 8px; flex-wrap: wrap; width: 100%; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+    .hierarchy-filter.show { display: flex; }
+    .scroll-container { flex: 1; overflow-y: auto; overflow-x: auto; position: relative; display: flex; flex-direction: column; }
+    .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 10px; background: #ffffff; flex-shrink: 0; position: sticky !important; left: 0 !important; width: 100% !important; z-index: 70 !important; }
+    .mobile-mode .kpi-container { grid-template-columns: repeat(2, 1fr); }
+    .kpi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .kpi-title { font-size: 9px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; margin-bottom: 2px; }
+    .kpi-value { font-size: 13px; font-weight: 700; color: var(--text-main); }
+    .kpi-value.green { color: var(--green); }
+    .kpi-value.red { color: var(--red); }
+    .table-area { flex: 1; width: 100%; min-width: max-content; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11px; background: #ffffff; }
+    th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); white-space: nowrap; }
+    th { background: #dbeafe !important; color: #1e3a8a; font-weight: 700; position: sticky !important; top: 0 !important; z-index: 80 !important; box-shadow: none !important; cursor: pointer; }
+    th:first-child, td:first-child { text-align: left !important; position: sticky !important; left: 0 !important; font-weight: 600; border-right: 1px solid var(--border) !important; box-shadow: none !important; }
+    th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
+    td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
+    tr.total-row td { background: #eff6ff !important; font-weight: 700; border-top: 2px solid var(--accent); }
+    tr.total-row td:first-child { background: #dbeafe !important; }
+    .res-badge { background: #dcfce7; color: #15803d; padding: 3px 6px; border-radius: 4px; font-weight: 700; }
+    .drr-pill { padding: 3px 6px; border-radius: 4px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-weight: 700; }
+    .case-value { color: #1d4ed8; font-weight: 700; }
+    .paid-value { color: #0f766e; font-weight: 700; }
+    .red { color: #dc2626; font-weight: 700; }
+    .pagination-bar { padding: 10px 14px; background: #ffffff; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 11px; flex-shrink: 0; position: sticky !important; left: 0 !important; width: 100% !important; z-index: 100 !important; }
+    .page-btn { padding: 5px 10px; border: 1px solid var(--border); background: #f8fafc; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="app-wrapper" id="appWrapper">
+    <div class="header-bar">
+      <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button>
+        <button class="view-toggle-btn" id="mobileToggleBtn" onclick="toggleViewMode()"><i class="fa-solid fa-mobile-screen-button"></i><span id="viewModeText">Mobile View</span></button>
+      </div>
+    </div>
+    <div class="level-nav">
+      <button class="level-btn active" onclick="changeLevel('Zonal Head',this)">Zonal Head</button>
+      <button class="level-btn" onclick="changeLevel('Deputy Zonal',this)">Deputy Zonal</button>
+      <button class="level-btn" onclick="changeLevel('State Head',this)">State Head</button>
+      <button class="level-btn" onclick="changeLevel('City Manager',this)">City Manager</button>
+      <button class="level-btn" onclick="changeLevel('FOS Wise',this)">FOS</button>
+    </div>
+    <div class="fixed-search-bar">
+      <div class="filter-section">
+        <div class="multi-select" id="cycleFilter" data-placeholder="Cycle BKT">
+          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('cycleFilter')">Cycle BKT</button>
+          <div class="multi-select-menu" id="cycleMenu">
+            <label class="multi-option"><input type="checkbox" value="Overall" checked onchange="toggleOverallCycle(this)"> Overall Cycle</label>
+          </div>
+        </div>
+        <div class="multi-select" id="shortfallTargetFilter" data-placeholder="Set TGT" data-single="true">
+          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('shortfallTargetFilter')">Set TGT: 92.5%</button>
+          <div class="multi-select-menu">
+            <label class="multi-option"><input type="checkbox" value="85" onchange="handleTargetChange(this)"> 85%</label>
+            <label class="multi-option"><input type="checkbox" value="90" onchange="handleTargetChange(this)"> 90%</label>
+            <label class="multi-option"><input type="checkbox" value="92.5" checked onchange="handleTargetChange(this)"> 92.5%</label>
+            <label class="multi-option"><input type="checkbox" value="95" onchange="handleTargetChange(this)"> 95%</label>
+          </div>
+        </div>
+        <div class="multi-select" id="productFilter" data-placeholder="Product">
+          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('productFilter')">Product</button>
+          <div class="multi-select-menu" id="productMenu">
+            <label class="multi-option"><input type="checkbox" value="Overall" checked onchange="toggleOverallProduct(this)"> Overall Product</label>
+          </div>
+        </div>
+        <input type="text" class="search-box" id="searchInput" placeholder="Search Name..." onkeyup="renderAll()">
+      </div>
+      <div class="hierarchy-filter" id="hierarchyFilter">
+        <select id="zonalHeadFilter" class="filter-select" onchange="updateDeputyDropdown(); renderAll();"><option value="">All Zonal Head</option></select>
+        <select id="deputyZonalFilter" class="filter-select" onchange="updateStateHeadDropdown(); renderAll();"><option value="">All Deputy Zonal</option></select>
+        <select id="stateHeadFilter" class="filter-select" onchange="updateCityManagerDropdown(); renderAll();"><option value="">All State Head</option></select>
+        <select id="cityManagerFilter" class="filter-select" onchange="renderAll();"><option value="">All City Manager</option></select>
+      </div>
+    </div>
+    <div class="scroll-container">
+      <div class="kpi-container" id="kpiBox">
+        <div class="kpi-card"><div class="kpi-title">Status</div><div class="kpi-value" id="kpiStatusVal">Loading Data...</div></div>
+      </div>
+      <div class="table-area">
+        <table>
+          <thead><tr id="tableHead"></tr></thead>
+          <tbody id="tableDataBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text-sub);">Fetching live records...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="pagination-bar">
+      <span id="paginationInfo">Showing 0 of 0 entries</span>
+      <div id="paginationButtons"></div>
+    </div>
+  </div>
+
+  <script>
+    var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
+    var rawSheetRows = [];
+    var rowsPerPage = 15, currentPage = 1, currentLevel = "Zonal Head", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
+
+    function toggleViewMode() {
+      var a = document.getElementById("appWrapper"), b = document.getElementById("viewModeText");
+      if (a && b) {
+        a.classList.toggle("mobile-mode");
+        b.innerText = a.classList.contains("mobile-mode") ? "Desktop View" : "Mobile View";
+      }
+    }
+
+    function updateMainHeaderTitle() {
+      var e = document.getElementById("mainHeaderTitle");
+      if (!e) return;
+      if (currentCycles.indexOf("Overall") !== -1 || currentCycles.length === 0) {
+        e.textContent = "Performance Matrix";
+      } else {
+        e.textContent = "Performance Matrix (" + currentCycles.join(", ") + ")";
+      }
+    }
+
+    window.handleManagerData = function(e) {
+      var resData = null;
+      if (e && e.status === "success" && Array.isArray(e.data)) {
+        resData = e.data.slice(1);
+      } else if (Array.isArray(e)) {
+        resData = e.slice(1);
+      }
+      if (resData && resData.length > 0) {
+        rawSheetRows = resData;
+        populateProductDropdown();
+        populateCycleDropdown();
+        updateHierarchyVisibility();
+        renderAll();
+      } else {
+        var st = document.getElementById("kpiStatusVal");
+        if (st) st.textContent = "No Data";
+        document.getElementById("tableDataBody").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:red;">No records found or permission denied.</td></tr>';
+      }
+    };
+
+    function fetchLiveData() {
+      var old = document.getElementById("jsonpScript");
+      if (old) old.remove();
+      var scriptObj = document.createElement("script");
+      scriptObj.id = "jsonpScript";
+      scriptObj.src = SCRIPT_URL + "?callback=handleManagerData&_=" + Date.now();
+      scriptObj.onerror = function() {
+        fetch(SCRIPT_URL).then(function(res) { return res.json(); }).then(function(data) { window.handleManagerData(data); }).catch(function(err) {
+          var st = document.getElementById("kpiStatusVal");
+          if (st) st.textContent = "Fetch Error";
+          console.error("Data Fetch Failed", err);
+        });
+      };
+      document.body.appendChild(scriptObj);
+    }
+
+    function handleTargetChange(e) {
+      handleSingleCheck(e);
+      var t = e.value;
+      targetShortfallPct = parseFloat(t) || 92.5;
+      var a = document.querySelector("#shortfallTargetFilter .multi-select-btn");
+      if (a) a.textContent = "Set TGT: " + targetShortfallPct + "%";
+      renderAll();
+    }
+
+    function populateProductDropdown() {
+      var e = document.getElementById("productMenu");
+      if (!e) return;
+      var t = uniqueValues(rawSheetRows, 2), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentProducts.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallProduct(this)"> Overall Product</label>';
+      for (var n = 0; n < t.length; n++) {
+        var l = t[n], r = currentProducts.indexOf(l) !== -1 ? "checked" : "";
+        a += '<label class="multi-option"><input type="checkbox" value="' + String(l).replace(/"/g, "&quot;") + '" ' + r + ' onchange="handleProductCheck(this)"> ' + l + '</label>';
+      }
+      e.innerHTML = a;
+      updateMultiSelectText("productFilter");
+    }
+
+    function handleProductCheck(e) {
+      var t = document.querySelector('#productMenu input[value="Overall"]');
+      t && (t.checked = !1);
+      currentProducts = getCheckedValues("productFilter");
+      0 === currentProducts.length && (t && (t.checked = !0), currentProducts = ["Overall"]);
+      updateMultiSelectText("productFilter");
+      renderAll();
+    }
+
+    function populateCycleDropdown() {
+      var e = document.getElementById("cycleMenu");
+      if (!e) return;
+      var t = uniqueValues(rawSheetRows, 16), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentCycles.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallCycle(this)"> Overall Cycle</label>';
+      for (var n = 0; n < t.length; n++) {
+        var l = t[n], r = currentCycles.indexOf(l) !== -1 ? "checked" : "";
+        a += '<label class="multi-option"><input type="checkbox" value="' + String(l).replace(/"/g, "&quot;") + '" ' + r + ' onchange="handleCycleCheck(this)"> ' + l + '</label>';
+      }
+      e.innerHTML = a;
+      updateMultiSelectText("cycleFilter");
+    }
+
+    function handleCycleCheck(e) {
+      var t = document.querySelector('#cycleMenu input[value="Overall"]');
+      t && (t.checked = !1);
+      currentCycles = getCheckedValues("cycleFilter");
+      0 === currentCycles.length && (t && (t.checked = !0), currentCycles = ["Overall"]);
+      updateMultiSelectText("cycleFilter");
+      updateMainHeaderTitle();
+      renderAll();
+    }
+
+    function toggleOverallCycle(e) {
+      setCheckedValues("cycleFilter", ["Overall"]);
+      currentCycles = ["Overall"];
+      updateMultiSelectText("cycleFilter");
+      updateMainHeaderTitle();
+      renderAll();
+    }
+
+    function changeLevel(e, t) {
+      currentLevel = e;
+      var a = document.querySelectorAll(".level-btn");
+      for (var n = 0; n < a.length; n++) a[n].classList.remove("active");
+      t.classList.add("active");
+      updateHierarchyVisibility();
+      renderAll();
+    }
+
+    function toggleOverallProduct(e) {
+      setCheckedValues("productFilter", ["Overall"]);
+      currentProducts = ["Overall"];
+      updateMultiSelectText("productFilter");
+      updateHierarchyVisibility();
+      renderAll();
+    }
+
+    function setColumnSort(e) {
+      activeSort.field === e ? activeSort.direction = "asc" === activeSort.direction ? "desc" : "asc" : (activeSort.field = e, activeSort.direction = "name" === e ? "asc" : "desc");
+      renderAll();
+    }
+
+    function toggleMultiSelect(e) {
+      var t = document.querySelectorAll(".multi-select");
+      for (var a = 0; a < t.length; a++) t[a].id !== e && t[a].classList.remove("open");
+      var n = document.getElementById(e);
+      n && n.classList.toggle("open");
+    }
+
+    function getCheckedValues(e) {
+      var t = document.querySelectorAll("#" + e + " input[type=checkbox]:checked"), a = [];
+      for (var n = 0; n < t.length; n++) a.push(t[n].value);
+      return a;
+    }
+
+    function setCheckedValues(e, t) {
+      var a = document.querySelectorAll("#" + e + " input[type=checkbox]");
+      for (var n = 0; n < a.length; n++) a[n].checked = -1 !== t.indexOf(a[n].value);
+    }
+
+    function handleSingleCheck(e) {
+      var t = e.closest(".multi-select");
+      if (t && "true" === t.dataset.single && e.checked) {
+        var a = t.querySelectorAll("input[type=checkbox]");
+        for (var n = 0; n < a.length; n++) a[n] !== e && (a[n].checked = !1);
+      }
+    }
+
+    function updateMultiSelectText(e) {
+      var t = document.getElementById(e);
+      if (!t) return;
+      var a = t.querySelector(".multi-select-btn"), n = getCheckedValues(e), l = t.dataset.placeholder || "Select";
+      -1 !== n.indexOf("Overall") || 0 === n.length ? a.textContent = l : a.textContent = n.join(", ");
+    }
+
+    function cleanNumber(e) {
+      return Number(String(e || 0).replace(/,/g, "").replace("%", "")) || 0;
+    }
+
+    function formatNumber(e) {
+      return Math.round(Number(e)).toLocaleString("en-IN");
+    }
+
+    function formatAmount(e) {
+      return Math.round(cleanNumber(e)).toLocaleString("en-IN");
+    }
+
+    function formatTableAmount(e) {
+      return Math.round(cleanNumber(e)).toLocaleString("en-IN");
+    }
+
+    function getLevelIndex() {
+      return "Deputy Zonal" === currentLevel ? 11 : "State Head" === currentLevel ? 10 : "City Manager" === currentLevel ? 9 : "FOS Wise" === currentLevel ? 6 : 12;
+    }
+
+    function getDisplayName(e) {
+      return e[getLevelIndex()] || "";
+    }
+
+    function nameKey(e) {
+      return String(e || "").trim().replace(/\s+/g, " ").toLowerCase();
+    }
+
+    function sameName(e, t) {
+      return nameKey(e) === nameKey(t);
+    }
+
+    function uniqueValues(e, t) {
+      var a = {};
+      for (var n = 0; n < e.length; n++) {
+        var l = e[n][t];
+        if (l) {
+          var r = nameKey(l);
+          a[r] || (a[r] = l);
+        }
+      }
+      var s = [];
+      for (var k in a) s.push(a[k]);
+      return s.sort(function(e, t) { return e.localeCompare(t); });
+    }
+
+    function parseFlexibleDate(e) {
+      if (!e) return null;
+      var t = String(e).trim(), a = new Date(t);
+      if (!isNaN(a.getTime())) return a;
+      var n = t.split(/[-/]/);
+      return 3 === n.length ? 4 === n[0].length ? new Date(n[0], n[1] - 1, n[2]) : new Date(n[2], n[1] - 1, n[0]) : null;
+    }
+
+    function isBKTXSelected() {
+      return -1 !== currentCycles.indexOf("Overall") || 0 === currentCycles.length ? !1 : currentCycles.some(function(e) { return -1 !== String(e || "").toUpperCase().indexOf("BKT-X"); });
+    }
+
+    function getRemainingDays(e) {
+      if (!isBKTXSelected()) return null;
+      var t = null;
+      for (var a = 0; a < e.length; a++) {
+        var n = String(e[a][17] || "").trim();
+        if (n) {
+          var l = parseFlexibleDate(n);
+          l && (t && !(l > t) || (t = l));
+        }
+      }
+      if (!t) return 1;
+      var r = new Date();
+      r.setHours(0, 0, 0, 0);
+      t.setHours(0, 0, 0, 0);
+      var s = t.getTime() - r.getTime(), k = Math.ceil(s / 864e5) + 1;
+      return k > 0 ? k : 1;
+    }
+
+    function aggregateDuplicateNames(e) {
+      var t = {}, a = new Date();
+      a.setDate(a.getDate() - 1);
+      var n = a.getFullYear(), l = a.getMonth(), r = a.getDate();
+      for (var s = 0; s < e.length; s++) {
+        var k = e[s], o = getDisplayName(k), c = nameKey(o);
+        if (c) {
+          var u = cleanNumber(k[1]), d = cleanNumber(k[13]), i = String(k[14] || "").trim().toUpperCase(), m = "PAID" === i || "1" === i ? u : 0, y = String(k[15] || "").trim(), p = 0;
+          if (m > 0 && y) {
+            var C = parseFlexibleDate(y);
+            C && C.getFullYear() === n && C.getMonth() === l && C.getDate() === r && (p = u);
+          }
+          t[c] ? (t[c].pos += u, t[c].res += m, t[c].coll += d, t[c].ydayRes += p) : t[c] = { row: k, pos: u, res: m, coll: d, ydayRes: p };
+        }
+      }
+      var v = [];
+      for (var f in t) {
+        var D = t[f].row.slice(0);
+        D.pos = t[f].pos;
+        D.res = t[f].res;
+        D.coll = t[f].coll;
+        D.ydayRes = t[f].ydayRes;
+        v.push(D);
+      }
+      return v;
+    }
+
+    function fillSelect(e, t, a, n) {
+      if (void 0 === n && (n = !0), e) {
+        var l = n ? e.value : "", r = '<option value="">' + a + '</option>';
+        for (var s = 0; s < t.length; s++) r += '<option value="' + String(t[s]).replace(/"/g, "&quot;") + '">' + t[s] + '</option>';
+        e.innerHTML = r;
+        e.value = n && t.some(function(e) { return sameName(e, l); }) ? t.find(function(e) { return sameName(e, l); }) : "";
+      }
+    }
+
+    function updateHierarchyVisibility() {
+      var e = document.getElementById("hierarchyFilter");
+      e && ("State Head" === currentLevel || "City Manager" === currentLevel || "FOS Wise" === currentLevel ? (e.classList.add("show"), updateZonalDropdown(), updateDeputyDropdown(), updateStateHeadDropdown(), updateCityManagerDropdown()) : e.classList.remove("show"));
+    }
+
+    function updateZonalDropdown() {
+      fillSelect(document.getElementById("zonalHeadFilter"), uniqueValues(rawSheetRows, 12), "All Zonal Head");
+    }
+
+    function updateDeputyDropdown() {
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = e ? rawSheetRows.filter(function(t) { return sameName(t[12], e); }) : rawSheetRows;
+      fillSelect(document.getElementById("deputyZonalFilter"), uniqueValues(t, 11), "All Deputy Zonal");
+    }
+
+    function updateStateHeadDropdown() {
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = rawSheetRows.filter(function(a) { return (!e || sameName(a[12], e)) && (!t || sameName(a[11], t)); });
+      fillSelect(document.getElementById("stateHeadFilter"), uniqueValues(a, 10), "All State Head");
+    }
+
+    function updateCityManagerDropdown() {
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", n = rawSheetRows.filter(function(n) { return (!e || sameName(n[12], e)) && (!t || sameName(n[11], t)) && (!a || sameName(a[10], a)); });
+      fillSelect(document.getElementById("cityManagerFilter"), uniqueValues(n, 9), "All City Manager");
+    }
+
+    function getBaseTableData() { return rawSheetRows || []; }
+
+    function getFilteredTableData() {
+      var e = document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase().trim() : "", a = getBaseTableData();
+      -1 === currentProducts.indexOf("Overall") && currentProducts.length > 0 && (a = a.filter(function(e) { return -1 !== currentProducts.indexOf(String(e[2] || "").trim()); }));
+      -1 === currentCycles.indexOf("Overall") && currentCycles.length > 0 && (a = a.filter(function(e) { return -1 !== currentCycles.indexOf(String(e[16] || "").trim()); }));
+      if ("State Head" === currentLevel || "City Manager" === currentLevel || "FOS Wise" === currentLevel) {
+        var n = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", l = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", r = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", s = document.getElementById("cityManagerFilter") ? document.getElementById("cityManagerFilter").value : "";
+        a = a.filter(function(e) { return (!n || sameName(e[12], n)) && (!l || sameName(e[11], l)) && ("State Head" === currentLevel || !r || sameName(e[10], r)) && ("FOS Wise" !== currentLevel || !s || sameName(e[9], s)); });
+      }
+      e && (a = a.filter(function(t) { return -1 !== t.join(" ").toLowerCase().indexOf(e); }));
+      a = aggregateDuplicateNames(a);
+      a.sort(compareRows);
+      return a;
+    }
+
+    function compareRows(e, t) {
+      var a = activeSort.field, n = "asc" === activeSort.direction ? 1 : -1;
+      if ("name" === a) return getDisplayName(e).localeCompare(getDisplayName(t)) * n;
+      var l = "cases" === a ? "pos" : "paid" === a ? "res" : "visitPending" === a ? "coll" : "pos";
+      return ((e[l] || 0) - (t[l] || 0)) * n;
+    }
+
+    function renderAll() {
+      currentPage = 1;
+      updateMainHeaderTitle();
+      renderKPI();
+      renderTable();
+    }
+
+    function renderKPI() {
+      for (var e = getFilteredTableData(), t = e.length, a = 0, n = 0, l = 0; l < e.length; l++) a += e[l].pos, n += e[l].res;
+      var r = a > 0 ? (n / a * 100).toFixed(1) + "%" : "0.0%", s = Math.max(0, targetShortfallPct / 100 * a - n), k = rawSheetRows.filter(function(e) {
+        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
+        return t && a;
+      }), o = getRemainingDays(k), c = "-", u = "DRP";
+      null !== o && (c = formatAmount(s / o), u = "DRP (" + o + " DAYS)");
+      var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
+      document.getElementById("kpiBox").innerHTML = '<div class="kpi-card"><div class="kpi-title">' + lvlName + ' Count</div><div class="kpi-value">' + formatNumber(t) + '</div></div><div class="kpi-card"><div class="kpi-title">Total P O/S</div><div class="kpi-value">₹' + formatAmount(a) + '</div></div><div class="kpi-card"><div class="kpi-title">POS Resolution</div><div class="kpi-value">₹' + formatAmount(n) + '</div></div><div class="kpi-card"><div class="kpi-title">% Resolution</div><div class="kpi-value green">' + r + '</div></div><div class="kpi-card"><div class="kpi-title">Shortfall (' + targetShortfallPct + '%)</div><div class="kpi-value red">₹' + formatAmount(s) + '</div></div><div class="kpi-card"><div class="kpi-title">' + u + '</div><div class="kpi-value">₹' + c + '</div></div>';
+    }
+
+    function renderTable(e) {
+      e && (currentPage = 1);
+      var t = getFilteredTableData(), a = rawSheetRows.filter(function(e) {
+        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
+        return t && a;
+      }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + " Days)" : "DRP";
+      var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
+      document.getElementById("tableHead").innerHTML = '<th id="levelHeaderName" onclick="setColumnSort(\'name\')">' + lvlName + ' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y&apos;day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall(' + targetShortfallPct + '%)</th><th onclick="setColumnSort(\'drr\')">' + l + '</th>';
+      var r = Math.max(1, Math.ceil(t.length / rowsPerPage));
+      currentPage > r && (currentPage = r);
+      var s = (currentPage - 1) * rowsPerPage, k = s + rowsPerPage, o = t.slice(s, k), c = "";
+      for (var u = 0; u < o.length; u++) {
+        var d = getDisplayName(o[u]), i = o[u].pos, m = o[u].res, y = o[u].ydayRes, p = i > 0 ? (m / i * 100).toFixed(1) : "0.0", C = Math.max(0, targetShortfallPct / 100 * i - m), v = "-";
+        null !== n && (v = formatTableAmount(C / n));
+        c += '<tr><td>' + d + '</td><td class="case-value">' + formatTableAmount(i) + '</td><td class="paid-value">' + formatTableAmount(m) + '</td><td><span class="res-badge">' + p + '%</span></td><td class="paid-value">' + formatTableAmount(y) + '</td><td class="red">' + formatTableAmount(C) + '</td><td><span class="drr-pill">' + v + '</span></td></tr>';
+      }
+      document.getElementById("tableDataBody").innerHTML = c;
+      renderPagination(t.length, r, s, Math.min(k, t.length));
+    }
+
+    function renderPagination(e, t, a, n) {
+      var l = document.getElementById("paginationInfo"), r = document.getElementById("paginationButtons");
+      l && r && (0 === e ? (l.innerHTML = "Showing 0 of 0 entries", r.innerHTML = "") : l.innerHTML = "Showing " + (a + 1) + "–" + n + " of " + e + " entries", r.innerHTML = '<button class="page-btn" onclick="goToPage(' + (currentPage - 1) + ')" ' + (1 === currentPage ? "disabled" : "") + '><i class="fa-solid fa-chevron-left"></i> Prev</button><button class="page-btn active">' + currentPage + '</button><button class="page-btn" onclick="goToPage(' + (currentPage + 1) + ')" ' + (currentPage === t ? "disabled" : "") + '>Next <i class="fa-solid fa-chevron-right"></i></button>');
+    }
+
+    function goToPage(e) {
+      currentPage = e;
+      renderTable();
+    }
+
+    function exportCSV() {
+      var e = getFilteredTableData(), t = [[currentLevel, "P O/S", "Resolution", "Resolution %", "Y'day POS Res", "Shortfall (" + targetShortfallPct + "%)", "DRP"]], a = rawSheetRows.filter(function(e) {
+        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
+        return t && a;
+      }), n = getRemainingDays(a);
+      for (var l = 0; l < e.length; l++) {
+        var r = getDisplayName(e[l]), s = e[l].pos, k = e[l].res, o = e[l].ydayRes, c = s > 0 ? (k / s * 100).toFixed(1) : "0.0", u = Math.max(0, targetShortfallPct / 100 * s - k), d = "-";
+        null !== n && (d = Math.round(u / n));
+        t.push([r, s, k, c + "%", o, u, d]);
+      }
+      var i = "data:text/csv;charset=utf-8," + t.map(function(e) { return e.join(","); }).join("\n"), m = encodeURI(i), y = document.createElement("a");
+      y.setAttribute("href", m);
+      y.setAttribute("download", "Performance_Report_" + currentLevel + ".csv");
+      document.body.appendChild(y);
+      y.click();
+    }
+
+    document.addEventListener("click", function(e) {
+      if (!e.target.closest(".multi-select")) {
+        var t = document.querySelectorAll(".multi-select");
+        for (var a = 0; a < t.length; a++) t[a].classList.remove("open");
+      }
+    });
+
+    updateHierarchyVisibility();
+    fetchLiveData();
+  </script>
+</body>
+</html>
