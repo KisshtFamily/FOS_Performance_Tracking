@@ -44,10 +44,13 @@
     .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 10px; background: #ffffff; flex-shrink: 0; position: sticky !important; left: 0 !important; width: 100% !important; z-index: 70 !important; }
     .mobile-mode .kpi-container { grid-template-columns: repeat(2, 1fr); }
     .kpi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+    .kpi-icon { font-size: 14px; margin-bottom: 2px; }
     .kpi-title { font-size: 9px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; margin-bottom: 2px; }
     .kpi-value { font-size: 13px; font-weight: 700; color: var(--text-main); }
     .kpi-value.green { color: var(--green); }
     .kpi-value.red { color: var(--red); }
+    
+    /* Summary Table Area */
     .table-area { flex: 1; width: 100%; min-width: max-content; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11px; background: #ffffff; }
     th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); white-space: nowrap; }
@@ -55,6 +58,14 @@
     th:first-child, td:first-child { text-align: left !important; position: sticky !important; left: 0 !important; font-weight: 600; border-right: 1px solid var(--border) !important; box-shadow: none !important; }
     th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
     td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
+
+    /* Mobile View Special Rule: Only Summary Table 80% Zoomed Out */
+    .mobile-mode .table-area {
+      zoom: 0.8;
+      -moz-transform: scale(0.8);
+      -moz-transform-origin: 0 0;
+    }
+
     tr.total-row td { background: #eff6ff !important; font-weight: 700; border-top: 2px solid var(--accent); }
     tr.total-row td:first-child { background: #dbeafe !important; }
     .res-badge { background: #dcfce7; color: #15803d; padding: 3px 6px; border-radius: 4px; font-weight: 700; }
@@ -480,7 +491,13 @@
       }), o = getRemainingDays(k), c = "-", u = "DRP";
       null !== o && (c = formatAmount(s / o), u = "DRP (" + o + " DAYS)");
       var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
-      document.getElementById("kpiBox").innerHTML = '<div class="kpi-card"><div class="kpi-title">' + lvlName + ' Count</div><div class="kpi-value">' + formatNumber(t) + '</div></div><div class="kpi-card"><div class="kpi-title">Total P O/S</div><div class="kpi-value">₹' + formatAmount(a) + '</div></div><div class="kpi-card"><div class="kpi-title">POS Resolution</div><div class="kpi-value">₹' + formatAmount(n) + '</div></div><div class="kpi-card"><div class="kpi-title">% Resolution</div><div class="kpi-value green">' + r + '</div></div><div class="kpi-card"><div class="kpi-title">Shortfall (' + targetShortfallPct + '%)</div><div class="kpi-value red">₹' + formatAmount(s) + '</div></div><div class="kpi-card"><div class="kpi-title">' + u + '</div><div class="kpi-value">₹' + c + '</div></div>';
+      document.getElementById("kpiBox").innerHTML = 
+        '<div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-title">' + lvlName + ' Count</div><div class="kpi-value">' + formatNumber(t) + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">📄</div><div class="kpi-title">Total P O/S</div><div class="kpi-value">₹' + formatAmount(a) + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">🔨</div><div class="kpi-title">POS Resolution</div><div class="kpi-value">₹' + formatAmount(n) + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">🎯</div><div class="kpi-title">% Resolution</div><div class="kpi-value green">' + r + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">⚠️</div><div class="kpi-title">Shortfall (' + targetShortfallPct + '%)</div><div class="kpi-value red">₹' + formatAmount(s) + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">⏱️</div><div class="kpi-title">' + u + '</div><div class="kpi-value">₹' + c + '</div></div>';
     }
 
     function renderTable(e) {
