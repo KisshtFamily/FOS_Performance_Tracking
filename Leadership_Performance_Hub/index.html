@@ -53,7 +53,6 @@
       -moz-transform-origin: center center;
     }
     
-    /* Responsive Mobile Screen Fix (Top Spacing & Fit) */
     @media (max-width: 768px) {
       body {
         padding: 0 !important;
@@ -86,7 +85,6 @@
       -moz-transform: none !important;
     }
 
-    /* Top Header Padding Fix for Mobile Notch/URL Bar */
     .header-bar { 
       background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); 
       color: white; 
@@ -170,11 +168,13 @@
         <button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button>
       </div>
     </div>
+    <!-- Added AVP button to Navigation -->
     <div class="level-nav">
-      <button class="level-btn active" onclick="changeLevel('Zonal Head',this)">ZH</button>
-      <button class="level-btn" onclick="changeLevel('Deputy Zonal',this)">DZH</button>
-      <button class="level-btn" onclick="changeLevel('State Head',this)">SH</button>
-      <button class="level-btn" onclick="changeLevel('City Manager',this)">CM/TL</button>
+      <button class="level-btn active" onclick="changeLevel('AVP',this)">AVP</button>
+      <button class="level-btn" onclick="changeLevel('ZH',this)">ZH</button>
+      <button class="level-btn" onclick="changeLevel('DZ',this)">DZ</button>
+      <button class="level-btn" onclick="changeLevel('SH',this)">SH</button>
+      <button class="level-btn" onclick="changeLevel('CM',this)">CM</button>
       <button class="level-btn" onclick="changeLevel('FOS Wise',this)">FOS</button>
     </div>
     <div class="fixed-search-bar">
@@ -229,7 +229,7 @@
   <script>
     var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
     var rawSheetRows = [];
-    var rowsPerPage = 15, currentPage = 1, currentLevel = "Zonal Head", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
+    var rowsPerPage = 15, currentPage = 1, currentLevel = "AVP", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
 
     function autoDetectDeviceView() {
       var wrapper = document.getElementById("appWrapper");
@@ -461,8 +461,13 @@
       return Math.round(cleanNumber(e)).toLocaleString("en-IN");
     }
 
+    // Updated Level Index mapping for Col T (Index 19) = AVP
     function getLevelIndex() {
-      return "Deputy Zonal" === currentLevel ? 11 : "State Head" === currentLevel ? 10 : "City Manager" === currentLevel ? 9 : "FOS Wise" === currentLevel ? 6 : 12;
+      return "AVP" === currentLevel ? 19 : 
+             "DZ" === currentLevel ? 11 : 
+             "SH" === currentLevel ? 10 : 
+             "CM" === currentLevel ? 9 : 
+             "FOS Wise" === currentLevel ? 6 : 12; // 12 for "ZH"
     }
 
     function getDisplayName(e) {
@@ -559,7 +564,7 @@
 
     function updateHierarchyVisibility() {
       var e = document.getElementById("hierarchyFilter");
-      e && ("State Head" === currentLevel || "City Manager" === currentLevel || "FOS Wise" === currentLevel ? (e.classList.add("show"), updateZonalDropdown(), updateDeputyDropdown(), updateStateHeadDropdown(), updateCityManagerDropdown()) : e.classList.remove("show"));
+      e && ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel ? (e.classList.add("show"), updateZonalDropdown(), updateDeputyDropdown(), updateStateHeadDropdown(), updateCityManagerDropdown()) : e.classList.remove("show"));
     }
 
     function updateZonalDropdown() {
@@ -587,9 +592,9 @@
       var e = document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase().trim() : "", a = getBaseTableData();
       -1 === currentProducts.indexOf("Overall") && currentProducts.length > 0 && (a = a.filter(function(e) { return -1 !== currentProducts.indexOf(String(e[2] || "").trim()); }));
       -1 === currentCycles.indexOf("Overall") && currentCycles.length > 0 && (a = a.filter(function(e) { return -1 !== currentCycles.indexOf(String(e[16] || "").trim()); }));
-      if ("State Head" === currentLevel || "City Manager" === currentLevel || "FOS Wise" === currentLevel) {
+      if ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel) {
         var n = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", l = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", r = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", s = document.getElementById("cityManagerFilter") ? document.getElementById("cityManagerFilter").value : "";
-        a = a.filter(function(e) { return (!n || sameName(e[12], n)) && (!l || sameName(e[11], l)) && ("State Head" === currentLevel || !r || sameName(e[10], r)) && ("FOS Wise" !== currentLevel || !s || sameName(e[9], s)); });
+        a = a.filter(function(e) { return (!n || sameName(e[12], n)) && (!l || sameName(e[11], l)) && ("SH" === currentLevel || !r || sameName(e[10], r)) && ("FOS Wise" !== currentLevel || !s || sameName(e[9], s)); });
       }
       e && (a = a.filter(function(t) { return -1 !== t.join(" ").toLowerCase().indexOf(e); }));
       a = aggregateDuplicateNames(a);
