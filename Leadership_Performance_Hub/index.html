@@ -19,9 +19,23 @@
       --red: #dc2626;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-    body { background: #cbd5e1; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
     
-    /* Overall Dashboard Container Zoomed Out to 95% */
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #cbd5e1;
+      overflow: hidden;
+    }
+
+    body { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+    }
+    
+    /* Desktop Container - Clean 95% Scale */
     .app-wrapper { 
       width: 100%; 
       max-width: 1400px; 
@@ -38,20 +52,41 @@
       -moz-transform-origin: center center;
     }
     
-    .app-wrapper.mobile-mode { 
-      max-width: 410px; 
-      height: 92vh; 
-      border-radius: 20px; 
-      border: 4px solid #0f172a; 
-      transform: none !important; 
-      transform-origin: top center;
-      margin: 0 auto;
+    /* Real Mobile View Fix - Zero Margins, Zero Gaps, Fits 100% Screen */
+    @media (max-width: 768px) {
+      body {
+        padding: 0 !important;
+        background: var(--bg) !important;
+      }
+      .app-wrapper { 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        height: 100vh !important; 
+        border-radius: 0 !important; 
+        border: none !important; 
+        box-shadow: none !important;
+        margin: 0 !important;
+        zoom: 1 !important;
+        -moz-transform: none !important;
+      }
+    }
+
+    .mobile-mode {
+      width: 100% !important;
+      max-width: 100% !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      zoom: 1 !important;
+      -moz-transform: none !important;
     }
 
     .header-bar { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: relative; z-index: 300; }
     .header-title-container { display: flex; flex-direction: column; gap: 2px; }
     .header-title { font-size: 15px; font-weight: 700; line-height: 1.2; }
-    .header-subtitle { font-size: 11px; opacity: 0.9; font-weight: 500; letter-spacing: 0.3px; }
+    .header-subtitle { font-size: 11px; opacity: 0.95; font-weight: 600; letter-spacing: 0.3px; color: #e2e8f0; }
     
     .view-toggle-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; outline: none; }
     .view-toggle-btn:hover { background: rgba(255,255,255,0.35); }
@@ -71,7 +106,9 @@
     .hierarchy-filter.show { display: flex; }
     .scroll-container { flex: 1; overflow-y: auto; overflow-x: auto; position: relative; display: flex; flex-direction: column; }
     .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 10px; background: #ffffff; flex-shrink: 0; position: sticky !important; left: 0 !important; width: 100% !important; z-index: 70 !important; }
-    .mobile-mode .kpi-container { grid-template-columns: repeat(2, 1fr); padding: 8px; gap: 6px; }
+    @media (max-width: 768px) {
+      .kpi-container { grid-template-columns: repeat(2, 1fr) !important; padding: 8px !important; gap: 6px !important; }
+    }
     .kpi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .kpi-icon { font-size: 14px; margin-bottom: 2px; }
     .kpi-title { font-size: 9px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; margin-bottom: 2px; }
@@ -87,10 +124,13 @@
     th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
     td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
 
-    .mobile-mode .table-area {
-      zoom: 0.8;
-      -moz-transform: scale(0.8);
-      -moz-transform-origin: top left;
+    /* Summary Table Scale in Mobile Mode */
+    @media (max-width: 768px) {
+      .table-area {
+        zoom: 0.85;
+        -moz-transform: scale(0.85);
+        -moz-transform-origin: top left;
+      }
     }
 
     tr.total-row td { background: #eff6ff !important; font-weight: 700; border-top: 2px solid var(--accent); }
@@ -110,7 +150,7 @@
     <div class="header-bar">
       <div class="header-title-container">
         <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
-        <div class="header-subtitle" id="updatedDateTimeLabel">-- | --</div>
+        <div class="header-subtitle" id="updatedDateTimeLabel">Loading...</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button>
@@ -197,32 +237,44 @@
       }
     }
 
+    // Extract Date & Time from Col S (Index 18) with robust fallbacks
     function updateHeaderTimestamp(resData, fullPayload) {
       var subLabel = document.getElementById("updatedDateTimeLabel");
       if (!subLabel) return;
       
       var customDate = "";
-      if (resData && resData.length > 0 && resData[0] && resData[0][18]) {
-        customDate = String(resData[0][18]).trim();
+      if (resData && resData.length > 0) {
+        for (var idx = 0; idx < resData.length; idx++) {
+          if (resData[idx] && resData[idx][18]) {
+            var val = String(resData[idx][18]).trim();
+            if (val && val !== "undefined" && val !== "null") {
+              customDate = val;
+              break;
+            }
+          }
+        }
       }
       
       if (customDate) {
         subLabel.textContent = customDate;
-      } else if (fullPayload && fullPayload.updatedAt) {
-        var dt = new Date(fullPayload.updatedAt);
-        if (!isNaN(dt.getTime())) {
-          var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-          var day = ("0" + dt.getDate()).slice(-2);
-          var month = months[dt.getMonth()];
-          var year = String(dt.getFullYear()).slice(-2);
-          var hours = dt.getHours();
-          var minutes = ("0" + dt.getMinutes()).slice(-2);
-          var ampm = hours >= 12 ? "PM" : "AM";
-          hours = hours % 12;
-          hours = hours ? hours : 12;
-          subLabel.textContent = day + "-" + month + "-" + year + " | " + hours + ":" + minutes + ampm;
-        }
+        return;
       }
+      
+      var rawTimestamp = (fullPayload && (fullPayload.updatedAt || fullPayload.lastUpdated)) ? fullPayload.updatedAt || fullPayload.lastUpdated : Date.now();
+      var dt = new Date(rawTimestamp);
+      if (isNaN(dt.getTime())) dt = new Date();
+      
+      var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+      var day = ("0" + dt.getDate()).slice(-2);
+      var month = months[dt.getMonth()];
+      var year = String(dt.getFullYear()).slice(-2);
+      var hours = dt.getHours();
+      var minutes = ("0" + dt.getMinutes()).slice(-2);
+      var ampm = hours >= 12 ? "PM" : "AM";
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      
+      subLabel.textContent = day + "-" + month + "-" + year + " | " + hours + ":" + minutes + ampm;
     }
 
     window.handleManagerData = function(e) {
@@ -243,6 +295,7 @@
       } else {
         var st = document.getElementById("kpiStatusVal");
         if (st) st.textContent = "No Data";
+        updateHeaderTimestamp(null, e);
         document.getElementById("tableDataBody").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:red;">No records found or permission denied.</td></tr>';
       }
     };
@@ -257,6 +310,7 @@
         fetch(SCRIPT_URL).then(function(res) { return res.json(); }).then(function(data) { window.handleManagerData(data); }).catch(function(err) {
           var st = document.getElementById("kpiStatusVal");
           if (st) st.textContent = "Fetch Error";
+          updateHeaderTimestamp(null, null);
           console.error("Data Fetch Failed", err);
         });
       };
