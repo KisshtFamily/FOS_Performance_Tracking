@@ -155,6 +155,120 @@
     .pagination-bar { padding: 10px 14px; background: #ffffff; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 11px; flex-shrink: 0; position: sticky !important; left: 0 !important; width: 100% !important; z-index: 100 !important; }
     .page-btn { padding: 5px 10px; border: 1px solid var(--border); background: #f8fafc; border-radius: 6px; cursor: pointer; font-weight: 600; }
     .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* RAW DATA MODAL POPUP STYLES */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+      background: #ffffff;
+      width: 100%;
+      max-width: 1200px;
+      max-height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalPop 0.25s ease-out;
+    }
+    @keyframes modalPop {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal-header {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: #ffffff;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-title { font-size: 15px; font-weight: 700; }
+    .modal-close-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .modal-close-btn:hover { background: rgba(255,255,255,0.4); }
+    .modal-body {
+      padding: 14px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .raw-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .raw-filter-group { display: flex; flex-direction: column; gap: 4px; }
+    .raw-filter-label { font-size: 10px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; }
+    .raw-filter-select {
+      padding: 6px 8px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 11px;
+      background: #ffffff;
+      outline: none;
+      font-weight: 500;
+    }
+    .raw-table-wrapper {
+      flex: 1;
+      overflow: auto;
+      max-height: 50vh;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .raw-table-wrapper table { font-size: 11px; }
+    .raw-table-wrapper th { background: #e2e8f0 !important; color: #0f172a; position: sticky; top: 0; z-index: 10; }
+    .modal-footer {
+      padding: 12px 18px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .raw-count-info { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+    .download-excel-btn {
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
+    }
+    .download-excel-btn:hover { background: #15803d; }
   </style>
 </head>
 <body>
@@ -165,10 +279,9 @@
         <div class="header-subtitle" id="updatedDateTimeLabel">Loading...</div>
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button>
+        <button class="view-toggle-btn" onclick="openRawDataModal()"><i class="fa-solid fa-download"></i> Data</button>
       </div>
     </div>
-    <!-- Added AVP button to Navigation -->
     <div class="level-nav">
       <button class="level-btn active" onclick="changeLevel('AVP',this)">AVP</button>
       <button class="level-btn" onclick="changeLevel('ZH',this)">ZH</button>
@@ -226,6 +339,77 @@
     </div>
   </div>
 
+  <!-- RAW DATA MODAL POPUP -->
+  <div class="modal-overlay" id="rawDataModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-database"></i> Raw Data Explorer</div>
+        <button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="raw-filters-grid">
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">Cycle BKT</label>
+            <select class="raw-filter-select" id="rfCycle" onchange="renderRawModalData()"><option value="">All Cycle BKT</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">ZH Name</label>
+            <select class="raw-filter-select" id="rfZH" onchange="renderRawModalData()"><option value="">All ZH</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">SH Name</label>
+            <select class="raw-filter-select" id="rfSH" onchange="renderRawModalData()"><option value="">All SH</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">CM Name</label>
+            <select class="raw-filter-select" id="rfCM" onchange="renderRawModalData()"><option value="">All CM</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">FOS Name</label>
+            <select class="raw-filter-select" id="rfFOS" onchange="renderRawModalData()"><option value="">All FOS</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">Paid Status</label>
+            <select class="raw-filter-select" id="rfPaid" onchange="renderRawModalData()"><option value="">All Paid Status</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">Final Disposition</label>
+            <select class="raw-filter-select" id="rfFinalDisp" onchange="renderRawModalData()"><option value="">All Final Disposition</option></select>
+          </div>
+        </div>
+
+        <div class="raw-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Loan No</th>
+                <th>P O/S</th>
+                <th>Product</th>
+                <th>Cycle BKT</th>
+                <th>FOS SURN</th>
+                <th>FOS Name</th>
+                <th>City Manager</th>
+                <th>State Head Name</th>
+                <th>DZH</th>
+                <th>Zonal Head Name</th>
+                <th>Paid Status</th>
+                <th>Final Disposition</th>
+                <th>Report Disposition</th>
+              </tr>
+            </thead>
+            <tbody id="rawModalTableBody">
+              <tr><td colspan="13" style="text-align:center;padding:15px;color:var(--text-sub);">Loading raw records...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="raw-count-info" id="rawModalCount">Total Records: 0</span>
+        <button class="download-excel-btn" onclick="downloadRawExcel()"><i class="fa-solid fa-file-excel"></i> Download Raw Excel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
     var rawSheetRows = [];
@@ -256,11 +440,11 @@
       if (!subLabel) return;
       
       var customDate = "";
-      if (resData && resData.length > 0) {
-        for (var idx = 0; idx < resData.length; idx++) {
+      if (resData && Array.isArray(resData) && resData.length > 0) {
+        for (var idx = 0; idx < Math.min(resData.length, 50); idx++) {
           if (resData[idx] && resData[idx][18]) {
             var val = String(resData[idx][18]).trim();
-            if (val && val !== "undefined" && val !== "null") {
+            if (val && val !== "undefined" && val !== "null" && val.toUpperCase() !== "UPDATED DATE") {
               customDate = val;
               break;
             }
@@ -461,7 +645,6 @@
       return Math.round(cleanNumber(e)).toLocaleString("en-IN");
     }
 
-    // Updated Level Index mapping for Col T (Index 19) = AVP
     function getLevelIndex() {
       return "AVP" === currentLevel ? 19 : 
              "DZ" === currentLevel ? 11 : 
@@ -678,6 +861,124 @@
       y.setAttribute("download", "Performance_Report_" + currentLevel + ".csv");
       document.body.appendChild(y);
       y.click();
+    }
+
+    /* RAW DATA MODAL LOGIC */
+    function openRawDataModal() {
+      populateRawModalDropdowns();
+      renderRawModalData();
+      document.getElementById("rawDataModal").classList.add("active");
+    }
+
+    function closeRawDataModal() {
+      document.getElementById("rawDataModal").classList.remove("active");
+    }
+
+    function populateRawModalDropdowns() {
+      fillSelect(document.getElementById("rfCycle"), uniqueValues(rawSheetRows, 16), "All Cycle BKT", false);
+      fillSelect(document.getElementById("rfZH"), uniqueValues(rawSheetRows, 12), "All ZH Name", false);
+      fillSelect(document.getElementById("rfSH"), uniqueValues(rawSheetRows, 10), "All SH Name", false);
+      fillSelect(document.getElementById("rfCM"), uniqueValues(rawSheetRows, 9), "All CM Name", false);
+      fillSelect(document.getElementById("rfFOS"), uniqueValues(rawSheetRows, 6), "All FOS Name", false);
+      fillSelect(document.getElementById("rfPaid"), uniqueValues(rawSheetRows, 14), "All Paid Status", false);
+      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(rawSheetRows, 20), "All Final Disposition", false);
+    }
+
+    function getFilteredRawRows() {
+      var c = document.getElementById("rfCycle").value;
+      var zh = document.getElementById("rfZH").value;
+      var sh = document.getElementById("rfSH").value;
+      var cm = document.getElementById("rfCM").value;
+      var fos = document.getElementById("rfFOS").value;
+      var paid = document.getElementById("rfPaid").value;
+      var disp = document.getElementById("rfFinalDisp").value;
+
+      return rawSheetRows.filter(function(r) {
+        if (c && !sameName(r[16], c)) return false;
+        if (zh && !sameName(r[12], zh)) return false;
+        if (sh && !sameName(r[10], sh)) return false;
+        if (cm && !sameName(r[9], cm)) return false;
+        if (fos && !sameName(r[6], fos)) return false;
+        if (paid && !sameName(r[14], paid)) return false;
+        if (disp && !sameName(r[20], disp)) return false;
+        return true;
+      });
+    }
+
+    function renderRawModalData() {
+      var rows = getFilteredRawRows();
+      var countLabel = document.getElementById("rawModalCount");
+      if (countLabel) countLabel.textContent = "Total Records: " + formatNumber(rows.length);
+
+      var body = document.getElementById("rawModalTableBody");
+      if (!body) return;
+
+      if (rows.length === 0) {
+        body.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:20px;color:red;">No matching raw records found.</td></tr>';
+        return;
+      }
+
+      var html = "";
+      var limit = Math.min(rows.length, 100); // Preview top 100
+      for (var i = 0; i < limit; i++) {
+        var r = rows[i];
+        html += "<tr>" +
+          "<td>" + (r[0] || "") + "</td>" + // Loan No (Col A)
+          "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" + // POS (Col B)
+          "<td>" + (r[2] || "") + "</td>" + // Product (Col C)
+          "<td>" + (r[16] || "") + "</td>" + // Cycle BKT (Col Q)
+          "<td>" + (r[4] || "") + "</td>" + // FOS SURN (Col E)
+          "<td>" + (r[6] || "") + "</td>" + // FOS Name (Col G)
+          "<td>" + (r[9] || "") + "</td>" + // CM (Col J)
+          "<td>" + (r[10] || "") + "</td>" + // SH (Col K)
+          "<td>" + (r[11] || "") + "</td>" + // DZH (Col L)
+          "<td>" + (r[12] || "") + "</td>" + // ZH (Col M)
+          "<td>" + (r[14] || "") + "</td>" + // Paid Status (Col O)
+          "<td>" + (r[20] || "") + "</td>" + // Final Disp (Col U)
+          "<td>" + (r[21] || "") + "</td>" + // Report Disp (Col V)
+        "</tr>";
+      }
+      body.innerHTML = html;
+    }
+
+    function downloadRawExcel() {
+      var rows = getFilteredRawRows();
+      if (rows.length === 0) {
+        alert("No records to export.");
+        return;
+      }
+
+      var csvContent = [
+        ["Loan No", "P O/S", "Product", "Cycle BKT", "FOS SURN", "FOS Name", "City Manager", "State Head Name", "DZH", "Zonal Head Name", "Paid Status", "Final Disposition", "Report Disposition"]
+      ];
+
+      for (var i = 0; i < rows.length; i++) {
+        var r = rows[i];
+        csvContent.push([
+          '"' + (r[0] || "") + '"',
+          cleanNumber(r[1]),
+          '"' + (r[2] || "") + '"',
+          '"' + (r[16] || "") + '"',
+          '"' + (r[4] || "") + '"',
+          '"' + (r[6] || "") + '"',
+          '"' + (r[9] || "") + '"',
+          '"' + (r[10] || "") + '"',
+          '"' + (r[11] || "") + '"',
+          '"' + (r[12] || "") + '"',
+          '"' + (r[14] || "") + '"',
+          '"' + (r[20] || "") + '"',
+          '"' + (r[21] || "") + '"'
+        ]);
+      }
+
+      var csvString = "data:text/csv;charset=utf-8,\uFEFF" + csvContent.map(function(e) { return e.join(","); }).join("\n");
+      var encodedUri = encodeURI(csvString);
+      var link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Raw_Data_Export_" + Date.now() + ".csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     document.addEventListener("click", function(e) {
