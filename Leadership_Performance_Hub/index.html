@@ -477,14 +477,15 @@
     window.handleManagerData = function(e) {
       var resData = null;
       if (e && e.status === "success" && Array.isArray(e.data)) {
-        resData = e.data.slice(1);
+        resData = e.data;
       } else if (Array.isArray(e)) {
-        resData = e.slice(1);
+        resData = e;
       }
       
       if (resData && resData.length > 0) {
+        // Store full dataset
         rawSheetRows = resData;
-        updateHeaderTimestamp(resData, e);
+        updateHeaderTimestamp(rawSheetRows.slice(1), e);
         populateProductDropdown();
         populateCycleDropdown();
         updateHierarchyVisibility();
@@ -523,10 +524,20 @@
       renderAll();
     }
 
+    function getPureDataRows() {
+      if (!rawSheetRows || rawSheetRows.length === 0) return [];
+      var firstRow = rawSheetRows[0];
+      if (firstRow && String(firstRow[0]).toLowerCase().indexOf("loan") !== -1) {
+        return rawSheetRows.slice(1);
+      }
+      return rawSheetRows;
+    }
+
     function populateProductDropdown() {
       var e = document.getElementById("productMenu");
       if (!e) return;
-      var t = uniqueValues(rawSheetRows, 2), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentProducts.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallProduct(this)"> Overall Product</label>';
+      var data = getPureDataRows();
+      var t = uniqueValues(data, 2), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentProducts.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallProduct(this)"> Overall Product</label>';
       for (var n = 0; n < t.length; n++) {
         var l = t[n], r = currentProducts.indexOf(l) !== -1 ? "checked" : "";
         a += '<label class="multi-option"><input type="checkbox" value="' + String(l).replace(/"/g, "&quot;") + '" ' + r + ' onchange="handleProductCheck(this)"> ' + l + '</label>';
@@ -547,7 +558,8 @@
     function populateCycleDropdown() {
       var e = document.getElementById("cycleMenu");
       if (!e) return;
-      var t = uniqueValues(rawSheetRows, 16), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentCycles.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallCycle(this)"> Overall Cycle</label>';
+      var data = getPureDataRows();
+      var t = uniqueValues(data, 16), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentCycles.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallCycle(this)"> Overall Cycle</label>';
       for (var n = 0; n < t.length; n++) {
         var l = t[n], r = currentCycles.indexOf(l) !== -1 ? "checked" : "";
         a += '<label class="multi-option"><input type="checkbox" value="' + String(l).replace(/"/g, "&quot;") + '" ' + r + ' onchange="handleCycleCheck(this)"> ' + l + '</label>';
@@ -751,25 +763,28 @@
     }
 
     function updateZonalDropdown() {
-      fillSelect(document.getElementById("zonalHeadFilter"), uniqueValues(rawSheetRows, 12), "All Zonal Head");
+      fillSelect(document.getElementById("zonalHeadFilter"), uniqueValues(getPureDataRows(), 12), "All Zonal Head");
     }
 
     function updateDeputyDropdown() {
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = e ? rawSheetRows.filter(function(t) { return sameName(t[12], e); }) : rawSheetRows;
+      var data = getPureDataRows();
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = e ? data.filter(function(t) { return sameName(t[12], e); }) : data;
       fillSelect(document.getElementById("deputyZonalFilter"), uniqueValues(t, 11), "All Deputy Zonal");
     }
 
     function updateStateHeadDropdown() {
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = rawSheetRows.filter(function(a) { return (!e || sameName(a[12], e)) && (!t || sameName(a[11], t)); });
+      var data = getPureDataRows();
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = data.filter(function(a) { return (!e || sameName(a[12], e)) && (!t || sameName(a[11], t)); });
       fillSelect(document.getElementById("stateHeadFilter"), uniqueValues(a, 10), "All State Head");
     }
 
     function updateCityManagerDropdown() {
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", n = rawSheetRows.filter(function(n) { return (!e || sameName(n[12], e)) && (!t || sameName(n[11], t)) && (!a || sameName(a[10], a)); });
+      var data = getPureDataRows();
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", n = data.filter(function(n) { return (!e || sameName(n[12], e)) && (!t || sameName(n[11], t)) && (!a || sameName(a[10], a)); });
       fillSelect(document.getElementById("cityManagerFilter"), uniqueValues(n, 9), "All City Manager");
     }
 
-    function getBaseTableData() { return rawSheetRows || []; }
+    function getBaseTableData() { return getPureDataRows(); }
 
     function getFilteredTableData() {
       var e = document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase().trim() : "", a = getBaseTableData();
@@ -801,7 +816,7 @@
 
     function renderKPI() {
       for (var e = getFilteredTableData(), t = e.length, a = 0, n = 0, l = 0; l < e.length; l++) a += e[l].pos, n += e[l].res;
-      var r = a > 0 ? (n / a * 100).toFixed(1) + "%" : "0.0%", s = Math.max(0, targetShortfallPct / 100 * a - n), k = rawSheetRows.filter(function(e) {
+      var r = a > 0 ? (n / a * 100).toFixed(1) + "%" : "0.0%", s = Math.max(0, targetShortfallPct / 100 * a - n), k = getPureDataRows().filter(function(e) {
         var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
         return t && a;
       }), o = getRemainingDays(k), c = "-", u = "DRP";
@@ -818,7 +833,7 @@
 
     function renderTable(e) {
       e && (currentPage = 1);
-      var t = getFilteredTableData(), a = rawSheetRows.filter(function(e) {
+      var t = getFilteredTableData(), a = getPureDataRows().filter(function(e) {
         var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
         return t && a;
       }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + "D)" : "DRP";
@@ -847,7 +862,7 @@
     }
 
     function exportCSV() {
-      var e = getFilteredTableData(), t = [[currentLevel, "P O/S", "Resolution", "Resolution %", "Y'day POS Res", "Shortfall (" + targetShortfallPct + "%)", "DRP"]], a = rawSheetRows.filter(function(e) {
+      var e = getFilteredTableData(), t = [[currentLevel, "P O/S", "Resolution", "Resolution %", "Y'day POS Res", "Shortfall (" + targetShortfallPct + "%)", "DRP"]], a = getPureDataRows().filter(function(e) {
         var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
         return t && a;
       }), n = getRemainingDays(a);
@@ -863,7 +878,7 @@
       y.click();
     }
 
-    /* RAW DATA MODAL LOGIC */
+    /* RAW DATA MODAL LOGIC WITH DYNAMIC DATA CONNECTIVITY */
     function openRawDataModal() {
       populateRawModalDropdowns();
       renderRawModalData();
@@ -875,13 +890,14 @@
     }
 
     function populateRawModalDropdowns() {
-      fillSelect(document.getElementById("rfCycle"), uniqueValues(rawSheetRows, 16), "All Cycle BKT", false);
-      fillSelect(document.getElementById("rfZH"), uniqueValues(rawSheetRows, 12), "All ZH Name", false);
-      fillSelect(document.getElementById("rfSH"), uniqueValues(rawSheetRows, 10), "All SH Name", false);
-      fillSelect(document.getElementById("rfCM"), uniqueValues(rawSheetRows, 9), "All CM Name", false);
-      fillSelect(document.getElementById("rfFOS"), uniqueValues(rawSheetRows, 6), "All FOS Name", false);
-      fillSelect(document.getElementById("rfPaid"), uniqueValues(rawSheetRows, 14), "All Paid Status", false);
-      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(rawSheetRows, 20), "All Final Disposition", false);
+      var data = getPureDataRows();
+      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, 16), "All Cycle BKT", false);
+      fillSelect(document.getElementById("rfZH"), uniqueValues(data, 12), "All ZH Name", false);
+      fillSelect(document.getElementById("rfSH"), uniqueValues(data, 10), "All SH Name", false);
+      fillSelect(document.getElementById("rfCM"), uniqueValues(data, 9), "All CM Name", false);
+      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, 6), "All FOS Name", false);
+      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, 14), "All Paid Status", false);
+      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, 20), "All Final Disposition", false);
     }
 
     function getFilteredRawRows() {
@@ -893,7 +909,9 @@
       var paid = document.getElementById("rfPaid").value;
       var disp = document.getElementById("rfFinalDisp").value;
 
-      return rawSheetRows.filter(function(r) {
+      var data = getPureDataRows();
+
+      return data.filter(function(r) {
         if (c && !sameName(r[16], c)) return false;
         if (zh && !sameName(r[12], zh)) return false;
         if (sh && !sameName(r[10], sh)) return false;
@@ -913,7 +931,7 @@
       var body = document.getElementById("rawModalTableBody");
       if (!body) return;
 
-      if (rows.length === 0) {
+      if (!rows || rows.length === 0) {
         body.innerHTML = '<tr><td colspan="13" style="text-align:center;padding:20px;color:red;">No matching raw records found.</td></tr>';
         return;
       }
@@ -923,19 +941,19 @@
       for (var i = 0; i < limit; i++) {
         var r = rows[i];
         html += "<tr>" +
-          "<td>" + (r[0] || "") + "</td>" + // Loan No (Col A)
+          "<td>" + (r[0] !== undefined ? r[0] : "") + "</td>" + // Loan No (Col A)
           "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" + // POS (Col B)
-          "<td>" + (r[2] || "") + "</td>" + // Product (Col C)
-          "<td>" + (r[16] || "") + "</td>" + // Cycle BKT (Col Q)
-          "<td>" + (r[4] || "") + "</td>" + // FOS SURN (Col E)
-          "<td>" + (r[6] || "") + "</td>" + // FOS Name (Col G)
-          "<td>" + (r[9] || "") + "</td>" + // CM (Col J)
-          "<td>" + (r[10] || "") + "</td>" + // SH (Col K)
-          "<td>" + (r[11] || "") + "</td>" + // DZH (Col L)
-          "<td>" + (r[12] || "") + "</td>" + // ZH (Col M)
-          "<td>" + (r[14] || "") + "</td>" + // Paid Status (Col O)
-          "<td>" + (r[20] || "") + "</td>" + // Final Disp (Col U)
-          "<td>" + (r[21] || "") + "</td>" + // Report Disp (Col V)
+          "<td>" + (r[2] !== undefined ? r[2] : "") + "</td>" + // Product (Col C)
+          "<td>" + (r[16] !== undefined ? r[16] : "") + "</td>" + // Cycle BKT (Col Q)
+          "<td>" + (r[4] !== undefined ? r[4] : "") + "</td>" + // FOS SURN (Col E)
+          "<td>" + (r[6] !== undefined ? r[6] : "") + "</td>" + // FOS Name (Col G)
+          "<td>" + (r[9] !== undefined ? r[9] : "") + "</td>" + // CM (Col J)
+          "<td>" + (r[10] !== undefined ? r[10] : "") + "</td>" + // SH (Col K)
+          "<td>" + (r[11] !== undefined ? r[11] : "") + "</td>" + // DZH (Col L)
+          "<td>" + (r[12] !== undefined ? r[12] : "") + "</td>" + // ZH (Col M)
+          "<td>" + (r[14] !== undefined ? r[14] : "") + "</td>" + // Paid Status (Col O)
+          "<td>" + (r[20] !== undefined ? r[20] : "") + "</td>" + // Final Disp (Col U)
+          "<td>" + (r[21] !== undefined ? r[21] : "") + "</td>" + // Report Disp (Col V)
         "</tr>";
       }
       body.innerHTML = html;
@@ -955,19 +973,19 @@
       for (var i = 0; i < rows.length; i++) {
         var r = rows[i];
         csvContent.push([
-          '"' + (r[0] || "") + '"',
+          '"' + (r[0] !== undefined ? r[0] : "") + '"',
           cleanNumber(r[1]),
-          '"' + (r[2] || "") + '"',
-          '"' + (r[16] || "") + '"',
-          '"' + (r[4] || "") + '"',
-          '"' + (r[6] || "") + '"',
-          '"' + (r[9] || "") + '"',
-          '"' + (r[10] || "") + '"',
-          '"' + (r[11] || "") + '"',
-          '"' + (r[12] || "") + '"',
-          '"' + (r[14] || "") + '"',
-          '"' + (r[20] || "") + '"',
-          '"' + (r[21] || "") + '"'
+          '"' + (r[2] !== undefined ? r[2] : "") + '"',
+          '"' + (r[16] !== undefined ? r[16] : "") + '"',
+          '"' + (r[4] !== undefined ? r[4] : "") + '"',
+          '"' + (r[6] !== undefined ? r[6] : "") + '"',
+          '"' + (r[9] !== undefined ? r[9] : "") + '"',
+          '"' + (r[10] !== undefined ? r[10] : "") + '"',
+          '"' + (r[11] !== undefined ? r[11] : "") + '"',
+          '"' + (r[12] !== undefined ? r[12] : "") + '"',
+          '"' + (r[14] !== undefined ? r[14] : "") + '"',
+          '"' + (r[20] !== undefined ? r[20] : "") + '"',
+          '"' + (r[21] !== undefined ? r[21] : "") + '"'
         ]);
       }
 
