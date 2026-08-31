@@ -156,7 +156,7 @@
     .page-btn { padding: 5px 10px; border: 1px solid var(--border); background: #f8fafc; border-radius: 6px; cursor: pointer; font-weight: 600; }
     .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* RAW DATA MODAL POPUP STYLES */
+    /* RAW DATA MODAL STYLES */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -172,7 +172,7 @@
     .modal-box {
       background: #ffffff;
       width: 100%;
-      max-width: 1200px;
+      max-width: 1300px;
       max-height: 90vh;
       border-radius: 16px;
       box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
@@ -218,8 +218,8 @@
     }
     .raw-filters-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 8px;
       background: #f8fafc;
       padding: 12px;
       border-radius: 10px;
@@ -350,23 +350,31 @@
         <div class="raw-filters-grid">
           <div class="raw-filter-group">
             <label class="raw-filter-label">Cycle BKT</label>
-            <select class="raw-filter-select" id="rfCycle" onchange="renderRawModalData()"><option value="">All Cycle BKT</option></select>
+            <select class="raw-filter-select" id="rfCycle" onchange="handleCascadingModalChange('cycle')"><option value="">All Cycle BKT</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">AVP Name</label>
+            <select class="raw-filter-select" id="rfAVP" onchange="handleCascadingModalChange('avp')"><option value="">All AVP</option></select>
           </div>
           <div class="raw-filter-group">
             <label class="raw-filter-label">ZH Name</label>
-            <select class="raw-filter-select" id="rfZH" onchange="renderRawModalData()"><option value="">All ZH</option></select>
+            <select class="raw-filter-select" id="rfZH" onchange="handleCascadingModalChange('zh')"><option value="">All ZH</option></select>
+          </div>
+          <div class="raw-filter-group">
+            <label class="raw-filter-label">DZH Name</label>
+            <select class="raw-filter-select" id="rfDZH" onchange="handleCascadingModalChange('dzh')"><option value="">All DZH</option></select>
           </div>
           <div class="raw-filter-group">
             <label class="raw-filter-label">SH Name</label>
-            <select class="raw-filter-select" id="rfSH" onchange="renderRawModalData()"><option value="">All SH</option></select>
+            <select class="raw-filter-select" id="rfSH" onchange="handleCascadingModalChange('sh')"><option value="">All SH</option></select>
           </div>
           <div class="raw-filter-group">
             <label class="raw-filter-label">CM Name</label>
-            <select class="raw-filter-select" id="rfCM" onchange="renderRawModalData()"><option value="">All CM</option></select>
+            <select class="raw-filter-select" id="rfCM" onchange="handleCascadingModalChange('cm')"><option value="">All CM</option></select>
           </div>
           <div class="raw-filter-group">
             <label class="raw-filter-label">FOS Name</label>
-            <select class="raw-filter-select" id="rfFOS" onchange="renderRawModalData()"><option value="">All FOS</option></select>
+            <select class="raw-filter-select" id="rfFOS" onchange="handleCascadingModalChange('fos')"><option value="">All FOS</option></select>
           </div>
           <div class="raw-filter-group">
             <label class="raw-filter-label">Paid Status</label>
@@ -483,9 +491,8 @@
       }
       
       if (resData && resData.length > 0) {
-        // Store full dataset
         rawSheetRows = resData;
-        updateHeaderTimestamp(rawSheetRows.slice(1), e);
+        updateHeaderTimestamp(getPureDataRows(), e);
         populateProductDropdown();
         populateCycleDropdown();
         updateHierarchyVisibility();
@@ -878,7 +885,7 @@
       y.click();
     }
 
-    /* RAW DATA MODAL LOGIC WITH DYNAMIC DATA CONNECTIVITY */
+    /* CASCADING HIERARCHY RAW DATA MODAL LOGIC */
     function openRawDataModal() {
       populateRawModalDropdowns();
       renderRawModalData();
@@ -889,31 +896,23 @@
       document.getElementById("rawDataModal").classList.remove("active");
     }
 
-    function populateRawModalDropdowns() {
-      var data = getPureDataRows();
-      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, 16), "All Cycle BKT", false);
-      fillSelect(document.getElementById("rfZH"), uniqueValues(data, 12), "All ZH Name", false);
-      fillSelect(document.getElementById("rfSH"), uniqueValues(data, 10), "All SH Name", false);
-      fillSelect(document.getElementById("rfCM"), uniqueValues(data, 9), "All CM Name", false);
-      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, 6), "All FOS Name", false);
-      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, 14), "All Paid Status", false);
-      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, 20), "All Final Disposition", false);
-    }
-
     function getFilteredRawRows() {
+      var data = getPureDataRows();
       var c = document.getElementById("rfCycle").value;
+      var avp = document.getElementById("rfAVP").value;
       var zh = document.getElementById("rfZH").value;
+      var dzh = document.getElementById("rfDZH").value;
       var sh = document.getElementById("rfSH").value;
       var cm = document.getElementById("rfCM").value;
       var fos = document.getElementById("rfFOS").value;
       var paid = document.getElementById("rfPaid").value;
       var disp = document.getElementById("rfFinalDisp").value;
 
-      var data = getPureDataRows();
-
       return data.filter(function(r) {
         if (c && !sameName(r[16], c)) return false;
+        if (avp && !sameName(r[19], avp)) return false;
         if (zh && !sameName(r[12], zh)) return false;
+        if (dzh && !sameName(r[11], dzh)) return false;
         if (sh && !sameName(r[10], sh)) return false;
         if (cm && !sameName(r[9], cm)) return false;
         if (fos && !sameName(r[6], fos)) return false;
@@ -921,6 +920,66 @@
         if (disp && !sameName(r[20], disp)) return false;
         return true;
       });
+    }
+
+    function handleCascadingModalChange(changedLevel) {
+      var data = getPureDataRows();
+      var c = document.getElementById("rfCycle").value;
+      var avp = document.getElementById("rfAVP").value;
+      var zh = document.getElementById("rfZH").value;
+      var dzh = document.getElementById("rfDZH").value;
+      var sh = document.getElementById("rfSH").value;
+      var cm = document.getElementById("rfCM").value;
+
+      // Hierarchy Cascading Reset Logic
+      if (changedLevel === 'avp') {
+        fillSelect(document.getElementById("rfZH"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp))), 12), "All ZH", false);
+        document.getElementById("rfDZH").value = "";
+        document.getElementById("rfSH").value = "";
+        document.getElementById("rfCM").value = "";
+        document.getElementById("rfFOS").value = "";
+      }
+      
+      var currentZH = document.getElementById("rfZH").value;
+      if (changedLevel === 'avp' || changedLevel === 'zh') {
+        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH))), 11), "All DZH", false);
+        document.getElementById("rfSH").value = "";
+        document.getElementById("rfCM").value = "";
+        document.getElementById("rfFOS").value = "";
+      }
+
+      var currentDZH = document.getElementById("rfDZH").value;
+      if (changedLevel === 'avp' || changedLevel === 'zh' || changedLevel === 'dzh') {
+        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH)) && (!currentDZH || sameName(r[11], currentDZH))), 10), "All SH", false);
+        document.getElementById("rfCM").value = "";
+        document.getElementById("rfFOS").value = "";
+      }
+
+      var currentSH = document.getElementById("rfSH").value;
+      if (changedLevel === 'avp' || changedLevel === 'zh' || changedLevel === 'dzh' || changedLevel === 'sh') {
+        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH)) && (!currentDZH || sameName(r[11], currentDZH)) && (!currentSH || sameName(r[10], currentSH))), 9), "All CM", false);
+        document.getElementById("rfFOS").value = "";
+      }
+
+      var currentCM = document.getElementById("rfCM").value;
+      if (changedLevel === 'avp' || changedLevel === 'zh' || changedLevel === 'dzh' || changedLevel === 'sh' || changedLevel === 'cm') {
+        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH)) && (!currentDZH || sameName(r[11], currentDZH)) && (!currentSH || sameName(r[10], currentSH)) && (!currentCM || sameName(r[9], currentCM))), 6), "All FOS", false);
+      }
+
+      renderRawModalData();
+    }
+
+    function populateRawModalDropdowns() {
+      var data = getPureDataRows();
+      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, 16), "All Cycle BKT", false);
+      fillSelect(document.getElementById("rfAVP"), uniqueValues(data, 19), "All AVP", false);
+      fillSelect(document.getElementById("rfZH"), uniqueValues(data, 12), "All ZH", false);
+      fillSelect(document.getElementById("rfDZH"), uniqueValues(data, 11), "All DZH", false);
+      fillSelect(document.getElementById("rfSH"), uniqueValues(data, 10), "All SH", false);
+      fillSelect(document.getElementById("rfCM"), uniqueValues(data, 9), "All CM", false);
+      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, 6), "All FOS", false);
+      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, 14), "All Paid Status", false);
+      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, 20), "All Final Disposition", false);
     }
 
     function renderRawModalData() {
@@ -937,23 +996,23 @@
       }
 
       var html = "";
-      var limit = Math.min(rows.length, 100); // Preview top 100
+      var limit = Math.min(rows.length, 100);
       for (var i = 0; i < limit; i++) {
         var r = rows[i];
         html += "<tr>" +
-          "<td>" + (r[0] !== undefined ? r[0] : "") + "</td>" + // Loan No (Col A)
-          "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" + // POS (Col B)
-          "<td>" + (r[2] !== undefined ? r[2] : "") + "</td>" + // Product (Col C)
-          "<td>" + (r[16] !== undefined ? r[16] : "") + "</td>" + // Cycle BKT (Col Q)
-          "<td>" + (r[4] !== undefined ? r[4] : "") + "</td>" + // FOS SURN (Col E)
-          "<td>" + (r[6] !== undefined ? r[6] : "") + "</td>" + // FOS Name (Col G)
-          "<td>" + (r[9] !== undefined ? r[9] : "") + "</td>" + // CM (Col J)
-          "<td>" + (r[10] !== undefined ? r[10] : "") + "</td>" + // SH (Col K)
-          "<td>" + (r[11] !== undefined ? r[11] : "") + "</td>" + // DZH (Col L)
-          "<td>" + (r[12] !== undefined ? r[12] : "") + "</td>" + // ZH (Col M)
-          "<td>" + (r[14] !== undefined ? r[14] : "") + "</td>" + // Paid Status (Col O)
-          "<td>" + (r[20] !== undefined ? r[20] : "") + "</td>" + // Final Disp (Col U)
-          "<td>" + (r[21] !== undefined ? r[21] : "") + "</td>" + // Report Disp (Col V)
+          "<td>" + (r[0] !== undefined ? r[0] : "") + "</td>" + 
+          "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" + 
+          "<td>" + (r[2] !== undefined ? r[2] : "") + "</td>" + 
+          "<td>" + (r[16] !== undefined ? r[16] : "") + "</td>" + 
+          "<td>" + (r[4] !== undefined ? r[4] : "") + "</td>" + 
+          "<td>" + (r[6] !== undefined ? r[6] : "") + "</td>" + 
+          "<td>" + (r[9] !== undefined ? r[9] : "") + "</td>" + 
+          "<td>" + (r[10] !== undefined ? r[10] : "") + "</td>" + 
+          "<td>" + (r[11] !== undefined ? r[11] : "") + "</td>" + 
+          "<td>" + (r[12] !== undefined ? r[12] : "") + "</td>" + 
+          "<td>" + (r[14] !== undefined ? r[14] : "") + "</td>" + 
+          "<td>" + (r[20] !== undefined ? r[20] : "") + "</td>" + 
+          "<td>" + (r[21] !== undefined ? r[21] : "") + "</td>" + 
         "</tr>";
       }
       body.innerHTML = html;
