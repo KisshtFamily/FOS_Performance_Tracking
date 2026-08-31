@@ -99,7 +99,6 @@
       </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button>
-        <button class="view-toggle-btn" id="mobileToggleBtn" onclick="toggleViewMode()"><i class="fa-solid fa-mobile-screen-button"></i><span id="viewModeText">Mobile View</span></button>
       </div>
     </div>
     <div class="level-nav">
@@ -165,22 +164,11 @@
 
     function autoDetectDeviceView() {
       var wrapper = document.getElementById("appWrapper");
-      var text = document.getElementById("viewModeText");
-      if (!wrapper || !text) return;
+      if (!wrapper) return;
       if (window.innerWidth <= 768) {
         wrapper.classList.add("mobile-mode");
-        text.innerText = "Desktop View";
       } else {
         wrapper.classList.remove("mobile-mode");
-        text.innerText = "Mobile View";
-      }
-    }
-
-    function toggleViewMode() {
-      var a = document.getElementById("appWrapper"), b = document.getElementById("viewModeText");
-      if (a && b) {
-        a.classList.toggle("mobile-mode");
-        b.innerText = a.classList.contains("mobile-mode") ? "Desktop View" : "Mobile View";
       }
     }
 
@@ -194,7 +182,6 @@
       }
     }
 
-    // Extract Col 19 (Index 18) Updated Date Format
     function updateHeaderTimestamp(resData, fullPayload) {
       var subLabel = document.getElementById("updatedDateTimeLabel");
       if (!subLabel) return;
@@ -548,7 +535,7 @@
         var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
         return t && a;
       }), o = getRemainingDays(k), c = "-", u = "DRP";
-      null !== o && (c = formatAmount(s / o), u = "DRP (" + o + " DAYS)");
+      null !== o && (c = formatAmount(s / o), u = "DRP (" + o + "D)");
       var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
       document.getElementById("kpiBox").innerHTML = 
         '<div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-title">' + lvlName + ' Count</div><div class="kpi-value">' + formatNumber(t) + '</div></div>' +
@@ -564,7 +551,7 @@
       var t = getFilteredTableData(), a = rawSheetRows.filter(function(e) {
         var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
         return t && a;
-      }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + " Days)" : "DRP";
+      }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + "D)" : "DRP";
       var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
       document.getElementById("tableHead").innerHTML = '<th id="levelHeaderName" onclick="setColumnSort(\'name\')">' + lvlName + ' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y&apos;day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall(' + targetShortfallPct + '%)</th><th onclick="setColumnSort(\'drr\')">' + l + '</th>';
       var r = Math.max(1, Math.ceil(t.length / rowsPerPage));
