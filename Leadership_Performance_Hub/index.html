@@ -20,10 +20,24 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     body { background: #cbd5e1; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 10px; }
+    
     .app-wrapper { width: 100%; max-width: 1400px; height: 95vh; background: var(--bg); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); overflow: hidden; display: flex; flex-direction: column; position: relative; }
-    .app-wrapper.mobile-mode { max-width: 400px; height: 90vh; border-radius: 28px; border: 5px solid #0f172a; transform: scale(0.92); transform-origin: center center; }
-    .header-bar { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: relative; z-index: 300; }
-    .header-title { font-size: 15px; font-weight: 700; }
+    
+    .app-wrapper.mobile-mode { 
+      max-width: 410px; 
+      height: 92vh; 
+      border-radius: 20px; 
+      border: 4px solid #0f172a; 
+      transform: none !important; 
+      transform-origin: top center;
+      margin: 0 auto;
+    }
+
+    .header-bar { background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; position: relative; z-index: 300; }
+    .header-title-container { display: flex; flex-direction: column; gap: 2px; }
+    .header-title { font-size: 15px; font-weight: 700; line-height: 1.2; }
+    .header-subtitle { font-size: 11px; opacity: 0.9; font-weight: 500; letter-spacing: 0.3px; }
+    
     .view-toggle-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; outline: none; }
     .view-toggle-btn:hover { background: rgba(255,255,255,0.35); }
     .level-nav { background: #ffffff; padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; position: relative; z-index: 250; }
@@ -42,7 +56,7 @@
     .hierarchy-filter.show { display: flex; }
     .scroll-container { flex: 1; overflow-y: auto; overflow-x: auto; position: relative; display: flex; flex-direction: column; }
     .kpi-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; padding: 10px; background: #ffffff; flex-shrink: 0; position: sticky !important; left: 0 !important; width: 100% !important; z-index: 70 !important; }
-    .mobile-mode .kpi-container { grid-template-columns: repeat(2, 1fr); }
+    .mobile-mode .kpi-container { grid-template-columns: repeat(2, 1fr); padding: 8px; gap: 6px; }
     .kpi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
     .kpi-icon { font-size: 14px; margin-bottom: 2px; }
     .kpi-title { font-size: 9px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; margin-bottom: 2px; }
@@ -50,7 +64,6 @@
     .kpi-value.green { color: var(--green); }
     .kpi-value.red { color: var(--red); }
     
-    /* Summary Table Area */
     .table-area { flex: 1; width: 100%; min-width: max-content; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11px; background: #ffffff; }
     th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); white-space: nowrap; }
@@ -59,11 +72,10 @@
     th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
     td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
 
-    /* Mobile View Special Rule: Only Summary Table 80% Zoomed Out */
     .mobile-mode .table-area {
       zoom: 0.8;
       -moz-transform: scale(0.8);
-      -moz-transform-origin: 0 0;
+      -moz-transform-origin: top left;
     }
 
     tr.total-row td { background: #eff6ff !important; font-weight: 700; border-top: 2px solid var(--accent); }
@@ -81,7 +93,10 @@
 <body>
   <div class="app-wrapper" id="appWrapper">
     <div class="header-bar">
-      <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
+      <div class="header-title-container">
+        <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
+        <div class="header-subtitle" id="updatedDateTimeLabel">-- | --</div>
+      </div>
       <div style="display:flex;align-items:center;gap:8px;">
         <button class="view-toggle-btn" onclick="exportCSV()"><i class="fa-solid fa-download"></i> Data</button>
         <button class="view-toggle-btn" id="mobileToggleBtn" onclick="toggleViewMode()"><i class="fa-solid fa-mobile-screen-button"></i><span id="viewModeText">Mobile View</span></button>
@@ -148,6 +163,19 @@
     var rawSheetRows = [];
     var rowsPerPage = 15, currentPage = 1, currentLevel = "Zonal Head", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
 
+    function autoDetectDeviceView() {
+      var wrapper = document.getElementById("appWrapper");
+      var text = document.getElementById("viewModeText");
+      if (!wrapper || !text) return;
+      if (window.innerWidth <= 768) {
+        wrapper.classList.add("mobile-mode");
+        text.innerText = "Desktop View";
+      } else {
+        wrapper.classList.remove("mobile-mode");
+        text.innerText = "Mobile View";
+      }
+    }
+
     function toggleViewMode() {
       var a = document.getElementById("appWrapper"), b = document.getElementById("viewModeText");
       if (a && b) {
@@ -166,6 +194,35 @@
       }
     }
 
+    // Extract Col 19 (Index 18) Updated Date Format
+    function updateHeaderTimestamp(resData, fullPayload) {
+      var subLabel = document.getElementById("updatedDateTimeLabel");
+      if (!subLabel) return;
+      
+      var customDate = "";
+      if (resData && resData.length > 0 && resData[0] && resData[0][18]) {
+        customDate = String(resData[0][18]).trim();
+      }
+      
+      if (customDate) {
+        subLabel.textContent = customDate;
+      } else if (fullPayload && fullPayload.updatedAt) {
+        var dt = new Date(fullPayload.updatedAt);
+        if (!isNaN(dt.getTime())) {
+          var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+          var day = ("0" + dt.getDate()).slice(-2);
+          var month = months[dt.getMonth()];
+          var year = String(dt.getFullYear()).slice(-2);
+          var hours = dt.getHours();
+          var minutes = ("0" + dt.getMinutes()).slice(-2);
+          var ampm = hours >= 12 ? "PM" : "AM";
+          hours = hours % 12;
+          hours = hours ? hours : 12;
+          subLabel.textContent = day + "-" + month + "-" + year + " | " + hours + ":" + minutes + ampm;
+        }
+      }
+    }
+
     window.handleManagerData = function(e) {
       var resData = null;
       if (e && e.status === "success" && Array.isArray(e.data)) {
@@ -173,8 +230,10 @@
       } else if (Array.isArray(e)) {
         resData = e.slice(1);
       }
+      
       if (resData && resData.length > 0) {
         rawSheetRows = resData;
+        updateHeaderTimestamp(resData, e);
         populateProductDropdown();
         populateCycleDropdown();
         updateHierarchyVisibility();
@@ -554,6 +613,9 @@
       }
     });
 
+    window.addEventListener("resize", autoDetectDeviceView);
+
+    autoDetectDeviceView();
     updateHierarchyVisibility();
     fetchLiveData();
   </script>
