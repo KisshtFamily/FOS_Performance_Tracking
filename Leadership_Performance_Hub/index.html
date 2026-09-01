@@ -283,8 +283,8 @@
       </div>
     </div>
     <div class="level-nav">
-      <button class="level-btn active" onclick="changeLevel('AVP',this)">AVP</button>
-      <button class="level-btn" onclick="changeLevel('ZH',this)">ZH</button>
+      <button class="level-btn" onclick="changeLevel('AVP',this)">AVP</button>
+      <button class="level-btn active" onclick="changeLevel('ZH',this)">ZH</button>
       <button class="level-btn" onclick="changeLevel('DZ',this)">DZ</button>
       <button class="level-btn" onclick="changeLevel('SH',this)">SH</button>
       <button class="level-btn" onclick="changeLevel('CM',this)">CM</button>
@@ -339,7 +339,6 @@
     </div>
   </div>
 
-  <!-- RAW DATA MODAL POPUP -->
   <div class="modal-overlay" id="rawDataModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -421,7 +420,33 @@
   <script>
     var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
     var rawSheetRows = [];
-    var rowsPerPage = 15, currentPage = 1, currentLevel = "AVP", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
+    var rowsPerPage = 15, currentPage = 1, currentLevel = "ZH", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
+
+    // Exact Zero-based Index Constants Mapping
+    var C = {
+      LOAN: 0,        // Col A (1)
+      POS: 1,         // Col B (2)
+      PRODUCT: 2,     // Col C (3)
+      CYCLE_DATE: 3,  // Col D (4)
+      FOS_SURN: 4,    // Col E (5)
+      EMP_CODE: 5,    // Col F (6)
+      FOS_NAME: 6,    // Col G (7)
+      PAN: 7,         // Col H (8)
+      AGENCY: 8,      // Col I (9)
+      CM: 9,          // Col J (10)
+      SH: 10,         // Col K (11)
+      DZH: 11,        // Col L (12)
+      ZH: 12,         // Col M (13)
+      COLL: 13,       // Col N (14)
+      PAID_STATUS: 14,// Col O (15)
+      PAID_DATE: 15,  // Col P (16)
+      CYCLE_BKT: 16,  // Col Q (17)
+      CYCLE_END: 17,  // Col R (18)
+      UPDATED_DATE: 18,// Col S (19)
+      AVP: 19,        // Col T (20)
+      FINAL_DISP: 20, // Col U (21)
+      REPORT_DISP: 21 // Col V (22)
+    };
 
     function autoDetectDeviceView() {
       var wrapper = document.getElementById("appWrapper");
@@ -449,9 +474,9 @@
       
       var customDate = "";
       if (resData && Array.isArray(resData) && resData.length > 0) {
-        for (var idx = 0; idx < Math.min(resData.length, 50); idx++) {
-          if (resData[idx] && resData[idx][18]) {
-            var val = String(resData[idx][18]).trim();
+        for (var idx = 0; idx < Math.min(resData.length, 100); idx++) {
+          if (resData[idx] && resData[idx][C.UPDATED_DATE]) {
+            var val = String(resData[idx][C.UPDATED_DATE]).trim();
             if (val && val !== "undefined" && val !== "null" && val.toUpperCase() !== "UPDATED DATE") {
               customDate = val;
               break;
@@ -483,7 +508,6 @@
     }
 
     window.handleManagerData = function(e) {
-      console.log("Raw Response Received:", e);
       var resData = null;
       if (e && e.status === "success" && Array.isArray(e.data)) {
         resData = e.data;
@@ -495,7 +519,6 @@
       
       if (resData && resData.length > 0) {
         rawSheetRows = resData;
-        console.log("Data Successfully Loaded. Rows:", rawSheetRows.length);
         updateHeaderTimestamp(getPureDataRows(), e);
         populateProductDropdown();
         populateCycleDropdown();
@@ -510,15 +533,12 @@
     };
 
     function fetchLiveData() {
-      // Primary: Direct Fetch CORS
       fetch(SCRIPT_URL, { method: "GET", mode: "cors" })
         .then(function(res) { return res.json(); })
         .then(function(data) {
           window.handleManagerData(data);
         })
-        .catch(function(err) {
-          console.warn("Direct fetch restricted, running fallback JSONP:", err);
-          // Secondary Fallback: JSONP
+        .catch(function() {
           var old = document.getElementById("jsonpScript");
           if (old) old.remove();
           var scriptObj = document.createElement("script");
@@ -527,7 +547,6 @@
           scriptObj.onerror = function() {
             var st = document.getElementById("kpiStatusVal");
             if (st) st.textContent = "Fetch Error";
-            console.error("All fetch methods failed.");
           };
           document.body.appendChild(scriptObj);
         });
@@ -545,7 +564,7 @@
     function getPureDataRows() {
       if (!rawSheetRows || rawSheetRows.length === 0) return [];
       var firstRow = rawSheetRows[0];
-      if (firstRow && String(firstRow[0]).toLowerCase().indexOf("loan") !== -1) {
+      if (firstRow && String(firstRow[C.LOAN] || "").toLowerCase().indexOf("loan") !== -1) {
         return rawSheetRows.slice(1);
       }
       return rawSheetRows;
@@ -555,7 +574,7 @@
       var e = document.getElementById("productMenu");
       if (!e) return;
       var data = getPureDataRows();
-      var t = uniqueValues(data, 2), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentProducts.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallProduct(this)"> Overall Product</label>';
+      var t = uniqueValues(data, C.PRODUCT), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentProducts.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallProduct(this)"> Overall Product</label>';
       for (var n = 0; n < t.length; n++) {
         var l = t[n], r = currentProducts.indexOf(l) !== -1 ? "checked" : "";
         a += '<label class="multi-option"><input type="checkbox" value="' + String(l).replace(/"/g, "&quot;") + '" ' + r + ' onchange="handleProductCheck(this)"> ' + l + '</label>';
@@ -577,7 +596,7 @@
       var e = document.getElementById("cycleMenu");
       if (!e) return;
       var data = getPureDataRows();
-      var t = uniqueValues(data, 16), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentCycles.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallCycle(this)"> Overall Cycle</label>';
+      var t = uniqueValues(data, C.CYCLE_BKT), a = '<label class="multi-option"><input type="checkbox" value="Overall" ' + (currentCycles.indexOf("Overall") !== -1 ? "checked" : "") + ' onchange="toggleOverallCycle(this)"> Overall Cycle</label>';
       for (var n = 0; n < t.length; n++) {
         var l = t[n], r = currentCycles.indexOf(l) !== -1 ? "checked" : "";
         a += '<label class="multi-option"><input type="checkbox" value="' + String(l).replace(/"/g, "&quot;") + '" ' + r + ' onchange="handleCycleCheck(this)"> ' + l + '</label>';
@@ -676,15 +695,17 @@
     }
 
     function getLevelIndex() {
-      return "AVP" === currentLevel ? 19 : 
-             "DZ" === currentLevel ? 11 : 
-             "SH" === currentLevel ? 10 : 
-             "CM" === currentLevel ? 9 : 
-             "FOS Wise" === currentLevel ? 6 : 12;
+      if ("AVP" === currentLevel) return C.AVP;
+      if ("DZ" === currentLevel) return C.DZH;
+      if ("SH" === currentLevel) return C.SH;
+      if ("CM" === currentLevel) return C.CM;
+      if ("FOS Wise" === currentLevel) return C.FOS_NAME;
+      return C.ZH;
     }
 
     function getDisplayName(e) {
-      return e[getLevelIndex()] || "";
+      var idx = getLevelIndex();
+      return (e && e[idx] !== undefined && e[idx] !== null && String(e[idx]).trim() !== "") ? String(e[idx]).trim() : "Other";
     }
 
     function nameKey(e) {
@@ -699,14 +720,14 @@
       var a = {};
       for (var n = 0; n < e.length; n++) {
         var l = e[n][t];
-        if (l) {
+        if (l !== undefined && l !== null && String(l).trim() !== "") {
           var r = nameKey(l);
-          a[r] || (a[r] = l);
+          if (r) a[r] = String(l).trim();
         }
       }
       var s = [];
       for (var k in a) s.push(a[k]);
-      return s.sort(function(e, t) { return e.localeCompare(t); });
+      return s.sort(function(e, t) { return String(e).localeCompare(String(t)); });
     }
 
     function parseFlexibleDate(e) {
@@ -725,7 +746,7 @@
       if (!isBKTXSelected()) return null;
       var t = null;
       for (var a = 0; a < e.length; a++) {
-        var n = String(e[a][17] || "").trim();
+        var n = String(e[a][C.CYCLE_END] || "").trim();
         if (n) {
           var l = parseFlexibleDate(n);
           l && (t && !(l > t) || (t = l));
@@ -746,10 +767,10 @@
       for (var s = 0; s < e.length; s++) {
         var k = e[s], o = getDisplayName(k), c = nameKey(o);
         if (c) {
-          var u = cleanNumber(k[1]), d = cleanNumber(k[13]), i = String(k[14] || "").trim().toUpperCase(), m = "PAID" === i || "1" === i ? u : 0, y = String(k[15] || "").trim(), p = 0;
+          var u = cleanNumber(k[C.POS]), d = cleanNumber(k[C.COLL]), i = String(k[C.PAID_STATUS] || "").trim().toUpperCase(), m = "PAID" === i || "1" === i ? u : 0, y = String(k[C.PAID_DATE] || "").trim(), p = 0;
           if (m > 0 && y) {
-            var C = parseFlexibleDate(y);
-            C && C.getFullYear() === n && C.getMonth() === l && C.getDate() === r && (p = u);
+            var C_date = parseFlexibleDate(y);
+            C_date && C_date.getFullYear() === n && C_date.getMonth() === l && C_date.getDate() === r && (p = u);
           }
           t[c] ? (t[c].pos += u, t[c].res += m, t[c].coll += d, t[c].ydayRes += p) : t[c] = { row: k, pos: u, res: m, coll: d, ydayRes: p };
         }
@@ -781,36 +802,36 @@
     }
 
     function updateZonalDropdown() {
-      fillSelect(document.getElementById("zonalHeadFilter"), uniqueValues(getPureDataRows(), 12), "All Zonal Head");
+      fillSelect(document.getElementById("zonalHeadFilter"), uniqueValues(getPureDataRows(), C.ZH), "All Zonal Head");
     }
 
     function updateDeputyDropdown() {
       var data = getPureDataRows();
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = e ? data.filter(function(t) { return sameName(t[12], e); }) : data;
-      fillSelect(document.getElementById("deputyZonalFilter"), uniqueValues(t, 11), "All Deputy Zonal");
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = e ? data.filter(function(t) { return sameName(t[C.ZH], e); }) : data;
+      fillSelect(document.getElementById("deputyZonalFilter"), uniqueValues(t, C.DZH), "All Deputy Zonal");
     }
 
     function updateStateHeadDropdown() {
       var data = getPureDataRows();
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = data.filter(function(a) { return (!e || sameName(a[12], e)) && (!t || sameName(a[11], t)); });
-      fillSelect(document.getElementById("stateHeadFilter"), uniqueValues(a, 10), "All State Head");
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = data.filter(function(a) { return (!e || sameName(a[C.ZH], e)) && (!t || sameName(a[C.DZH], t)); });
+      fillSelect(document.getElementById("stateHeadFilter"), uniqueValues(a, C.SH), "All State Head");
     }
 
     function updateCityManagerDropdown() {
       var data = getPureDataRows();
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", n = data.filter(function(n) { return (!e || sameName(n[12], e)) && (!t || sameName(n[11], t)) && (!a || sameName(a[10], a)); });
-      fillSelect(document.getElementById("cityManagerFilter"), uniqueValues(n, 9), "All City Manager");
+      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", n = data.filter(function(n) { return (!e || sameName(n[C.ZH], e)) && (!t || sameName(n[C.DZH], t)) && (!a || sameName(a[C.SH], a)); });
+      fillSelect(document.getElementById("cityManagerFilter"), uniqueValues(n, C.CM), "All City Manager");
     }
 
     function getBaseTableData() { return getPureDataRows(); }
 
     function getFilteredTableData() {
       var e = document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase().trim() : "", a = getBaseTableData();
-      -1 === currentProducts.indexOf("Overall") && currentProducts.length > 0 && (a = a.filter(function(e) { return -1 !== currentProducts.indexOf(String(e[2] || "").trim()); }));
-      -1 === currentCycles.indexOf("Overall") && currentCycles.length > 0 && (a = a.filter(function(e) { return -1 !== currentCycles.indexOf(String(e[16] || "").trim()); }));
+      -1 === currentProducts.indexOf("Overall") && currentProducts.length > 0 && (a = a.filter(function(e) { return -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()); }));
+      -1 === currentCycles.indexOf("Overall") && currentCycles.length > 0 && (a = a.filter(function(e) { return -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim()); }));
       if ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel) {
         var n = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", l = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", r = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", s = document.getElementById("cityManagerFilter") ? document.getElementById("cityManagerFilter").value : "";
-        a = a.filter(function(e) { return (!n || sameName(e[12], n)) && (!l || sameName(e[11], l)) && ("SH" === currentLevel || !r || sameName(e[10], r)) && ("FOS Wise" !== currentLevel || !s || sameName(e[9], s)); });
+        a = a.filter(function(e) { return (!n || sameName(e[C.ZH], n)) && (!l || sameName(e[C.DZH], l)) && ("SH" === currentLevel || !r || sameName(e[C.SH], r)) && ("FOS Wise" !== currentLevel || !s || sameName(e[C.CM], s)); });
       }
       e && (a = a.filter(function(t) { return -1 !== t.join(" ").toLowerCase().indexOf(e); }));
       a = aggregateDuplicateNames(a);
@@ -835,7 +856,7 @@
     function renderKPI() {
       for (var e = getFilteredTableData(), t = e.length, a = 0, n = 0, l = 0; l < e.length; l++) a += e[l].pos, n += e[l].res;
       var r = a > 0 ? (n / a * 100).toFixed(1) + "%" : "0.0%", s = Math.max(0, targetShortfallPct / 100 * a - n), k = getPureDataRows().filter(function(e) {
-        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
+        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim());
         return t && a;
       }), o = getRemainingDays(k), c = "-", u = "DRP";
       null !== o && (c = formatAmount(s / o), u = "DRP (" + o + "D)");
@@ -852,7 +873,7 @@
     function renderTable(e) {
       e && (currentPage = 1);
       var t = getFilteredTableData(), a = getPureDataRows().filter(function(e) {
-        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
+        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim());
         return t && a;
       }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + "D)" : "DRP";
       var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
@@ -861,9 +882,9 @@
       currentPage > r && (currentPage = r);
       var s = (currentPage - 1) * rowsPerPage, k = s + rowsPerPage, o = t.slice(s, k), c = "";
       for (var u = 0; u < o.length; u++) {
-        var d = getDisplayName(o[u]), i = o[u].pos, m = o[u].res, y = o[u].ydayRes, p = i > 0 ? (m / i * 100).toFixed(1) : "0.0", C = Math.max(0, targetShortfallPct / 100 * i - m), v = "-";
-        null !== n && (v = formatTableAmount(C / n));
-        c += '<tr><td>' + d + '</td><td class="case-value">' + formatTableAmount(i) + '</td><td class="paid-value">' + formatTableAmount(m) + '</td><td><span class="res-badge">' + p + '%</span></td><td class="paid-value">' + formatTableAmount(y) + '</td><td class="red">' + formatTableAmount(C) + '</td><td><span class="drr-pill">' + v + '</span></td></tr>';
+        var d = getDisplayName(o[u]), i = o[u].pos, m = o[u].res, y = o[u].ydayRes, p = i > 0 ? (m / i * 100).toFixed(1) : "0.0", C_target = Math.max(0, targetShortfallPct / 100 * i - m), v = "-";
+        null !== n && (v = formatTableAmount(C_target / n));
+        c += '<tr><td>' + d + '</td><td class="case-value">' + formatTableAmount(i) + '</td><td class="paid-value">' + formatTableAmount(m) + '</td><td><span class="res-badge">' + p + '%</span></td><td class="paid-value">' + formatTableAmount(y) + '</td><td class="red">' + formatTableAmount(C_target) + '</td><td><span class="drr-pill">' + v + '</span></td></tr>';
       }
       document.getElementById("tableDataBody").innerHTML = c;
       renderPagination(t.length, r, s, Math.min(k, t.length));
@@ -881,7 +902,7 @@
 
     function exportCSV() {
       var e = getFilteredTableData(), t = [[currentLevel, "P O/S", "Resolution", "Resolution %", "Y'day POS Res", "Shortfall (" + targetShortfallPct + "%)", "DRP"]], a = getPureDataRows().filter(function(e) {
-        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[2] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[16] || "").trim());
+        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim());
         return t && a;
       }), n = getRemainingDays(a);
       for (var l = 0; l < e.length; l++) {
@@ -909,15 +930,15 @@
 
     function populateRawModalDropdowns() {
       var data = getPureDataRows();
-      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, 16), "All Cycle BKT", false);
-      fillSelect(document.getElementById("rfAVP"), uniqueValues(data, 19), "All AVP", false);
-      fillSelect(document.getElementById("rfZH"), uniqueValues(data, 12), "All ZH", false);
-      fillSelect(document.getElementById("rfDZH"), uniqueValues(data, 11), "All DZH", false);
-      fillSelect(document.getElementById("rfSH"), uniqueValues(data, 10), "All SH", false);
-      fillSelect(document.getElementById("rfCM"), uniqueValues(data, 9), "All CM", false);
-      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, 6), "All FOS", false);
-      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, 14), "All Paid Status", false);
-      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, 20), "All Final Disposition", false);
+      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, C.CYCLE_BKT), "All Cycle BKT", false);
+      fillSelect(document.getElementById("rfAVP"), uniqueValues(data, C.AVP), "All AVP", false);
+      fillSelect(document.getElementById("rfZH"), uniqueValues(data, C.ZH), "All ZH", false);
+      fillSelect(document.getElementById("rfDZH"), uniqueValues(data, C.DZH), "All DZH", false);
+      fillSelect(document.getElementById("rfSH"), uniqueValues(data, C.SH), "All SH", false);
+      fillSelect(document.getElementById("rfCM"), uniqueValues(data, C.CM), "All CM", false);
+      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, C.FOS_NAME), "All FOS", false);
+      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, C.PAID_STATUS), "All Paid Status", false);
+      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, C.FINAL_DISP), "All Final Disposition", false);
     }
 
     function handleCascadingModalChange(lvl) {
@@ -930,7 +951,7 @@
       var cm = document.getElementById("rfCM").value;
 
       if (lvl === 'avp') {
-        fillSelect(document.getElementById("rfZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)); }), 12), "All ZH", false);
+        fillSelect(document.getElementById("rfZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)); }), C.ZH), "All ZH", false);
         document.getElementById("rfDZH").value = "";
         document.getElementById("rfSH").value = "";
         document.getElementById("rfCM").value = "";
@@ -939,7 +960,7 @@
       
       var curZH = document.getElementById("rfZH").value;
       if (lvl === 'avp' || lvl === 'zh') {
-        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)); }), 11), "All DZH", false);
+        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)); }), C.DZH), "All DZH", false);
         document.getElementById("rfSH").value = "";
         document.getElementById("rfCM").value = "";
         document.getElementById("rfFOS").value = "";
@@ -947,20 +968,20 @@
 
       var curDZH = document.getElementById("rfDZH").value;
       if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh') {
-        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)) && (!curDZH || sameName(r[11], curDZH)); }), 10), "All SH", false);
+        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)) && (!curDZH || sameName(r[C.DZH], curDZH)); }), C.SH), "All SH", false);
         document.getElementById("rfCM").value = "";
         document.getElementById("rfFOS").value = "";
       }
 
       var curSH = document.getElementById("rfSH").value;
       if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh') {
-        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)) && (!curDZH || sameName(r[11], curDZH)) && (!curSH || sameName(r[10], curSH)); }), 9), "All CM", false);
+        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)) && (!curDZH || sameName(r[C.DZH], curDZH)) && (!curSH || sameName(r[C.SH], curSH)); }), C.CM), "All CM", false);
         document.getElementById("rfFOS").value = "";
       }
 
       var curCM = document.getElementById("rfCM").value;
       if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh' || lvl === 'cm') {
-        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)) && (!curDZH || sameName(r[11], curDZH)) && (!curSH || sameName(r[10], curSH)) && (!curCM || sameName(r[9], curCM)); }), 6), "All FOS", false);
+        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)) && (!curDZH || sameName(r[C.DZH], curDZH)) && (!curSH || sameName(r[C.SH], curSH)) && (!curCM || sameName(r[C.CM], curCM)); }), C.FOS_NAME), "All FOS", false);
       }
 
       renderRawModalData();
@@ -979,15 +1000,15 @@
       var disp = document.getElementById("rfFinalDisp").value;
 
       return data.filter(function(r) {
-        if (c && !sameName(r[16], c)) return false;
-        if (avp && !sameName(r[19], avp)) return false;
-        if (zh && !sameName(r[12], zh)) return false;
-        if (dzh && !sameName(r[11], dzh)) return false;
-        if (sh && !sameName(r[10], sh)) return false;
-        if (cm && !sameName(r[9], cm)) return false;
-        if (fos && !sameName(r[6], fos)) return false;
-        if (paid && !sameName(r[14], paid)) return false;
-        if (disp && !sameName(r[20], disp)) return false;
+        if (c && !sameName(r[C.CYCLE_BKT], c)) return false;
+        if (avp && !sameName(r[C.AVP], avp)) return false;
+        if (zh && !sameName(r[C.ZH], zh)) return false;
+        if (dzh && !sameName(r[C.DZH], dzh)) return false;
+        if (sh && !sameName(r[C.SH], sh)) return false;
+        if (cm && !sameName(r[C.CM], cm)) return false;
+        if (fos && !sameName(r[C.FOS_NAME], fos)) return false;
+        if (paid && !sameName(r[C.PAID_STATUS], paid)) return false;
+        if (disp && !sameName(r[C.FINAL_DISP], disp)) return false;
         return true;
       });
     }
@@ -1010,19 +1031,19 @@
       for (var i = 0; i < limit; i++) {
         var r = rows[i];
         html += "<tr>" +
-          "<td>" + (r[0] !== undefined ? r[0] : "") + "</td>" +
-          "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" +
-          "<td>" + (r[2] !== undefined ? r[2] : "") + "</td>" +
-          "<td>" + (r[16] !== undefined ? r[16] : "") + "</td>" +
-          "<td>" + (r[4] !== undefined ? r[4] : "") + "</td>" +
-          "<td>" + (r[6] !== undefined ? r[6] : "") + "</td>" +
-          "<td>" + (r[9] !== undefined ? r[9] : "") + "</td>" +
-          "<td>" + (r[10] !== undefined ? r[10] : "") + "</td>" +
-          "<td>" + (r[11] !== undefined ? r[11] : "") + "</td>" +
-          "<td>" + (r[12] !== undefined ? r[12] : "") + "</td>" +
-          "<td>" + (r[14] !== undefined ? r[14] : "") + "</td>" +
-          "<td>" + (r[20] !== undefined ? r[20] : "") + "</td>" +
-          "<td>" + (r[21] !== undefined ? r[21] : "") + "</td>" +
+          "<td>" + (r[C.LOAN] !== undefined ? r[C.LOAN] : "") + "</td>" +
+          "<td>₹" + formatTableAmount(r[C.POS] || 0) + "</td>" +
+          "<td>" + (r[C.PRODUCT] !== undefined ? r[C.PRODUCT] : "") + "</td>" +
+          "<td>" + (r[C.CYCLE_BKT] !== undefined ? r[C.CYCLE_BKT] : "") + "</td>" +
+          "<td>" + (r[C.FOS_SURN] !== undefined ? r[C.FOS_SURN] : "") + "</td>" +
+          "<td>" + (r[C.FOS_NAME] !== undefined ? r[C.FOS_NAME] : "") + "</td>" +
+          "<td>" + (r[C.CM] !== undefined ? r[C.CM] : "") + "</td>" +
+          "<td>" + (r[C.SH] !== undefined ? r[C.SH] : "") + "</td>" +
+          "<td>" + (r[C.DZH] !== undefined ? r[C.DZH] : "") + "</td>" +
+          "<td>" + (r[C.ZH] !== undefined ? r[C.ZH] : "") + "</td>" +
+          "<td>" + (r[C.PAID_STATUS] !== undefined ? r[C.PAID_STATUS] : "") + "</td>" +
+          "<td>" + (r[C.FINAL_DISP] !== undefined ? r[C.FINAL_DISP] : "") + "</td>" +
+          "<td>" + (r[C.REPORT_DISP] !== undefined ? r[C.REPORT_DISP] : "") + "</td>" +
         "</tr>";
       }
       body.innerHTML = html;
@@ -1042,19 +1063,19 @@
       for (var i = 0; i < rows.length; i++) {
         var r = rows[i];
         csvContent.push([
-          '"' + (r[0] !== undefined ? r[0] : "") + '"',
-          cleanNumber(r[1]),
-          '"' + (r[2] !== undefined ? r[2] : "") + '"',
-          '"' + (r[16] !== undefined ? r[16] : "") + '"',
-          '"' + (r[4] !== undefined ? r[4] : "") + '"',
-          '"' + (r[6] !== undefined ? r[6] : "") + '"',
-          '"' + (r[9] !== undefined ? r[9] : "") + '"',
-          '"' + (r[10] !== undefined ? r[10] : "") + '"',
-          '"' + (r[11] !== undefined ? r[11] : "") + '"',
-          '"' + (r[12] !== undefined ? r[12] : "") + '"',
-          '"' + (r[14] !== undefined ? r[14] : "") + '"',
-          '"' + (r[20] !== undefined ? r[20] : "") + '"',
-          '"' + (r[21] !== undefined ? r[21] : "") + '"'
+          '"' + (r[C.LOAN] !== undefined ? r[C.LOAN] : "") + '"',
+          cleanNumber(r[C.POS]),
+          '"' + (r[C.PRODUCT] !== undefined ? r[C.PRODUCT] : "") + '"',
+          '"' + (r[C.CYCLE_BKT] !== undefined ? r[C.CYCLE_BKT] : "") + '"',
+          '"' + (r[C.FOS_SURN] !== undefined ? r[C.FOS_SURN] : "") + '"',
+          '"' + (r[C.FOS_NAME] !== undefined ? r[C.FOS_NAME] : "") + '"',
+          '"' + (r[C.CM] !== undefined ? r[C.CM] : "") + '"',
+          '"' + (r[C.SH] !== undefined ? r[C.SH] : "") + '"',
+          '"' + (r[C.DZH] !== undefined ? r[C.DZH] : "") + '"',
+          '"' + (r[C.ZH] !== undefined ? r[C.ZH] : "") + '"',
+          '"' + (r[C.PAID_STATUS] !== undefined ? r[C.PAID_STATUS] : "") + '"',
+          '"' + (r[C.FINAL_DISP] !== undefined ? r[C.FINAL_DISP] : "") + '"',
+          '"' + (r[C.REPORT_DISP] !== undefined ? r[C.REPORT_DISP] : "") + '"'
         ]);
       }
 
