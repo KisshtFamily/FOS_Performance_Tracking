@@ -316,10 +316,10 @@
         <input type="text" class="search-box" id="searchInput" placeholder="Search Name..." onkeyup="renderAll()">
       </div>
       <div class="hierarchy-filter" id="hierarchyFilter">
-        <select id="zonalHeadFilter" class="filter-select" onchange="updateDeputyDropdown(); renderAll();"><option value="">All Zonal Head</option></select>
-        <select id="deputyZonalFilter" class="filter-select" onchange="updateStateHeadDropdown(); renderAll();"><option value="">All Deputy Zonal</option></select>
-        <select id="stateHeadFilter" class="filter-select" onchange="updateCityManagerDropdown(); renderAll();"><option value="">All State Head</option></select>
-        <select id="cityManagerFilter" class="filter-select" onchange="renderAll();"><option value="">All City Manager</option></select>
+        <select id="zonalHeadFilter" class="filter-select" onchange="handleMainHierarchyChange('zh')"><option value="">All Zonal Head</option></select>
+        <select id="deputyZonalFilter" class="filter-select" onchange="handleMainHierarchyChange('dz')"><option value="">All Deputy Zonal</option></select>
+        <select id="stateHeadFilter" class="filter-select" onchange="handleMainHierarchyChange('sh')"><option value="">All State Head</option></select>
+        <select id="cityManagerFilter" class="filter-select" onchange="handleMainHierarchyChange('cm')"><option value="">All City Manager</option></select>
       </div>
     </div>
     <div class="scroll-container">
@@ -422,7 +422,7 @@
     var rawSheetRows = [];
     var rowsPerPage = 15, currentPage = 1, currentLevel = "ZH", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
 
-    // Exact Zero-based Index Constants Mapping
+    // Exact Zero-based Column Mapping
     var C = {
       LOAN: 0,        // Col A (1)
       POS: 1,         // Col B (2)
@@ -468,14 +468,14 @@
       }
     }
 
-    function updateHeaderTimestamp(resData, fullPayload) {
+    function updateHeaderTimestamp(resData) {
       var subLabel = document.getElementById("updatedDateTimeLabel");
       if (!subLabel) return;
       
       var customDate = "";
       if (resData && Array.isArray(resData) && resData.length > 0) {
         for (var idx = 0; idx < Math.min(resData.length, 100); idx++) {
-          if (resData[idx] && resData[idx][C.UPDATED_DATE]) {
+          if (resData[idx] && resData[idx][C.UPDATED_DATE] !== undefined && resData[idx][C.UPDATED_DATE] !== null) {
             var val = String(resData[idx][C.UPDATED_DATE]).trim();
             if (val && val !== "undefined" && val !== "null" && val.toUpperCase() !== "UPDATED DATE") {
               customDate = val;
@@ -484,27 +484,7 @@
           }
         }
       }
-      
-      if (customDate) {
-        subLabel.textContent = customDate;
-        return;
-      }
-      
-      var rawTimestamp = (fullPayload && (fullPayload.updatedAt || fullPayload.lastUpdated)) ? fullPayload.updatedAt || fullPayload.lastUpdated : Date.now();
-      var dt = new Date(rawTimestamp);
-      if (isNaN(dt.getTime())) dt = new Date();
-      
-      var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-      var day = ("0" + dt.getDate()).slice(-2);
-      var month = months[dt.getMonth()];
-      var year = String(dt.getFullYear()).slice(-2);
-      var hours = dt.getHours();
-      var minutes = ("0" + dt.getMinutes()).slice(-2);
-      var ampm = hours >= 12 ? "PM" : "AM";
-      hours = hours % 12;
-      hours = hours ? hours : 12;
-      
-      subLabel.textContent = day + "-" + month + "-" + year + " | " + hours + ":" + minutes + ampm;
+      subLabel.textContent = customDate ? customDate : "-- | --";
     }
 
     window.handleManagerData = function(e) {
@@ -519,7 +499,7 @@
       
       if (resData && resData.length > 0) {
         rawSheetRows = resData;
-        updateHeaderTimestamp(getPureDataRows(), e);
+        updateHeaderTimestamp(getPureDataRows());
         populateProductDropdown();
         populateCycleDropdown();
         updateHierarchyVisibility();
@@ -527,7 +507,6 @@
       } else {
         var st = document.getElementById("kpiStatusVal");
         if (st) st.textContent = "No Data";
-        updateHeaderTimestamp(null, e);
         document.getElementById("tableDataBody").innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:red;">No records found or permission denied.</td></tr>';
       }
     };
@@ -705,7 +684,9 @@
 
     function getDisplayName(e) {
       var idx = getLevelIndex();
-      return (e && e[idx] !== undefined && e[idx] !== null && String(e[idx]).trim() !== "") ? String(e[idx]).trim() : "Other";
+      if (!e) return "Other";
+      var val = e[idx];
+      return (val !== undefined && val !== null && String(val).trim() !== "") ? String(val).trim() : "Other";
     }
 
     function nameKey(e) {
@@ -798,29 +779,53 @@
 
     function updateHierarchyVisibility() {
       var e = document.getElementById("hierarchyFilter");
-      e && ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel ? (e.classList.add("show"), updateZonalDropdown(), updateDeputyDropdown(), updateStateHeadDropdown(), updateCityManagerDropdown()) : e.classList.remove("show"));
+      if (e) {
+        if ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel || "DZ" === currentLevel) {
+          e.classList.add("show");
+          handleMainHierarchyChange('init');
+        } else {
+          e.classList.remove("show");
+        }
+      }
     }
 
-    function updateZonalDropdown() {
-      fillSelect(document.getElementById("zonalHeadFilter"), uniqueValues(getPureDataRows(), C.ZH), "All Zonal Head");
-    }
-
-    function updateDeputyDropdown() {
+    function handleMainHierarchyChange(lvl) {
       var data = getPureDataRows();
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = e ? data.filter(function(t) { return sameName(t[C.ZH], e); }) : data;
-      fillSelect(document.getElementById("deputyZonalFilter"), uniqueValues(t, C.DZH), "All Deputy Zonal");
-    }
+      var zhEl = document.getElementById("zonalHeadFilter");
+      var dzEl = document.getElementById("deputyZonalFilter");
+      var shEl = document.getElementById("stateHeadFilter");
+      var cmEl = document.getElementById("cityManagerFilter");
 
-    function updateStateHeadDropdown() {
-      var data = getPureDataRows();
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = data.filter(function(a) { return (!e || sameName(a[C.ZH], e)) && (!t || sameName(a[C.DZH], t)); });
-      fillSelect(document.getElementById("stateHeadFilter"), uniqueValues(a, C.SH), "All State Head");
-    }
+      if (lvl === 'init') {
+        fillSelect(zhEl, uniqueValues(data, C.ZH), "All Zonal Head", true);
+      }
+      
+      var zh = zhEl.value;
+      if (lvl === 'init' || lvl === 'zh') {
+        var dzData = data.filter(function(r){ return !zh || sameName(r[C.ZH], zh); });
+        fillSelect(dzEl, uniqueValues(dzData, C.DZH), "All Deputy Zonal", lvl !== 'zh');
+        if (lvl === 'zh') {
+          shEl.value = "";
+          cmEl.value = "";
+        }
+      }
 
-    function updateCityManagerDropdown() {
-      var data = getPureDataRows();
-      var e = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", t = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", a = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", n = data.filter(function(n) { return (!e || sameName(n[C.ZH], e)) && (!t || sameName(n[C.DZH], t)) && (!a || sameName(a[C.SH], a)); });
-      fillSelect(document.getElementById("cityManagerFilter"), uniqueValues(n, C.CM), "All City Manager");
+      var dz = dzEl.value;
+      if (lvl === 'init' || lvl === 'zh' || lvl === 'dz') {
+        var shData = data.filter(function(r){ return (!zh || sameName(r[C.ZH], zh)) && (!dz || sameName(r[C.DZH], dz)); });
+        fillSelect(shEl, uniqueValues(shData, C.SH), "All State Head", (lvl !== 'zh' && lvl !== 'dz'));
+        if (lvl === 'zh' || lvl === 'dz') {
+          cmEl.value = "";
+        }
+      }
+
+      var sh = shEl.value;
+      if (lvl === 'init' || lvl === 'zh' || lvl === 'dz' || lvl === 'sh') {
+        var cmData = data.filter(function(r){ return (!zh || sameName(r[C.ZH], zh)) && (!dz || sameName(r[C.DZH], dz)) && (!sh || sameName(r[C.SH], sh)); });
+        fillSelect(cmEl, uniqueValues(cmData, C.CM), "All City Manager", (lvl === 'cm' || lvl === 'init'));
+      }
+
+      renderAll();
     }
 
     function getBaseTableData() { return getPureDataRows(); }
@@ -829,9 +834,18 @@
       var e = document.getElementById("searchInput") ? document.getElementById("searchInput").value.toLowerCase().trim() : "", a = getBaseTableData();
       -1 === currentProducts.indexOf("Overall") && currentProducts.length > 0 && (a = a.filter(function(e) { return -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()); }));
       -1 === currentCycles.indexOf("Overall") && currentCycles.length > 0 && (a = a.filter(function(e) { return -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim()); }));
-      if ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel) {
-        var n = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "", l = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "", r = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "", s = document.getElementById("cityManagerFilter") ? document.getElementById("cityManagerFilter").value : "";
-        a = a.filter(function(e) { return (!n || sameName(e[C.ZH], n)) && (!l || sameName(e[C.DZH], l)) && ("SH" === currentLevel || !r || sameName(e[C.SH], r)) && ("FOS Wise" !== currentLevel || !s || sameName(e[C.CM], s)); });
+      
+      if ("SH" === currentLevel || "CM" === currentLevel || "FOS Wise" === currentLevel || "DZ" === currentLevel) {
+        var n = document.getElementById("zonalHeadFilter") ? document.getElementById("zonalHeadFilter").value : "",
+            l = document.getElementById("deputyZonalFilter") ? document.getElementById("deputyZonalFilter").value : "",
+            r = document.getElementById("stateHeadFilter") ? document.getElementById("stateHeadFilter").value : "",
+            s = document.getElementById("cityManagerFilter") ? document.getElementById("cityManagerFilter").value : "";
+        a = a.filter(function(e) { 
+          return (!n || sameName(e[C.ZH], n)) && 
+                 (!l || sameName(e[C.DZH], l)) && 
+                 ("SH" === currentLevel || !r || sameName(e[C.SH], r)) && 
+                 ("FOS Wise" !== currentLevel || !s || sameName(e[C.CM], s)); 
+        });
       }
       e && (a = a.filter(function(t) { return -1 !== t.join(" ").toLowerCase().indexOf(e); }));
       a = aggregateDuplicateNames(a);
@@ -877,7 +891,7 @@
         return t && a;
       }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + "D)" : "DRP";
       var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
-      document.getElementById("tableHead").innerHTML = '<th id="levelHeaderName" onclick="setColumnSort(\'name\')">' + lvlName + ' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y&apos;day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall(' + targetShortfallPct + '%)</th><th onclick="setColumnSort(\'drr\')">' + l + '</th>';
+      document.getElementById("tableHead").innerHTML = '<th id="levelHeaderName" onclick="setColumnSort(\'name\')">'+lvlName+' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y\'day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall('+targetShortfallPct+'%)</th><th onclick="setColumnSort(\'drr\')">'+l+'</th>';
       var r = Math.max(1, Math.ceil(t.length / rowsPerPage));
       currentPage > r && (currentPage = r);
       var s = (currentPage - 1) * rowsPerPage, k = s + rowsPerPage, o = t.slice(s, k), c = "";
@@ -1031,19 +1045,19 @@
       for (var i = 0; i < limit; i++) {
         var r = rows[i];
         html += "<tr>" +
-          "<td>" + (r[C.LOAN] !== undefined ? r[C.LOAN] : "") + "</td>" +
+          "<td>" + (r[C.LOAN] !== undefined && r[C.LOAN] !== null ? r[C.LOAN] : "") + "</td>" +
           "<td>₹" + formatTableAmount(r[C.POS] || 0) + "</td>" +
-          "<td>" + (r[C.PRODUCT] !== undefined ? r[C.PRODUCT] : "") + "</td>" +
-          "<td>" + (r[C.CYCLE_BKT] !== undefined ? r[C.CYCLE_BKT] : "") + "</td>" +
-          "<td>" + (r[C.FOS_SURN] !== undefined ? r[C.FOS_SURN] : "") + "</td>" +
-          "<td>" + (r[C.FOS_NAME] !== undefined ? r[C.FOS_NAME] : "") + "</td>" +
-          "<td>" + (r[C.CM] !== undefined ? r[C.CM] : "") + "</td>" +
-          "<td>" + (r[C.SH] !== undefined ? r[C.SH] : "") + "</td>" +
-          "<td>" + (r[C.DZH] !== undefined ? r[C.DZH] : "") + "</td>" +
-          "<td>" + (r[C.ZH] !== undefined ? r[C.ZH] : "") + "</td>" +
-          "<td>" + (r[C.PAID_STATUS] !== undefined ? r[C.PAID_STATUS] : "") + "</td>" +
-          "<td>" + (r[C.FINAL_DISP] !== undefined ? r[C.FINAL_DISP] : "") + "</td>" +
-          "<td>" + (r[C.REPORT_DISP] !== undefined ? r[C.REPORT_DISP] : "") + "</td>" +
+          "<td>" + (r[C.PRODUCT] !== undefined && r[C.PRODUCT] !== null ? r[C.PRODUCT] : "") + "</td>" +
+          "<td>" + (r[C.CYCLE_BKT] !== undefined && r[C.CYCLE_BKT] !== null ? r[C.CYCLE_BKT] : "") + "</td>" +
+          "<td>" + (r[C.FOS_SURN] !== undefined && r[C.FOS_SURN] !== null ? r[C.FOS_SURN] : "") + "</td>" +
+          "<td>" + (r[C.FOS_NAME] !== undefined && r[C.FOS_NAME] !== null ? r[C.FOS_NAME] : "") + "</td>" +
+          "<td>" + (r[C.CM] !== undefined && r[C.CM] !== null ? r[C.CM] : "") + "</td>" +
+          "<td>" + (r[C.SH] !== undefined && r[C.SH] !== null ? r[C.SH] : "") + "</td>" +
+          "<td>" + (r[C.DZH] !== undefined && r[C.DZH] !== null ? r[C.DZH] : "") + "</td>" +
+          "<td>" + (r[C.ZH] !== undefined && r[C.ZH] !== null ? r[C.ZH] : "") + "</td>" +
+          "<td>" + (r[C.PAID_STATUS] !== undefined && r[C.PAID_STATUS] !== null ? r[C.PAID_STATUS] : "") + "</td>" +
+          "<td>" + (r[C.FINAL_DISP] !== undefined && r[C.FINAL_DISP] !== null ? r[C.FINAL_DISP] : "") + "</td>" +
+          "<td>" + (r[C.REPORT_DISP] !== undefined && r[C.REPORT_DISP] !== null ? r[C.REPORT_DISP] : "") + "</td>" +
         "</tr>";
       }
       body.innerHTML = html;
@@ -1063,19 +1077,19 @@
       for (var i = 0; i < rows.length; i++) {
         var r = rows[i];
         csvContent.push([
-          '"' + (r[C.LOAN] !== undefined ? r[C.LOAN] : "") + '"',
+          '"' + (r[C.LOAN] !== undefined && r[C.LOAN] !== null ? r[C.LOAN] : "") + '"',
           cleanNumber(r[C.POS]),
-          '"' + (r[C.PRODUCT] !== undefined ? r[C.PRODUCT] : "") + '"',
-          '"' + (r[C.CYCLE_BKT] !== undefined ? r[C.CYCLE_BKT] : "") + '"',
-          '"' + (r[C.FOS_SURN] !== undefined ? r[C.FOS_SURN] : "") + '"',
-          '"' + (r[C.FOS_NAME] !== undefined ? r[C.FOS_NAME] : "") + '"',
-          '"' + (r[C.CM] !== undefined ? r[C.CM] : "") + '"',
-          '"' + (r[C.SH] !== undefined ? r[C.SH] : "") + '"',
-          '"' + (r[C.DZH] !== undefined ? r[C.DZH] : "") + '"',
-          '"' + (r[C.ZH] !== undefined ? r[C.ZH] : "") + '"',
-          '"' + (r[C.PAID_STATUS] !== undefined ? r[C.PAID_STATUS] : "") + '"',
-          '"' + (r[C.FINAL_DISP] !== undefined ? r[C.FINAL_DISP] : "") + '"',
-          '"' + (r[C.REPORT_DISP] !== undefined ? r[C.REPORT_DISP] : "") + '"'
+          '"' + (r[C.PRODUCT] !== undefined && r[C.PRODUCT] !== null ? r[C.PRODUCT] : "") + '"',
+          '"' + (r[C.CYCLE_BKT] !== undefined && r[C.CYCLE_BKT] !== null ? r[C.CYCLE_BKT] : "") + '"',
+          '"' + (r[C.FOS_SURN] !== undefined && r[C.FOS_SURN] !== null ? r[C.FOS_SURN] : "") + '"',
+          '"' + (r[C.FOS_NAME] !== undefined && r[C.FOS_NAME] !== null ? r[C.FOS_NAME] : "") + '"',
+          '"' + (r[C.CM] !== undefined && r[C.CM] !== null ? r[C.CM] : "") + '"',
+          '"' + (r[C.SH] !== undefined && r[C.SH] !== null ? r[C.SH] : "") + '"',
+          '"' + (r[C.DZH] !== undefined && r[C.DZH] !== null ? r[C.DZH] : "") + '"',
+          '"' + (r[C.ZH] !== undefined && r[C.ZH] !== null ? r[C.ZH] : "") + '"',
+          '"' + (r[C.PAID_STATUS] !== undefined && r[C.PAID_STATUS] !== null ? r[C.PAID_STATUS] : "") + '"',
+          '"' + (r[C.FINAL_DISP] !== undefined && r[C.FINAL_DISP] !== null ? r[C.FINAL_DISP] : "") + '"',
+          '"' + (r[C.REPORT_DISP] !== undefined && r[C.REPORT_DISP] !== null ? r[C.REPORT_DISP] : "") + '"'
         ]);
       }
 
