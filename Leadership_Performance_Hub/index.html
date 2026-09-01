@@ -156,7 +156,7 @@
     .page-btn { padding: 5px 10px; border: 1px solid var(--border); background: #f8fafc; border-radius: 6px; cursor: pointer; font-weight: 600; }
     .page-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* RAW DATA MODAL STYLES */
+    /* RAW DATA MODAL POPUP STYLES */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -483,15 +483,19 @@
     }
 
     window.handleManagerData = function(e) {
+      console.log("Raw Response Received:", e);
       var resData = null;
       if (e && e.status === "success" && Array.isArray(e.data)) {
         resData = e.data;
       } else if (Array.isArray(e)) {
         resData = e;
+      } else if (e && Array.isArray(e.records)) {
+        resData = e.records;
       }
       
       if (resData && resData.length > 0) {
         rawSheetRows = resData;
+        console.log("Data Successfully Loaded. Rows:", rawSheetRows.length);
         updateHeaderTimestamp(getPureDataRows(), e);
         populateProductDropdown();
         populateCycleDropdown();
@@ -506,20 +510,27 @@
     };
 
     function fetchLiveData() {
-      var old = document.getElementById("jsonpScript");
-      if (old) old.remove();
-      var scriptObj = document.createElement("script");
-      scriptObj.id = "jsonpScript";
-      scriptObj.src = SCRIPT_URL + "?callback=handleManagerData&_=" + Date.now();
-      scriptObj.onerror = function() {
-        fetch(SCRIPT_URL).then(function(res) { return res.json(); }).then(function(data) { window.handleManagerData(data); }).catch(function(err) {
-          var st = document.getElementById("kpiStatusVal");
-          if (st) st.textContent = "Fetch Error";
-          updateHeaderTimestamp(null, null);
-          console.error("Data Fetch Failed", err);
+      // Primary: Direct Fetch CORS
+      fetch(SCRIPT_URL, { method: "GET", mode: "cors" })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          window.handleManagerData(data);
+        })
+        .catch(function(err) {
+          console.warn("Direct fetch restricted, running fallback JSONP:", err);
+          // Secondary Fallback: JSONP
+          var old = document.getElementById("jsonpScript");
+          if (old) old.remove();
+          var scriptObj = document.createElement("script");
+          scriptObj.id = "jsonpScript";
+          scriptObj.src = SCRIPT_URL + (SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "callback=handleManagerData&_=" + Date.now();
+          scriptObj.onerror = function() {
+            var st = document.getElementById("kpiStatusVal");
+            if (st) st.textContent = "Fetch Error";
+            console.error("All fetch methods failed.");
+          };
+          document.body.appendChild(scriptObj);
         });
-      };
-      document.body.appendChild(scriptObj);
     }
 
     function handleTargetChange(e) {
@@ -669,7 +680,7 @@
              "DZ" === currentLevel ? 11 : 
              "SH" === currentLevel ? 10 : 
              "CM" === currentLevel ? 9 : 
-             "FOS Wise" === currentLevel ? 6 : 12; // 12 for "ZH"
+             "FOS Wise" === currentLevel ? 6 : 12;
     }
 
     function getDisplayName(e) {
@@ -885,7 +896,7 @@
       y.click();
     }
 
-    /* CASCADING HIERARCHY RAW DATA MODAL LOGIC */
+    /* POPUP MODAL LOGIC WITH CASCADING HIERARCHY */
     function openRawDataModal() {
       populateRawModalDropdowns();
       renderRawModalData();
@@ -894,6 +905,65 @@
 
     function closeRawDataModal() {
       document.getElementById("rawDataModal").classList.remove("active");
+    }
+
+    function populateRawModalDropdowns() {
+      var data = getPureDataRows();
+      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, 16), "All Cycle BKT", false);
+      fillSelect(document.getElementById("rfAVP"), uniqueValues(data, 19), "All AVP", false);
+      fillSelect(document.getElementById("rfZH"), uniqueValues(data, 12), "All ZH", false);
+      fillSelect(document.getElementById("rfDZH"), uniqueValues(data, 11), "All DZH", false);
+      fillSelect(document.getElementById("rfSH"), uniqueValues(data, 10), "All SH", false);
+      fillSelect(document.getElementById("rfCM"), uniqueValues(data, 9), "All CM", false);
+      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, 6), "All FOS", false);
+      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, 14), "All Paid Status", false);
+      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, 20), "All Final Disposition", false);
+    }
+
+    function handleCascadingModalChange(lvl) {
+      var data = getPureDataRows();
+      var c = document.getElementById("rfCycle").value;
+      var avp = document.getElementById("rfAVP").value;
+      var zh = document.getElementById("rfZH").value;
+      var dzh = document.getElementById("rfDZH").value;
+      var sh = document.getElementById("rfSH").value;
+      var cm = document.getElementById("rfCM").value;
+
+      if (lvl === 'avp') {
+        fillSelect(document.getElementById("rfZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)); }), 12), "All ZH", false);
+        document.getElementById("rfDZH").value = "";
+        document.getElementById("rfSH").value = "";
+        document.getElementById("rfCM").value = "";
+        document.getElementById("rfFOS").value = "";
+      }
+      
+      var curZH = document.getElementById("rfZH").value;
+      if (lvl === 'avp' || lvl === 'zh') {
+        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)); }), 11), "All DZH", false);
+        document.getElementById("rfSH").value = "";
+        document.getElementById("rfCM").value = "";
+        document.getElementById("rfFOS").value = "";
+      }
+
+      var curDZH = document.getElementById("rfDZH").value;
+      if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh') {
+        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)) && (!curDZH || sameName(r[11], curDZH)); }), 10), "All SH", false);
+        document.getElementById("rfCM").value = "";
+        document.getElementById("rfFOS").value = "";
+      }
+
+      var curSH = document.getElementById("rfSH").value;
+      if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh') {
+        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)) && (!curDZH || sameName(r[11], curDZH)) && (!curSH || sameName(r[10], curSH)); }), 9), "All CM", false);
+        document.getElementById("rfFOS").value = "";
+      }
+
+      var curCM = document.getElementById("rfCM").value;
+      if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh' || lvl === 'cm') {
+        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!curZH || sameName(r[12], curZH)) && (!curDZH || sameName(r[11], curDZH)) && (!curSH || sameName(r[10], curSH)) && (!curCM || sameName(r[9], curCM)); }), 6), "All FOS", false);
+      }
+
+      renderRawModalData();
     }
 
     function getFilteredRawRows() {
@@ -922,66 +992,6 @@
       });
     }
 
-    function handleCascadingModalChange(changedLevel) {
-      var data = getPureDataRows();
-      var c = document.getElementById("rfCycle").value;
-      var avp = document.getElementById("rfAVP").value;
-      var zh = document.getElementById("rfZH").value;
-      var dzh = document.getElementById("rfDZH").value;
-      var sh = document.getElementById("rfSH").value;
-      var cm = document.getElementById("rfCM").value;
-
-      // Hierarchy Cascading Reset Logic
-      if (changedLevel === 'avp') {
-        fillSelect(document.getElementById("rfZH"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp))), 12), "All ZH", false);
-        document.getElementById("rfDZH").value = "";
-        document.getElementById("rfSH").value = "";
-        document.getElementById("rfCM").value = "";
-        document.getElementById("rfFOS").value = "";
-      }
-      
-      var currentZH = document.getElementById("rfZH").value;
-      if (changedLevel === 'avp' || changedLevel === 'zh') {
-        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH))), 11), "All DZH", false);
-        document.getElementById("rfSH").value = "";
-        document.getElementById("rfCM").value = "";
-        document.getElementById("rfFOS").value = "";
-      }
-
-      var currentDZH = document.getElementById("rfDZH").value;
-      if (changedLevel === 'avp' || changedLevel === 'zh' || changedLevel === 'dzh') {
-        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH)) && (!currentDZH || sameName(r[11], currentDZH))), 10), "All SH", false);
-        document.getElementById("rfCM").value = "";
-        document.getElementById("rfFOS").value = "";
-      }
-
-      var currentSH = document.getElementById("rfSH").value;
-      if (changedLevel === 'avp' || changedLevel === 'zh' || changedLevel === 'dzh' || changedLevel === 'sh') {
-        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH)) && (!currentDZH || sameName(r[11], currentDZH)) && (!currentSH || sameName(r[10], currentSH))), 9), "All CM", false);
-        document.getElementById("rfFOS").value = "";
-      }
-
-      var currentCM = document.getElementById("rfCM").value;
-      if (changedLevel === 'avp' || changedLevel === 'zh' || changedLevel === 'dzh' || changedLevel === 'sh' || changedLevel === 'cm') {
-        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(r => (!c || sameName(r[16], c)) && (!avp || sameName(r[19], avp)) && (!currentZH || sameName(r[12], currentZH)) && (!currentDZH || sameName(r[11], currentDZH)) && (!currentSH || sameName(r[10], currentSH)) && (!currentCM || sameName(r[9], currentCM))), 6), "All FOS", false);
-      }
-
-      renderRawModalData();
-    }
-
-    function populateRawModalDropdowns() {
-      var data = getPureDataRows();
-      fillSelect(document.getElementById("rfCycle"), uniqueValues(data, 16), "All Cycle BKT", false);
-      fillSelect(document.getElementById("rfAVP"), uniqueValues(data, 19), "All AVP", false);
-      fillSelect(document.getElementById("rfZH"), uniqueValues(data, 12), "All ZH", false);
-      fillSelect(document.getElementById("rfDZH"), uniqueValues(data, 11), "All DZH", false);
-      fillSelect(document.getElementById("rfSH"), uniqueValues(data, 10), "All SH", false);
-      fillSelect(document.getElementById("rfCM"), uniqueValues(data, 9), "All CM", false);
-      fillSelect(document.getElementById("rfFOS"), uniqueValues(data, 6), "All FOS", false);
-      fillSelect(document.getElementById("rfPaid"), uniqueValues(data, 14), "All Paid Status", false);
-      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, 20), "All Final Disposition", false);
-    }
-
     function renderRawModalData() {
       var rows = getFilteredRawRows();
       var countLabel = document.getElementById("rawModalCount");
@@ -1000,19 +1010,19 @@
       for (var i = 0; i < limit; i++) {
         var r = rows[i];
         html += "<tr>" +
-          "<td>" + (r[0] !== undefined ? r[0] : "") + "</td>" + 
-          "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" + 
-          "<td>" + (r[2] !== undefined ? r[2] : "") + "</td>" + 
-          "<td>" + (r[16] !== undefined ? r[16] : "") + "</td>" + 
-          "<td>" + (r[4] !== undefined ? r[4] : "") + "</td>" + 
-          "<td>" + (r[6] !== undefined ? r[6] : "") + "</td>" + 
-          "<td>" + (r[9] !== undefined ? r[9] : "") + "</td>" + 
-          "<td>" + (r[10] !== undefined ? r[10] : "") + "</td>" + 
-          "<td>" + (r[11] !== undefined ? r[11] : "") + "</td>" + 
-          "<td>" + (r[12] !== undefined ? r[12] : "") + "</td>" + 
-          "<td>" + (r[14] !== undefined ? r[14] : "") + "</td>" + 
-          "<td>" + (r[20] !== undefined ? r[20] : "") + "</td>" + 
-          "<td>" + (r[21] !== undefined ? r[21] : "") + "</td>" + 
+          "<td>" + (r[0] !== undefined ? r[0] : "") + "</td>" +
+          "<td>₹" + formatTableAmount(r[1] || 0) + "</td>" +
+          "<td>" + (r[2] !== undefined ? r[2] : "") + "</td>" +
+          "<td>" + (r[16] !== undefined ? r[16] : "") + "</td>" +
+          "<td>" + (r[4] !== undefined ? r[4] : "") + "</td>" +
+          "<td>" + (r[6] !== undefined ? r[6] : "") + "</td>" +
+          "<td>" + (r[9] !== undefined ? r[9] : "") + "</td>" +
+          "<td>" + (r[10] !== undefined ? r[10] : "") + "</td>" +
+          "<td>" + (r[11] !== undefined ? r[11] : "") + "</td>" +
+          "<td>" + (r[12] !== undefined ? r[12] : "") + "</td>" +
+          "<td>" + (r[14] !== undefined ? r[14] : "") + "</td>" +
+          "<td>" + (r[20] !== undefined ? r[20] : "") + "</td>" +
+          "<td>" + (r[21] !== undefined ? r[21] : "") + "</td>" +
         "</tr>";
       }
       body.innerHTML = html;
