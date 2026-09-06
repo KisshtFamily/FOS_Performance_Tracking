@@ -80,7 +80,6 @@
     .filter-section { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .search-box { padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; background: #f8fafc; outline: none; flex: 1; min-width: 120px; }
     
-    /* Universal Multi-Select Styles */
     .multi-select { position: relative; flex: 1; min-width: 110px; }
     .multi-select-btn { width: 100%; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--border); background: #f8fafc; color: var(--text-main); font-size: 11px; font-weight: 600; cursor: pointer; text-align: left; outline: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .multi-select-menu { display: none; position: absolute; top: calc(100% + 4px); left: 0; width: 100%; min-width: 170px; max-height: 220px; overflow-y: auto; padding: 6px; border-radius: 8px; background: #ffffff; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.15); z-index: 9999; }
@@ -178,6 +177,16 @@
       box-shadow: 0 2px 4px rgba(22, 163, 74, 0.2);
     }
     .download-excel-btn:hover { background: #15803d; }
+
+    /* MOBILE MODAL 80% ZOOM ONLY */
+    @media (max-width: 768px) {
+      .modal-box {
+        zoom: 0.8;
+        -moz-transform: scale(0.8);
+        -moz-transform-origin: center center;
+        max-height: 95vh;
+      }
+    }
   </style>
 </head>
 <body>
@@ -545,7 +554,6 @@
       buildMultiSelectMenu("cycleMenu", "cycleFilter", uniqueValues(data, C.CYCLE_BKT), "Overall Cycle", "onCycleCheck");
       buildMultiSelectMenu("productMenu", "productFilter", uniqueValues(data, C.PRODUCT), "Overall Product", "onProductCheck");
       
-      // Main Hierarchy Menus
       buildMultiSelectMenu("menuZH", "msZH", uniqueValues(data, C.ZH), "All ZH", "onHierarchyCheck");
       buildMultiSelectMenu("menuDZH", "msDZH", uniqueValues(data, C.DZH), "All DZH", "onHierarchyCheck");
       buildMultiSelectMenu("menuSH", "msSH", uniqueValues(data, C.SH), "All SH", "onHierarchyCheck");
@@ -568,7 +576,6 @@
       handleGenericMultiCheck(cb, isOverall, container, renderAll);
     }
 
-    /* 3rd REQUIREMENT: Cascading Filter Visibility Logic */
     function updateHierarchyVisibility() {
       var hContainer = document.getElementById("hierarchyFilter");
       var msZH = document.getElementById("msZH");
@@ -730,7 +737,6 @@
         filtered.push(r);
       }
 
-      // Fast Aggregation
       var agg = {};
       var yday = new Date(); yday.setDate(yday.getDate() - 1);
       var yY = yday.getFullYear(), yM = yday.getMonth(), yD = yday.getDate();
