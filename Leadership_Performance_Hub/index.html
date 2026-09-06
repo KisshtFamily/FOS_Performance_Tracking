@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Hierarchy Performance Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
@@ -21,35 +21,62 @@
       --border: #e2e8f0;
       --green: #16a34a;
       --red: #dc2626;
+      --black-border: #090d16;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
     
     html, body {
       width: 100%; height: 100%; height: 100dvh;
-      margin: 0; padding: 0; background: #cbd5e1; overflow: hidden;
+      margin: 0; padding: 0;
+      background: radial-gradient(circle at 50% 50%, #0f172a 0%, #020617 100%);
+      overflow: hidden;
     }
-    body { display: flex; justify-content: center; align-items: center; }
+    body { 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      padding: 12px;
+    }
     
+    /* 3D Black Premium Board Wrapper */
     .app-wrapper { 
       width: 100%; max-width: 1400px; height: 95vh; height: 95dvh;
-      background: var(--bg); border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); 
-      overflow: hidden; display: flex; flex-direction: column; position: relative; 
-      zoom: 0.95; -moz-transform: scale(0.95); -moz-transform-origin: center center;
+      background: var(--bg); 
+      border-radius: 20px; 
+      border: 5px solid #0f172a;
+      outline: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 
+        0 0 0 2px #020617,
+        0 25px 60px -15px rgba(0, 0, 0, 0.8),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2); 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+      position: relative; 
+      zoom: 0.95; 
+      -moz-transform: scale(0.95); 
+      -moz-transform-origin: center center;
     }
     
+    /* Mobile View: 90% Scale + Black Premium Outer Shell */
     @media (max-width: 768px) {
-      body { padding: 0 !important; background: var(--bg) !important; }
-      .app-wrapper { 
-        width: 100% !important; max-width: 100% !important; height: 100vh !important; height: 100dvh !important;
-        border-radius: 0 !important; border: none !important; box-shadow: none !important; margin: 0 !important;
-        zoom: 1 !important; -moz-transform: none !important; 
+      body { 
+        padding: 6px !important; 
+        background: #020617 !important; 
       }
-    }
-
-    .mobile-mode {
-      width: 100% !important; max-width: 100% !important; height: 100vh !important; height: 100dvh !important;
-      border-radius: 0 !important; border: none !important; box-shadow: none !important; margin: 0 !important;
-      zoom: 1 !important; -moz-transform: none !important;
+      .app-wrapper { 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        height: 98vh !important; 
+        height: 98dvh !important;
+        border-radius: 14px !important; 
+        border: 4px solid #0f172a !important; 
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.75) !important; 
+        margin: 0 !important; 
+        zoom: 0.90 !important; 
+        -moz-transform: scale(0.90) !important;
+        -moz-transform-origin: top center !important;
+      }
     }
 
     .header-bar { 
@@ -114,10 +141,6 @@
     th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 95 !important; }
     td:first-child { background: #ffffff !important; color: #0f172a; z-index: 35 !important; }
 
-    @media (max-width: 768px) {
-      .table-area { zoom: 0.85; -moz-transform: scale(0.85); -moz-transform-origin: top left; }
-    }
-
     tr.total-row td { background: #eff6ff !important; font-weight: 700; border-top: 2px solid var(--accent); }
     tr.total-row td:first-child { background: #dbeafe !important; }
     .res-badge { background: #dcfce7; color: #15803d; padding: 3px 6px; border-radius: 4px; font-weight: 700; }
@@ -132,13 +155,15 @@
     /* RAW DATA MODAL POPUP */
     .modal-overlay {
       display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 10000;
+      background: rgba(2, 6, 23, 0.75); backdrop-filter: blur(6px); z-index: 10000;
       justify-content: center; align-items: center; padding: 12px;
     }
     .modal-overlay.active { display: flex; }
     .modal-box {
       background: #ffffff; width: 100%; max-width: 1300px; max-height: 90vh;
-      border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      border-radius: 18px; 
+      border: 4px solid #0f172a;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
       display: flex; flex-direction: column; overflow: hidden; animation: modalPop 0.25s ease-out;
     }
     @keyframes modalPop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -178,7 +203,6 @@
     }
     .download-excel-btn:hover { background: #15803d; }
 
-    /* MOBILE MODAL 80% ZOOM ONLY */
     @media (max-width: 768px) {
       .modal-box {
         zoom: 0.8;
@@ -365,13 +389,6 @@
     };
 
     function autoDetectDeviceView() {
-      var wrapper = document.getElementById("appWrapper");
-      if (!wrapper) return;
-      if (window.innerWidth <= 768) {
-        wrapper.classList.add("mobile-mode");
-      } else {
-        wrapper.classList.remove("mobile-mode");
-      }
       updateAllMultiSelectLabels();
     }
 
