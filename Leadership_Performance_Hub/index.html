@@ -6,6 +6,11 @@
   <title>Hierarchy Performance Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- ExcelJS & FileSaver for XLSX Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
   <style>
     :root {
       --primary: #1e3a8a;
@@ -54,21 +59,21 @@
     }
     
     @media (max-width: 768px) {
-      body {
-        padding: 0 !important;
-        background: var(--bg) !important;
+      body { 
+        padding: 0 !important; 
+        background: var(--bg) !important; 
       }
       .app-wrapper { 
         width: 100% !important; 
         max-width: 100% !important; 
         height: 100vh !important; 
-        height: 100dvh !important;
+        height: 100dvh !important; 
         border-radius: 0 !important; 
         border: none !important; 
-        box-shadow: none !important;
-        margin: 0 !important;
-        zoom: 1 !important;
-        -moz-transform: none !important;
+        box-shadow: none !important; 
+        margin: 0 !important; 
+        zoom: 1 !important; 
+        -moz-transform: none !important; 
       }
     }
 
@@ -103,9 +108,20 @@
     
     .view-toggle-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 8px; font-size: 11px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 6px; outline: none; }
     .view-toggle-btn:hover { background: rgba(255,255,255,0.35); }
+    
+    /* Level Navigation Styling */
     .level-nav { background: #ffffff; padding: 8px 12px; border-bottom: 1px solid var(--border); display: flex; gap: 6px; overflow-x: auto; flex-shrink: 0; position: relative; z-index: 250; }
-    .level-btn { padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border); background: #f1f5f9; color: var(--text-sub); font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+    .level-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: #f1f5f9; color: var(--text-sub); font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
     .level-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    
+    /* Responsive Level Labels (Full on Laptop, Short on Mobile) */
+    .label-short { display: none; }
+    .label-full { display: inline; }
+    @media (max-width: 768px) {
+      .label-short { display: inline; }
+      .label-full { display: none; }
+    }
+
     .fixed-search-bar { background: #ffffff; padding: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 200; position: relative; }
     .filter-section { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
     .filter-select, .search-box { padding: 7px 10px; border: 1px solid var(--border); border-radius: 8px; font-size: 11px; background: #f8fafc; outline: none; flex: 1; min-width: 100px; }
@@ -133,15 +149,25 @@
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11px; background: #ffffff; }
     th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); white-space: nowrap; }
     th { background: #dbeafe !important; color: #1e3a8a; font-weight: 700; position: sticky !important; top: 0 !important; z-index: 80 !important; box-shadow: none !important; cursor: pointer; }
+    
+    /* Laptop Default: Freeze First Column */
     th:first-child, td:first-child { text-align: left !important; position: sticky !important; left: 0 !important; font-weight: 600; border-right: 1px solid var(--border) !important; box-shadow: none !important; }
     th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
     td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
 
+    /* Mobile View: Unfreeze First Column on Mobile */
     @media (max-width: 768px) {
       .table-area {
         zoom: 0.85;
         -moz-transform: scale(0.85);
         -moz-transform-origin: top left;
+      }
+      th:first-child, td:first-child {
+        position: static !important;
+        box-shadow: none !important;
+      }
+      .raw-table-wrapper th:first-child, .raw-table-wrapper td:first-child {
+        position: static !important;
       }
     }
 
@@ -283,12 +309,12 @@
       </div>
     </div>
     <div class="level-nav">
-      <button class="level-btn" onclick="changeLevel('AVP',this)">AVP</button>
-      <button class="level-btn active" onclick="changeLevel('ZH',this)">ZH</button>
-      <button class="level-btn" onclick="changeLevel('DZ',this)">DZ</button>
-      <button class="level-btn" onclick="changeLevel('SH',this)">SH</button>
-      <button class="level-btn" onclick="changeLevel('CM',this)">CM</button>
-      <button class="level-btn" onclick="changeLevel('FOS Wise',this)">FOS</button>
+      <button class="level-btn" onclick="changeLevel('AVP',this)"><span class="label-short">AVP</span><span class="label-full">AVP</span></button>
+      <button class="level-btn active" onclick="changeLevel('ZH',this)"><span class="label-short">ZH</span><span class="label-full">Zonal Head</span></button>
+      <button class="level-btn" onclick="changeLevel('DZ',this)"><span class="label-short">DZ</span><span class="label-full">Deputy Zonal</span></button>
+      <button class="level-btn" onclick="changeLevel('SH',this)"><span class="label-short">SH</span><span class="label-full">State Head</span></button>
+      <button class="level-btn" onclick="changeLevel('CM',this)"><span class="label-short">CM</span><span class="label-full">City Manager</span></button>
+      <button class="level-btn" onclick="changeLevel('FOS Wise',this)"><span class="label-short">FOS</span><span class="label-full">FOS</span></button>
     </div>
     <div class="fixed-search-bar">
       <div class="filter-section">
@@ -339,6 +365,7 @@
     </div>
   </div>
 
+  <!-- RAW DATA MODAL POPUP -->
   <div class="modal-overlay" id="rawDataModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -350,10 +377,6 @@
           <div class="raw-filter-group">
             <label class="raw-filter-label">Cycle BKT</label>
             <select class="raw-filter-select" id="rfCycle" onchange="handleCascadingModalChange('cycle')"><option value="">All Cycle BKT</option></select>
-          </div>
-          <div class="raw-filter-group">
-            <label class="raw-filter-label">AVP Name</label>
-            <select class="raw-filter-select" id="rfAVP" onchange="handleCascadingModalChange('avp')"><option value="">All AVP</option></select>
           </div>
           <div class="raw-filter-group">
             <label class="raw-filter-label">ZH Name</label>
@@ -380,8 +403,8 @@
             <select class="raw-filter-select" id="rfPaid" onchange="renderRawModalData()"><option value="">All Paid Status</option></select>
           </div>
           <div class="raw-filter-group">
-            <label class="raw-filter-label">Final Disposition</label>
-            <select class="raw-filter-select" id="rfFinalDisp" onchange="renderRawModalData()"><option value="">All Final Disposition</option></select>
+            <label class="raw-filter-label">Report Disposition</label>
+            <select class="raw-filter-select" id="rfReportDisp" onchange="renderRawModalData()"><option value="">All Report Disposition</option></select>
           </div>
         </div>
 
@@ -422,30 +445,12 @@
     var rawSheetRows = [];
     var rowsPerPage = 15, currentPage = 1, currentLevel = "ZH", currentProducts = ["Overall"], currentCycles = ["Overall"], targetShortfallPct = 92.5, activeSort = { field: "name", direction: "asc" };
 
-    // Exact Zero-based Column Mapping
+    // Column Mapping
     var C = {
-      LOAN: 0,        // Col A (1)
-      POS: 1,         // Col B (2)
-      PRODUCT: 2,     // Col C (3)
-      CYCLE_DATE: 3,  // Col D (4)
-      FOS_SURN: 4,    // Col E (5)
-      EMP_CODE: 5,    // Col F (6)
-      FOS_NAME: 6,    // Col G (7)
-      PAN: 7,         // Col H (8)
-      AGENCY: 8,      // Col I (9)
-      CM: 9,          // Col J (10)
-      SH: 10,         // Col K (11)
-      DZH: 11,        // Col L (12)
-      ZH: 12,         // Col M (13)
-      COLL: 13,       // Col N (14)
-      PAID_STATUS: 14,// Col O (15)
-      PAID_DATE: 15,  // Col P (16)
-      CYCLE_BKT: 16,  // Col Q (17)
-      CYCLE_END: 17,  // Col R (18)
-      UPDATED_DATE: 18,// Col S (19)
-      AVP: 19,        // Col T (20)
-      FINAL_DISP: 20, // Col U (21)
-      REPORT_DISP: 21 // Col V (22)
+      LOAN: 0, POS: 1, PRODUCT: 2, CYCLE_DATE: 3, FOS_SURN: 4, EMP_CODE: 5,
+      FOS_NAME: 6, PAN: 7, AGENCY: 8, CM: 9, SH: 10, DZH: 11, ZH: 12,
+      COLL: 13, PAID_STATUS: 14, PAID_DATE: 15, CYCLE_BKT: 16, CYCLE_END: 17,
+      UPDATED_DATE: 18, AVP: 19, FINAL_DISP: 20, REPORT_DISP: 21
     };
 
     function autoDetectDeviceView() {
@@ -471,7 +476,6 @@
     function updateHeaderTimestamp(resData) {
       var subLabel = document.getElementById("updatedDateTimeLabel");
       if (!subLabel) return;
-      
       var customDate = "";
       if (resData && Array.isArray(resData) && resData.length > 0) {
         for (var idx = 0; idx < Math.min(resData.length, 100); idx++) {
@@ -489,13 +493,9 @@
 
     window.handleManagerData = function(e) {
       var resData = null;
-      if (e && e.status === "success" && Array.isArray(e.data)) {
-        resData = e.data;
-      } else if (Array.isArray(e)) {
-        resData = e;
-      } else if (e && Array.isArray(e.records)) {
-        resData = e.records;
-      }
+      if (e && e.status === "success" && Array.isArray(e.data)) resData = e.data;
+      else if (Array.isArray(e)) resData = e;
+      else if (e && Array.isArray(e.records)) resData = e.records;
       
       if (resData && resData.length > 0) {
         rawSheetRows = resData;
@@ -514,9 +514,7 @@
     function fetchLiveData() {
       fetch(SCRIPT_URL, { method: "GET", mode: "cors" })
         .then(function(res) { return res.json(); })
-        .then(function(data) {
-          window.handleManagerData(data);
-        })
+        .then(function(data) { window.handleManagerData(data); })
         .catch(function() {
           var old = document.getElementById("jsonpScript");
           if (old) old.remove();
@@ -531,12 +529,18 @@
         });
     }
 
+    function closeAllMultiSelects() {
+      var ms = document.querySelectorAll(".multi-select");
+      for (var i = 0; i < ms.length; i++) ms[i].classList.remove("open");
+    }
+
     function handleTargetChange(e) {
       handleSingleCheck(e);
       var t = e.value;
       targetShortfallPct = parseFloat(t) || 92.5;
       var a = document.querySelector("#shortfallTargetFilter .multi-select-btn");
       if (a) a.textContent = "Set TGT: " + targetShortfallPct + "%";
+      closeAllMultiSelects();
       renderAll();
     }
 
@@ -568,6 +572,7 @@
       currentProducts = getCheckedValues("productFilter");
       0 === currentProducts.length && (t && (t.checked = !0), currentProducts = ["Overall"]);
       updateMultiSelectText("productFilter");
+      closeAllMultiSelects();
       renderAll();
     }
 
@@ -591,6 +596,7 @@
       0 === currentCycles.length && (t && (t.checked = !0), currentCycles = ["Overall"]);
       updateMultiSelectText("cycleFilter");
       updateMainHeaderTitle();
+      closeAllMultiSelects();
       renderAll();
     }
 
@@ -599,6 +605,7 @@
       currentCycles = ["Overall"];
       updateMultiSelectText("cycleFilter");
       updateMainHeaderTitle();
+      closeAllMultiSelects();
       renderAll();
     }
 
@@ -616,6 +623,7 @@
       currentProducts = ["Overall"];
       updateMultiSelectText("productFilter");
       updateHierarchyVisibility();
+      closeAllMultiSelects();
       renderAll();
     }
 
@@ -680,6 +688,15 @@
       if ("CM" === currentLevel) return C.CM;
       if ("FOS Wise" === currentLevel) return C.FOS_NAME;
       return C.ZH;
+    }
+
+    function getLevelDisplayName() {
+      if ("AVP" === currentLevel) return "AVP";
+      if ("DZ" === currentLevel) return window.innerWidth <= 768 ? "DZ" : "Deputy Zonal";
+      if ("SH" === currentLevel) return window.innerWidth <= 768 ? "SH" : "State Head";
+      if ("CM" === currentLevel) return window.innerWidth <= 768 ? "CM" : "City Manager";
+      if ("FOS Wise" === currentLevel) return "FOS";
+      return window.innerWidth <= 768 ? "ZH" : "Zonal Head";
     }
 
     function getDisplayName(e) {
@@ -874,9 +891,9 @@
         return t && a;
       }), o = getRemainingDays(k), c = "-", u = "DRP";
       null !== o && (c = formatAmount(s / o), u = "DRP (" + o + "D)");
-      var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
+      var lvlLabel = getLevelDisplayName();
       document.getElementById("kpiBox").innerHTML = 
-        '<div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-title">' + lvlName + ' Count</div><div class="kpi-value">' + formatNumber(t) + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-title">' + lvlLabel + ' Count</div><div class="kpi-value">' + formatNumber(t) + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">📄</div><div class="kpi-title">Total P O/S</div><div class="kpi-value">₹' + formatAmount(a) + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">🔨</div><div class="kpi-title">POS Resolution</div><div class="kpi-value">₹' + formatAmount(n) + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">🎯</div><div class="kpi-title">% Resolution</div><div class="kpi-value green">' + r + '</div></div>' +
@@ -890,8 +907,8 @@
         var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim());
         return t && a;
       }), n = getRemainingDays(a), l = null !== n ? "DRP (" + n + "D)" : "DRP";
-      var lvlName = "FOS Wise" === currentLevel ? "FOS" : currentLevel;
-      document.getElementById("tableHead").innerHTML = '<th id="levelHeaderName" onclick="setColumnSort(\'name\')">'+lvlName+' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y\'day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall('+targetShortfallPct+'%)</th><th onclick="setColumnSort(\'drr\')">'+l+'</th>';
+      var lvlLabel = getLevelDisplayName();
+      document.getElementById("tableHead").innerHTML = '<th id="levelHeaderName" onclick="setColumnSort(\'name\')">'+lvlLabel+' Name</th><th onclick="setColumnSort(\'cases\')">P O/S</th><th onclick="setColumnSort(\'paid\')">POS Res</th><th onclick="setColumnSort(\'paidPercent\')">Resolution %</th><th onclick="setColumnSort(\'visitPending\')">Y\'day POS Res</th><th onclick="setColumnSort(\'shortfall\')">Shortfall('+targetShortfallPct+'%)</th><th onclick="setColumnSort(\'drr\')">'+l+'</th>';
       var r = Math.max(1, Math.ceil(t.length / rowsPerPage));
       currentPage > r && (currentPage = r);
       var s = (currentPage - 1) * rowsPerPage, k = s + rowsPerPage, o = t.slice(s, k), c = "";
@@ -914,24 +931,7 @@
       renderTable();
     }
 
-    function exportCSV() {
-      var e = getFilteredTableData(), t = [[currentLevel, "P O/S", "Resolution", "Resolution %", "Y'day POS Res", "Shortfall (" + targetShortfallPct + "%)", "DRP"]], a = getPureDataRows().filter(function(e) {
-        var t = -1 !== currentProducts.indexOf("Overall") || -1 !== currentProducts.indexOf(String(e[C.PRODUCT] || "").trim()), a = -1 !== currentCycles.indexOf("Overall") || -1 !== currentCycles.indexOf(String(e[C.CYCLE_BKT] || "").trim());
-        return t && a;
-      }), n = getRemainingDays(a);
-      for (var l = 0; l < e.length; l++) {
-        var r = getDisplayName(e[l]), s = e[l].pos, k = e[l].res, o = e[l].ydayRes, c = s > 0 ? (k / s * 100).toFixed(1) : "0.0", u = Math.max(0, targetShortfallPct / 100 * s - k), d = "-";
-        null !== n && (d = Math.round(u / n));
-        t.push([r, s, k, c + "%", o, u, d]);
-      }
-      var i = "data:text/csv;charset=utf-8," + t.map(function(e) { return e.join(","); }).join("\n"), m = encodeURI(i), y = document.createElement("a");
-      y.setAttribute("href", m);
-      y.setAttribute("download", "Performance_Report_" + currentLevel + ".csv");
-      document.body.appendChild(y);
-      y.click();
-    }
-
-    /* POPUP MODAL LOGIC WITH CASCADING HIERARCHY */
+    /* POPUP MODAL LOGIC */
     function openRawDataModal() {
       populateRawModalDropdowns();
       renderRawModalData();
@@ -945,57 +945,46 @@
     function populateRawModalDropdowns() {
       var data = getPureDataRows();
       fillSelect(document.getElementById("rfCycle"), uniqueValues(data, C.CYCLE_BKT), "All Cycle BKT", false);
-      fillSelect(document.getElementById("rfAVP"), uniqueValues(data, C.AVP), "All AVP", false);
       fillSelect(document.getElementById("rfZH"), uniqueValues(data, C.ZH), "All ZH", false);
       fillSelect(document.getElementById("rfDZH"), uniqueValues(data, C.DZH), "All DZH", false);
       fillSelect(document.getElementById("rfSH"), uniqueValues(data, C.SH), "All SH", false);
       fillSelect(document.getElementById("rfCM"), uniqueValues(data, C.CM), "All CM", false);
       fillSelect(document.getElementById("rfFOS"), uniqueValues(data, C.FOS_NAME), "All FOS", false);
       fillSelect(document.getElementById("rfPaid"), uniqueValues(data, C.PAID_STATUS), "All Paid Status", false);
-      fillSelect(document.getElementById("rfFinalDisp"), uniqueValues(data, C.FINAL_DISP), "All Final Disposition", false);
+      fillSelect(document.getElementById("rfReportDisp"), uniqueValues(data, C.REPORT_DISP), "All Report Disposition", false);
     }
 
     function handleCascadingModalChange(lvl) {
       var data = getPureDataRows();
       var c = document.getElementById("rfCycle").value;
-      var avp = document.getElementById("rfAVP").value;
       var zh = document.getElementById("rfZH").value;
       var dzh = document.getElementById("rfDZH").value;
       var sh = document.getElementById("rfSH").value;
       var cm = document.getElementById("rfCM").value;
 
-      if (lvl === 'avp') {
-        fillSelect(document.getElementById("rfZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)); }), C.ZH), "All ZH", false);
-        document.getElementById("rfDZH").value = "";
-        document.getElementById("rfSH").value = "";
-        document.getElementById("rfCM").value = "";
-        document.getElementById("rfFOS").value = "";
-      }
-      
-      var curZH = document.getElementById("rfZH").value;
-      if (lvl === 'avp' || lvl === 'zh') {
-        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)); }), C.DZH), "All DZH", false);
+      if (lvl === 'cycle' || lvl === 'zh') {
+        fillSelect(document.getElementById("rfDZH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!zh || sameName(r[C.ZH], zh)); }), C.DZH), "All DZH", false);
         document.getElementById("rfSH").value = "";
         document.getElementById("rfCM").value = "";
         document.getElementById("rfFOS").value = "";
       }
 
       var curDZH = document.getElementById("rfDZH").value;
-      if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh') {
-        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)) && (!curDZH || sameName(r[C.DZH], curDZH)); }), C.SH), "All SH", false);
+      if (lvl === 'cycle' || lvl === 'zh' || lvl === 'dzh') {
+        fillSelect(document.getElementById("rfSH"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!zh || sameName(r[C.ZH], zh)) && (!curDZH || sameName(r[C.DZH], curDZH)); }), C.SH), "All SH", false);
         document.getElementById("rfCM").value = "";
         document.getElementById("rfFOS").value = "";
       }
 
       var curSH = document.getElementById("rfSH").value;
-      if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh') {
-        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)) && (!curDZH || sameName(r[C.DZH], curDZH)) && (!curSH || sameName(r[C.SH], curSH)); }), C.CM), "All CM", false);
+      if (lvl === 'cycle' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh') {
+        fillSelect(document.getElementById("rfCM"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!zh || sameName(r[C.ZH], zh)) && (!curDZH || sameName(r[C.DZH], curDZH)) && (!curSH || sameName(r[C.SH], curSH)); }), C.CM), "All CM", false);
         document.getElementById("rfFOS").value = "";
       }
 
       var curCM = document.getElementById("rfCM").value;
-      if (lvl === 'avp' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh' || lvl === 'cm') {
-        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!avp || sameName(r[C.AVP], avp)) && (!curZH || sameName(r[C.ZH], curZH)) && (!curDZH || sameName(r[C.DZH], curDZH)) && (!curSH || sameName(r[C.SH], curSH)) && (!curCM || sameName(r[C.CM], curCM)); }), C.FOS_NAME), "All FOS", false);
+      if (lvl === 'cycle' || lvl === 'zh' || lvl === 'dzh' || lvl === 'sh' || lvl === 'cm') {
+        fillSelect(document.getElementById("rfFOS"), uniqueValues(data.filter(function(r){ return (!c || sameName(r[C.CYCLE_BKT], c)) && (!zh || sameName(r[C.ZH], zh)) && (!curDZH || sameName(r[C.DZH], curDZH)) && (!curSH || sameName(r[C.SH], curSH)) && (!curCM || sameName(r[C.CM], curCM)); }), C.FOS_NAME), "All FOS", false);
       }
 
       renderRawModalData();
@@ -1004,27 +993,32 @@
     function getFilteredRawRows() {
       var data = getPureDataRows();
       var c = document.getElementById("rfCycle").value;
-      var avp = document.getElementById("rfAVP").value;
       var zh = document.getElementById("rfZH").value;
       var dzh = document.getElementById("rfDZH").value;
       var sh = document.getElementById("rfSH").value;
       var cm = document.getElementById("rfCM").value;
       var fos = document.getElementById("rfFOS").value;
       var paid = document.getElementById("rfPaid").value;
-      var disp = document.getElementById("rfFinalDisp").value;
+      var reportDisp = document.getElementById("rfReportDisp").value;
 
-      return data.filter(function(r) {
+      var filtered = data.filter(function(r) {
         if (c && !sameName(r[C.CYCLE_BKT], c)) return false;
-        if (avp && !sameName(r[C.AVP], avp)) return false;
         if (zh && !sameName(r[C.ZH], zh)) return false;
         if (dzh && !sameName(r[C.DZH], dzh)) return false;
         if (sh && !sameName(r[C.SH], sh)) return false;
         if (cm && !sameName(r[C.CM], cm)) return false;
         if (fos && !sameName(r[C.FOS_NAME], fos)) return false;
         if (paid && !sameName(r[C.PAID_STATUS], paid)) return false;
-        if (disp && !sameName(r[C.FINAL_DISP], disp)) return false;
+        if (reportDisp && !sameName(r[C.REPORT_DISP], reportDisp)) return false;
         return true;
       });
+
+      // Sort P O/S from High to Low
+      filtered.sort(function(a, b) {
+        return cleanNumber(b[C.POS]) - cleanNumber(a[C.POS]);
+      });
+
+      return filtered;
     }
 
     function renderRawModalData() {
@@ -1063,54 +1057,109 @@
       body.innerHTML = html;
     }
 
-    function downloadRawExcel() {
+    async function downloadRawExcel() {
       var rows = getFilteredRawRows();
       if (rows.length === 0) {
         alert("No records to export.");
         return;
       }
 
-      var csvContent = [
-        ["Loan No", "P O/S", "Product", "Cycle BKT", "FOS SURN", "FOS Name", "City Manager", "State Head Name", "DZH", "Zonal Head Name", "Paid Status", "Final Disposition", "Report Disposition"]
+      var headers = [
+        "Loan No", "P O/S", "Product", "Cycle BKT", "FOS SURN", "FOS Name",
+        "City Manager", "State Head Name", "DZH", "Zonal Head Name",
+        "Paid Status", "Final Disposition", "Report Disposition"
       ];
 
+      var wb = new ExcelJS.Workbook();
+      var ws = wb.addWorksheet("Raw Data", {
+        views: [{ state: 'frozen', ySplit: 1, showGridLines: true }]
+      });
+
+      // 1. Header Styling (Deep Blue, Bold White Text, Middle Center)
+      var headerRow = ws.addRow(headers);
+      headerRow.height = 26;
+      headerRow.eachCell(function(cell) {
+        cell.fill = {
+          type: 'pattern',
+          pattern: 'solid',
+          fgColor: { argb: 'FF1E3A8A' }
+        };
+        cell.font = {
+          name: 'Calibri',
+          size: 11,
+          bold: true,
+          color: { argb: 'FFFFFFFF' }
+        };
+        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        cell.border = {
+          top: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          left: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          bottom: { style: 'thin', color: { argb: 'FF94A3B8' } },
+          right: { style: 'thin', color: { argb: 'FF94A3B8' } }
+        };
+      });
+
+      // 2. Data Rows (High to Low Sorted, Center Aligned, Formatted Borders)
       for (var i = 0; i < rows.length; i++) {
         var r = rows[i];
-        csvContent.push([
-          '"' + (r[C.LOAN] !== undefined && r[C.LOAN] !== null ? r[C.LOAN] : "") + '"',
+        var dataRow = ws.addRow([
+          r[C.LOAN] !== undefined && r[C.LOAN] !== null ? String(r[C.LOAN]) : "",
           cleanNumber(r[C.POS]),
-          '"' + (r[C.PRODUCT] !== undefined && r[C.PRODUCT] !== null ? r[C.PRODUCT] : "") + '"',
-          '"' + (r[C.CYCLE_BKT] !== undefined && r[C.CYCLE_BKT] !== null ? r[C.CYCLE_BKT] : "") + '"',
-          '"' + (r[C.FOS_SURN] !== undefined && r[C.FOS_SURN] !== null ? r[C.FOS_SURN] : "") + '"',
-          '"' + (r[C.FOS_NAME] !== undefined && r[C.FOS_NAME] !== null ? r[C.FOS_NAME] : "") + '"',
-          '"' + (r[C.CM] !== undefined && r[C.CM] !== null ? r[C.CM] : "") + '"',
-          '"' + (r[C.SH] !== undefined && r[C.SH] !== null ? r[C.SH] : "") + '"',
-          '"' + (r[C.DZH] !== undefined && r[C.DZH] !== null ? r[C.DZH] : "") + '"',
-          '"' + (r[C.ZH] !== undefined && r[C.ZH] !== null ? r[C.ZH] : "") + '"',
-          '"' + (r[C.PAID_STATUS] !== undefined && r[C.PAID_STATUS] !== null ? r[C.PAID_STATUS] : "") + '"',
-          '"' + (r[C.FINAL_DISP] !== undefined && r[C.FINAL_DISP] !== null ? r[C.FINAL_DISP] : "") + '"',
-          '"' + (r[C.REPORT_DISP] !== undefined && r[C.REPORT_DISP] !== null ? r[C.REPORT_DISP] : "") + '"'
+          r[C.PRODUCT] !== undefined && r[C.PRODUCT] !== null ? String(r[C.PRODUCT]) : "",
+          r[C.CYCLE_BKT] !== undefined && r[C.CYCLE_BKT] !== null ? String(r[C.CYCLE_BKT]) : "",
+          r[C.FOS_SURN] !== undefined && r[C.FOS_SURN] !== null ? String(r[C.FOS_SURN]) : "",
+          r[C.FOS_NAME] !== undefined && r[C.FOS_NAME] !== null ? String(r[C.FOS_NAME]) : "",
+          r[C.CM] !== undefined && r[C.CM] !== null ? String(r[C.CM]) : "",
+          r[C.SH] !== undefined && r[C.SH] !== null ? String(r[C.SH]) : "",
+          r[C.DZH] !== undefined && r[C.DZH] !== null ? String(r[C.DZH]) : "",
+          r[C.ZH] !== undefined && r[C.ZH] !== null ? String(r[C.ZH]) : "",
+          r[C.PAID_STATUS] !== undefined && r[C.PAID_STATUS] !== null ? String(r[C.PAID_STATUS]) : "",
+          r[C.FINAL_DISP] !== undefined && r[C.FINAL_DISP] !== null ? String(r[C.FINAL_DISP]) : "",
+          r[C.REPORT_DISP] !== undefined && r[C.REPORT_DISP] !== null ? String(r[C.REPORT_DISP]) : ""
         ]);
+
+        dataRow.height = 20;
+        dataRow.eachCell(function(cell, colNum) {
+          cell.font = { name: 'Calibri', size: 10 };
+          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            bottom: { style: 'thin', color: { argb: 'FFE2E8F0' } },
+            right: { style: 'thin', color: { argb: 'FFE2E8F0' } }
+          };
+          if (colNum === 2) {
+            cell.numFmt = '#,##0';
+          }
+        });
       }
 
-      var csvString = "data:text/csv;charset=utf-8,\uFEFF" + csvContent.map(function(e) { return e.join(","); }).join("\n");
-      var encodedUri = encodeURI(csvString);
-      var link = document.createElement("a");
-      link.setAttribute("href", encodedUri);
-      link.setAttribute("download", "Raw_Data_Export_" + Date.now() + ".csv");
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // 3. Auto Adjust Column Widths with Padding
+      ws.columns.forEach(function(col) {
+        var maxLen = 12;
+        col.eachCell({ includeEmpty: true }, function(cell) {
+          var val = cell.value ? cell.value.toString() : '';
+          if (val.length > maxLen) maxLen = val.length;
+        });
+        col.width = Math.min(Math.max(maxLen + 4, 12), 45);
+      });
+
+      var buffer = await wb.xlsx.writeBuffer();
+      var blob = new Blob([buffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+      saveAs(blob, "Raw_Data_Export_" + Date.now() + ".xlsx");
     }
 
     document.addEventListener("click", function(e) {
       if (!e.target.closest(".multi-select")) {
-        var t = document.querySelectorAll(".multi-select");
-        for (var a = 0; a < t.length; a++) t[a].classList.remove("open");
+        closeAllMultiSelects();
       }
     });
 
-    window.addEventListener("resize", autoDetectDeviceView);
+    window.addEventListener("resize", function() {
+      autoDetectDeviceView();
+      renderKPI();
+      renderTable();
+    });
 
     autoDetectDeviceView();
     updateHierarchyVisibility();
