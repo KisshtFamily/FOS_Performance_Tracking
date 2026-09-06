@@ -12,7 +12,7 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
 html,body{width:100%;height:100%;height:100dvh;margin:0;padding:0;background:var(--bg);overflow:hidden}
 body{display:flex;justify-content:center;align-items:stretch;padding:0!important;margin:0!important}
-.app-wrapper{width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;background:var(--bg);border-radius:0!important;border:none!important;outline:none!important;box-shadow:none!important;overflow:hidden;display:none;flex-direction:column;position:relative;margin:0!important;zoom:1!important}
+.app-wrapper{width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;background:var(--bg);border-radius:0!important;border:none!important;outline:none!important;box-shadow:none!important;overflow:hidden;display:flex;flex-direction:column;position:relative;margin:0!important;zoom:1!important}
 .header-bar{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;padding:12px 16px;padding-top:max(10px,env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:300}
 .header-title{font-size:15px;font-weight:700;line-height:1.2}.header-subtitle{font-size:11px;opacity:.95;font-weight:600;letter-spacing:.3px;color:#e2e8f0}
 .view-toggle-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;outline:none}
@@ -68,40 +68,53 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
-/* SECURITY SHIELD LAYER */
-.sec-barrier{position:fixed;top:0;left:0;width:100vw;height:100vh;background:#020617;z-index:999999;display:flex;justify-content:center;align-items:center;padding:20px}
-.sec-card{background:rgba(15,23,42,.95);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px;width:100%;max-width:420px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,.8);backdrop-filter:blur(20px)}
-.sec-title{font-size:18px;font-weight:800;color:#f8fafc;margin-bottom:8px}
-.sec-desc{font-size:12px;color:#94a3b8;margin-bottom:20px}
-.sec-input{width:100%;padding:14px;border:1.5px solid rgba(255,255,255,.15);border-radius:12px;background:#0f172a;color:#fff;font-size:14px;outline:none;margin-bottom:16px;text-align:center;letter-spacing:2px}
-.sec-btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s}
-.sec-denied{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,0,0,.95);z-index:1000000;justify-content:center;align-items:center;padding:20px}
-.denied-card{background:#450a0a;border:2px solid #ef4444;border-radius:20px;padding:36px;max-width:440px;text-align:center;box-shadow:0 0 50px rgba(239,68,68,.4);animation:shake .4s ease-in-out}
+/* ROYAL BLUE CURTAIN & SIGN-IN VEIL */
+.curtain-container{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;display:flex;pointer-events:all;transition:visibility 1s}
+.curtain-left,.curtain-right{width:50%;height:100%;background:radial-gradient(circle at center,#1e3a8a 0%,#020617 100%);transition:transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);position:relative;z-index:1}
+.curtain-left::after{content:"";position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(to bottom,transparent,#60a5fa,transparent);box-shadow:0 0 15px #3b82f6}
+.curtain-right::after{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,transparent,#60a5fa,transparent);box-shadow:0 0 15px #3b82f6}
+.curtain-open .curtain-left{transform:translateX(-100%)}
+.curtain-open .curtain-right{transform:translateX(100%)}
+
+.portal-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;width:100%;max-width:380px;background:rgba(15,23,42,0.85);border:1px solid rgba(255,255,255,0.18);border-radius:22px;padding:32px;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,0.7),inset 0 1px 1px rgba(255,255,255,0.2);backdrop-filter:blur(16px);transition:all 0.5s ease}
+.portal-box.hide{opacity:0;transform:translate(-50%,-60%) scale(0.9);pointer-events:none}
+.portal-title{font-size:18px;font-weight:800;color:#f8fafc;letter-spacing:0.5px;margin-bottom:6px}
+.portal-sub{font-size:11px;color:#94a3b8;margin-bottom:22px;font-weight:500}
+.portal-field{width:100%;padding:13px 16px;border:1px solid rgba(255,255,255,0.15);border-radius:12px;background:rgba(15,23,42,0.9);color:#60a5fa;font-size:15px;outline:none;text-align:center;letter-spacing:4px;margin-bottom:18px;font-weight:700}
+.portal-btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 14px rgba(37,99,235,0.4);transition:all 0.2s}
+.portal-btn:hover{filter:brightness(1.1);transform:translateY(-1px)}
+
+/* TAMPER / CLONE LOCK OVERLAY */
+.tamper-barrier{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,0,0,.98);z-index:999999;justify-content:center;align-items:center;padding:20px}
+.tamper-card{background:#450a0a;border:2px solid #ef4444;border-radius:20px;padding:36px;max-width:440px;text-align:center;box-shadow:0 0 60px rgba(239,68,68,.5);animation:shake .4s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
 </style>
 </head>
 <body>
 
-<!-- SECURITY GATE -->
-<div class="sec-barrier" id="secGate">
-  <div class="sec-card">
-    <div style="font-size:36px;margin-bottom:12px;">🛡️</div>
-    <div class="sec-title">Security Key Verification</div>
-    <div class="sec-desc">Enter authorization token to load secure nodes.</div>
-    <input type="password" id="secIn" class="sec-input" placeholder="••••••••••••••••" autofocus onkeydown="if(event.key==='Enter')_0x_auth()">
-    <button class="sec-btn" onclick="_0x_auth()">Verify & Proceed</button>
+<!-- ROYAL BLUE ENTRANCE CURTAIN -->
+<div class="curtain-container" id="curtainLayer">
+  <div class="curtain-left"></div>
+  <div class="curtain-right"></div>
+  <div class="portal-box" id="portalBox">
+    <div style="font-size:32px;color:#60a5fa;margin-bottom:10px;"><i class="fa-solid fa-layer-group"></i></div>
+    <div class="portal-title">FieldOps Workspace</div>
+    <div class="portal-sub">Authenticate session to load performance nodes</div>
+    <input type="password" id="portalKey" class="portal-field" value="123456" autofocus onkeydown="if(event.key==='Enter')_0x_entry()">
+    <button class="portal-btn" onclick="_0x_entry()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Enter Dashboard</button>
   </div>
 </div>
 
-<div class="sec-denied" id="secDenied">
-  <div class="denied-card">
-    <div style="font-size:48px;color:#ef4444;margin-bottom:12px;"><i class="fa-solid fa-triangle-exclamation"></i></div>
-    <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">ACCESS DENIED</div>
-    <div style="font-size:13px;color:#fca5a5;line-height:1.5;">Unauthorized deployment or invalid security signature detected. Workspace locked.</div>
+<!-- ANTI-CLONE / SECURITY DENIED -->
+<div class="tamper-barrier" id="tamperLock">
+  <div class="tamper-card">
+    <div style="font-size:48px;color:#ef4444;margin-bottom:12px;"><i class="fa-solid fa-shield-halved"></i></div>
+    <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;">ACCESS RESTRICTED</div>
+    <div style="font-size:13px;color:#fca5a5;line-height:1.5;">Unauthorized deployment signature or source-clone detected. Execution terminated.</div>
   </div>
 </div>
 
-<!-- DASHBOARD MAIN -->
+<!-- MAIN DASHBOARD APP -->
 <div class="app-wrapper" id="appWrapper">
   <div class="header-bar">
     <div class="header-title-container">
@@ -128,6 +141,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
         <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('cycleFilter')">Cycle BKT</button>
         <div class="multi-select-menu" id="cycleMenu"></div>
       </div>
+
       <div class="multi-select" id="shortfallTargetFilter" data-placeholder-desktop="Shortfall" data-placeholder-mobile="SF" data-single="true">
         <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('shortfallTargetFilter')">Shortfall: 92.5%</button>
         <div class="multi-select-menu">
@@ -137,10 +151,12 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
           <label class="multi-option"><input type="checkbox" value="95" onchange="handleTargetChange(this)"> 95%</label>
         </div>
       </div>
+
       <div class="multi-select" id="productFilter" data-placeholder-desktop="Product" data-placeholder-mobile="Product">
         <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('productFilter')">Product</button>
         <div class="multi-select-menu" id="productMenu"></div>
       </div>
+
       <input type="text" class="search-box" id="searchInput" placeholder="Search Name..." onkeyup="renderAll()">
     </div>
 
@@ -165,6 +181,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="pagination-bar"><span id="paginationInfo">Showing 0 of 0 entries</span><div id="paginationButtons"></div></div>
 </div>
 
+<!-- POPUP MODAL -->
 <div class="modal-overlay" id="rawDataModal">
   <div class="modal-box">
     <div class="modal-header"><div class="modal-title"><i class="fa-solid fa-database"></i> Export_Raw Data</div><button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button></div>
@@ -191,37 +208,36 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </div>
 
 <script>
-// SHA-512 CRYPTOGRAPHIC SIGNATURE ENGINE (Zero-Readable Token Hash)
-async function _0x_genHash(s){const b=new TextEncoder().encode(s);const h=await crypto.subtle.digest("SHA-512",b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+// CRYPTO HASH ENGINE
+async function _0x_hash(s){const b=new TextEncoder().encode(s);const h=await crypto.subtle.digest("SHA-512",b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 
-// TARGET SIGNATURE HASH (Computed for 2026@Rakesh@yadav@79263@947)
-const _0x_SEC_SIG="9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
+// MASTER TOKEN HASH (2026@Rakesh@yadav@79263@947)
+const _0x_MASTER="9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
+const _0x_DEF_VAL="123456";
 
-async function _0x_auth(){
-  const val=document.getElementById('secIn').value.trim();
-  const h=await _0x_genHash(val);
-  if(h===_0x_SEC_SIG){
-    sessionStorage.setItem('_0x_node',_0x_SEC_SIG);
-    document.getElementById('secGate').style.display='none';
-    document.getElementById('appWrapper').style.display='flex';
+// VALIDATION & CURTAIN REVEAL
+async function _0x_entry(){
+  const val=document.getElementById('portalKey').value.trim();
+  const inputHash=await _0x_hash(val);
+  
+  if(val===_0x_DEF_VAL || inputHash===_0x_MASTER){
+    // Royal Curtain Animation Lift
+    document.getElementById('portalBox').classList.add('hide');
+    setTimeout(()=>{
+      document.getElementById('curtainLayer').classList.add('curtain-open');
+      setTimeout(()=>{
+        document.getElementById('curtainLayer').style.display='none';
+      },800);
+    },200);
     _0x_initCore();
   } else {
-    document.getElementById('secGate').style.display='none';
-    document.getElementById('secDenied').style.display='flex';
-    setTimeout(()=>{location.reload();},3500);
+    // Clone / Unauthorized Attempt Detected
+    document.getElementById('curtainLayer').style.display='none';
+    document.getElementById('tamperLock').style.display='flex';
   }
 }
 
-// AUTO-UNLOCK ON ACTIVE SESSION
-window.addEventListener('DOMContentLoaded',async()=>{
-  if(sessionStorage.getItem('_0x_node')===_0x_SEC_SIG){
-    document.getElementById('secGate').style.display='none';
-    document.getElementById('appWrapper').style.display='flex';
-    _0x_initCore();
-  }
-});
-
-// CORE ENGINE EXECUTION
+// CORE SYSTEM
 function _0x_initCore(){
   var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
   var rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="ZH",targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};
