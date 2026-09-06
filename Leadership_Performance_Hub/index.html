@@ -114,7 +114,7 @@
     .level-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: #f1f5f9; color: var(--text-sub); font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; }
     .level-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
     
-    /* Responsive Level Labels (Full on Laptop, Short on Mobile) */
+    /* Responsive Level Labels */
     .label-short { display: none; }
     .label-full { display: inline; }
     @media (max-width: 768px) {
@@ -150,24 +150,22 @@
     th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); white-space: nowrap; }
     th { background: #dbeafe !important; color: #1e3a8a; font-weight: 700; position: sticky !important; top: 0 !important; z-index: 80 !important; box-shadow: none !important; cursor: pointer; }
     
-    /* Laptop Default: Freeze First Column */
-    th:first-child, td:first-child { text-align: left !important; position: sticky !important; left: 0 !important; font-weight: 600; border-right: 1px solid var(--border) !important; box-shadow: none !important; }
-    th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 90 !important; }
-    td:first-child { background: #ffffff !important; color: #0f172a; z-index: 30 !important; }
+    /* FROZEN FIRST COLUMN (Horizontal Freeze for Name) */
+    th:first-child, td:first-child { 
+      text-align: left !important; 
+      position: sticky !important; 
+      left: 0 !important; 
+      font-weight: 600; 
+      border-right: 2px solid var(--border) !important; 
+    }
+    th:first-child { background: #dbeafe !important; color: #1e3a8a; z-index: 95 !important; }
+    td:first-child { background: #ffffff !important; color: #0f172a; z-index: 35 !important; }
 
-    /* Mobile View: Unfreeze First Column on Mobile */
     @media (max-width: 768px) {
       .table-area {
         zoom: 0.85;
         -moz-transform: scale(0.85);
         -moz-transform-origin: top left;
-      }
-      th:first-child, td:first-child {
-        position: static !important;
-        box-shadow: none !important;
-      }
-      .raw-table-wrapper th:first-child, .raw-table-wrapper td:first-child {
-        position: static !important;
       }
     }
 
@@ -268,9 +266,20 @@
       max-height: 50vh;
       border: 1px solid var(--border);
       border-radius: 8px;
+      position: relative;
     }
-    .raw-table-wrapper table { font-size: 11px; }
-    .raw-table-wrapper th { background: #e2e8f0 !important; color: #0f172a; position: sticky; top: 0; z-index: 10; }
+    .raw-table-wrapper table { font-size: 11px; border-collapse: separate; border-spacing: 0; }
+    
+    /* MODAL POPUP HEADER FREEZE */
+    .raw-table-wrapper th { 
+      background: #e2e8f0 !important; 
+      color: #0f172a; 
+      position: sticky !important; 
+      top: 0 !important; 
+      z-index: 50 !important;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
     .modal-footer {
       padding: 12px 18px;
       background: #ffffff;
@@ -311,7 +320,7 @@
     <div class="level-nav">
       <button class="level-btn" onclick="changeLevel('AVP',this)"><span class="label-short">AVP</span><span class="label-full">AVP</span></button>
       <button class="level-btn active" onclick="changeLevel('ZH',this)"><span class="label-short">ZH</span><span class="label-full">Zonal Head</span></button>
-      <button class="level-btn" onclick="changeLevel('DZ',this)"><span class="label-short">DZ</span><span class="label-full">Deputy Zonal</span></button>
+      <button class="level-btn" onclick="changeLevel('DZ',this)"><span class="label-short">DZH</span><span class="label-full">Deputy Zonal</span></button>
       <button class="level-btn" onclick="changeLevel('SH',this)"><span class="label-short">SH</span><span class="label-full">State Head</span></button>
       <button class="level-btn" onclick="changeLevel('CM',this)"><span class="label-short">CM</span><span class="label-full">City Manager</span></button>
       <button class="level-btn" onclick="changeLevel('FOS Wise',this)"><span class="label-short">FOS</span><span class="label-full">FOS</span></button>
@@ -369,7 +378,7 @@
   <div class="modal-overlay" id="rawDataModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-database"></i> Export Raw Data</div>
+        <div class="modal-title"><i class="fa-solid fa-database"></i> Raw Data Explorer</div>
         <button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
@@ -692,7 +701,7 @@
 
     function getLevelDisplayName() {
       if ("AVP" === currentLevel) return "AVP";
-      if ("DZ" === currentLevel) return window.innerWidth <= 768 ? "DZ" : "Deputy Zonal";
+      if ("DZ" === currentLevel) return window.innerWidth <= 768 ? "DZH" : "Deputy Zonal";
       if ("SH" === currentLevel) return window.innerWidth <= 768 ? "SH" : "State Head";
       if ("CM" === currentLevel) return window.innerWidth <= 768 ? "CM" : "City Manager";
       if ("FOS Wise" === currentLevel) return "FOS";
@@ -1075,9 +1084,9 @@
         views: [{ state: 'frozen', ySplit: 1, showGridLines: true }]
       });
 
-      // 1. Header Styling (Deep Blue, Bold White Text, Middle Center)
+      // 1. Header Styling
       var headerRow = ws.addRow(headers);
-      headerRow.height = 26;
+      headerRow.height = 28;
       headerRow.eachCell(function(cell) {
         cell.fill = {
           type: 'pattern',
@@ -1099,10 +1108,10 @@
         };
       });
 
-      // 2. Data Rows (High to Low Sorted, Center Aligned, Formatted Borders)
+      // 2. Data Rows with Auto Row Height calculation
       for (var i = 0; i < rows.length; i++) {
         var r = rows[i];
-        var dataRow = ws.addRow([
+        var rowValues = [
           r[C.LOAN] !== undefined && r[C.LOAN] !== null ? String(r[C.LOAN]) : "",
           cleanNumber(r[C.POS]),
           r[C.PRODUCT] !== undefined && r[C.PRODUCT] !== null ? String(r[C.PRODUCT]) : "",
@@ -1116,12 +1125,22 @@
           r[C.PAID_STATUS] !== undefined && r[C.PAID_STATUS] !== null ? String(r[C.PAID_STATUS]) : "",
           r[C.FINAL_DISP] !== undefined && r[C.FINAL_DISP] !== null ? String(r[C.FINAL_DISP]) : "",
           r[C.REPORT_DISP] !== undefined && r[C.REPORT_DISP] !== null ? String(r[C.REPORT_DISP]) : ""
-        ]);
+        ];
 
-        dataRow.height = 20;
+        var dataRow = ws.addRow(rowValues);
+        
+        // Dynamic Row Height Calculation for multi-line contents
+        var maxLines = 1;
+        rowValues.forEach(function(val) {
+          var str = String(val || "");
+          var lineCount = str.split(/\r\n|\n|\r/).length;
+          if (lineCount > maxLines) maxLines = lineCount;
+        });
+        dataRow.height = Math.max(20, maxLines * 16);
+
         dataRow.eachCell(function(cell, colNum) {
           cell.font = { name: 'Calibri', size: 10 };
-          cell.alignment = { vertical: 'middle', horizontal: 'center' };
+          cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
           cell.border = {
             top: { style: 'thin', color: { argb: 'FFE2E8F0' } },
             left: { style: 'thin', color: { argb: 'FFE2E8F0' } },
@@ -1134,12 +1153,19 @@
         });
       }
 
-      // 3. Auto Adjust Column Widths with Padding
-      ws.columns.forEach(function(col) {
-        var maxLen = 12;
+      // 3. Precise Auto Column Width Calculation
+      ws.columns.forEach(function(col, idx) {
+        var headerText = headers[idx] || '';
+        var maxLen = headerText.length;
+        
         col.eachCell({ includeEmpty: true }, function(cell) {
-          var val = cell.value ? cell.value.toString() : '';
-          if (val.length > maxLen) maxLen = val.length;
+          if (cell.value !== null && cell.value !== undefined) {
+            var valStr = cell.value.toString();
+            var lines = valStr.split(/\r\n|\n|\r/);
+            lines.forEach(function(l) {
+              if (l.length > maxLen) maxLen = l.length;
+            });
+          }
         });
         col.width = Math.min(Math.max(maxLen + 4, 12), 45);
       });
