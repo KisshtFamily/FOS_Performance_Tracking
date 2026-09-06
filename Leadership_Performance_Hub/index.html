@@ -129,6 +129,58 @@
     .kpi-value.green { color: var(--green); }
     .kpi-value.red { color: var(--red); }
     
+    /* Dynamic RGB Glow & Wave Keyframes */
+    @keyframes rgbGlow {
+      0% { color: #2563eb; text-shadow: 0 0 8px rgba(37, 99, 235, 0.45); }
+      33% { color: #8b5cf6; text-shadow: 0 0 8px rgba(139, 92, 246, 0.45); }
+      66% { color: #ec4899; text-shadow: 0 0 8px rgba(236, 72, 153, 0.45); }
+      100% { color: #10b981; text-shadow: 0 0 8px rgba(16, 185, 129, 0.45); }
+    }
+    
+    @keyframes rgbBadgeAnim {
+      0% {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(245, 158, 11, 0.12));
+        border-color: rgba(239, 68, 68, 0.4);
+        color: #dc2626;
+      }
+      25% {
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(16, 185, 129, 0.12));
+        border-color: rgba(245, 158, 11, 0.4);
+        color: #d97706;
+      }
+      50% {
+        background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(6, 182, 212, 0.12));
+        border-color: rgba(16, 185, 129, 0.4);
+        color: #059669;
+      }
+      75% {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(99, 102, 241, 0.12));
+        border-color: rgba(6, 182, 212, 0.4);
+        color: #0891b2;
+      }
+      100% {
+        background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(239, 68, 68, 0.12));
+        border-color: rgba(99, 102, 241, 0.4);
+        color: #4f46e5;
+      }
+    }
+
+    .rgb-kpi-text {
+      font-size: 14px;
+      font-weight: 800;
+      animation: rgbGlow 3.5s linear infinite alternate;
+    }
+
+    .res-badge { 
+      display: inline-block;
+      padding: 3px 8px; 
+      border-radius: 6px; 
+      font-weight: 800; 
+      border: 1px solid transparent;
+      transition: all 0.3s ease;
+      animation: rgbBadgeAnim 6s linear infinite;
+    }
+
     .table-area { flex: 1; width: 100%; min-width: max-content; }
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 11px; background: #ffffff; }
     th, td { padding: 8px 12px; text-align: right; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); white-space: nowrap; }
@@ -143,7 +195,6 @@
 
     tr.total-row td { background: #eff6ff !important; font-weight: 700; border-top: 2px solid var(--accent); }
     tr.total-row td:first-child { background: #dbeafe !important; }
-    .res-badge { background: #dcfce7; color: #15803d; padding: 3px 6px; border-radius: 4px; font-weight: 700; }
     .drr-pill { padding: 3px 6px; border-radius: 4px; background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; font-weight: 700; }
     .case-value { color: #1d4ed8; font-weight: 700; }
     .paid-value { color: #0f766e; font-weight: 700; }
@@ -242,9 +293,9 @@
           <div class="multi-select-menu" id="cycleMenu"></div>
         </div>
 
-        <!-- Target Filter -->
-        <div class="multi-select" id="shortfallTargetFilter" data-placeholder-desktop="Set TGT" data-placeholder-mobile="Set TGT" data-single="true">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('shortfallTargetFilter')">Set TGT: 92.5%</button>
+        <!-- Target Filter (Updated Placeholder & Label) -->
+        <div class="multi-select" id="shortfallTargetFilter" data-placeholder-desktop="Shortfall" data-placeholder-mobile="SF" data-single="true">
+          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('shortfallTargetFilter')">Shortfall: 92.5%</button>
           <div class="multi-select-menu">
             <label class="multi-option"><input type="checkbox" value="85" onchange="handleTargetChange(this)"> 85%</label>
             <label class="multi-option"><input type="checkbox" value="90" onchange="handleTargetChange(this)"> 90%</label>
@@ -305,7 +356,7 @@
   <div class="modal-overlay" id="rawDataModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-database"></i> Raw Data Explorer</div>
+        <div class="modal-title"><i class="fa-solid fa-database"></i> Export_Raw Data</div>
         <button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
@@ -490,7 +541,9 @@
       var isMobile = window.innerWidth <= 768;
       var placeholder = isMobile ? (el.dataset.placeholderMobile || el.dataset.placeholderDesktop) : (el.dataset.placeholderDesktop || "Select");
 
-      if (vals.length === 0 || vals.indexOf("Overall") !== -1) {
+      if (containerId === "shortfallTargetFilter") {
+        btn.textContent = (isMobile ? "SF: " : "Shortfall: ") + targetShortfallPct + "%";
+      } else if (vals.length === 0 || vals.indexOf("Overall") !== -1) {
         btn.textContent = placeholder;
       } else if (vals.length === 1) {
         btn.textContent = vals[0];
@@ -518,8 +571,7 @@
       handleSingleCheck(e);
       var t = e.value;
       targetShortfallPct = parseFloat(t) || 92.5;
-      var a = document.querySelector("#shortfallTargetFilter .multi-select-btn");
-      if (a) a.textContent = "Set TGT: " + targetShortfallPct + "%";
+      updateMultiSelectText("shortfallTargetFilter");
       closeAllMultiSelects();
       renderAll();
     }
@@ -848,7 +900,7 @@
         '<div class="kpi-card"><div class="kpi-icon">👥</div><div class="kpi-title">' + lvlLabel + ' Count</div><div class="kpi-value">' + formatNumber(tableData.length) + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">📄</div><div class="kpi-title">Total P O/S</div><div class="kpi-value">₹' + formatAmount(totalPos) + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">🔨</div><div class="kpi-title">POS Resolution</div><div class="kpi-value">₹' + formatAmount(totalRes) + '</div></div>' +
-        '<div class="kpi-card"><div class="kpi-icon">🎯</div><div class="kpi-title">% Resolution</div><div class="kpi-value green">' + resPct + '</div></div>' +
+        '<div class="kpi-card"><div class="kpi-icon">🎯</div><div class="kpi-title">% Resolution</div><div class="kpi-value rgb-kpi-text">' + resPct + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">⚠️</div><div class="kpi-title">Shortfall (' + targetShortfallPct + '%)</div><div class="kpi-value red">₹' + formatAmount(shortfall) + '</div></div>' +
         '<div class="kpi-card"><div class="kpi-icon">⏱️</div><div class="kpi-title">' + drrLabel + '</div><div class="kpi-value">₹' + drrVal + '</div></div>';
     }
