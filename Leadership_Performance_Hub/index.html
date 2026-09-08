@@ -83,24 +83,82 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
-/* THEMED ROYAL BLUE ENTRANCE CURTAIN */
-.curtain-container{position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;display:flex;pointer-events:all;transition:visibility .9s}
-.curtain-left,.curtain-right{width:50%;height:100%;background:linear-gradient(135deg,#1e3a8a 0%,#0f172a 100%);transition:transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);position:relative;z-index:1}
-.curtain-left::after{content:"";position:absolute;top:0;right:0;width:3px;height:100%;background:linear-gradient(to bottom,transparent,#38bdf8,transparent);box-shadow:0 0 15px #38bdf8}
-.curtain-right::after{content:"";position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,transparent,#38bdf8,transparent);box-shadow:0 0 15px #38bdf8}
+/* IMAGE-MATCHED MINIMALIST ENTRANCE CURTAIN */
+.curtain-container{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;
+  display:flex;pointer-events:all;transition:visibility .9s;
+  background: radial-gradient(circle at center, #e0f2fe 0%, #f0f9ff 45%, #ffffff 100%);
+}
+.curtain-left,.curtain-right{
+  width:50%;height:100%;
+  background: radial-gradient(circle at center, #e0f2fe 0%, #f0f9ff 45%, #ffffff 100%);
+  transition:transform 0.85s cubic-bezier(0.77, 0, 0.175, 1);
+  position:relative;z-index:1;
+}
 .curtain-open .curtain-left{transform:translateX(-100%)}
 .curtain-open .curtain-right{transform:translateX(100%)}
 
-/* BLUE GLASSMORPHIC SIGN-IN */
-.portal-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;width:100%;max-width:390px;background:linear-gradient(145deg, rgba(30, 58, 138, 0.85), rgba(15, 23, 42, 0.95));border:1.5px solid rgba(96, 165, 250, 0.4);border-radius:24px;padding:34px 28px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(37,99,235,0.3);backdrop-filter:blur(20px);transition:all .5s ease}
-.portal-box.hide{opacity:0;transform:translate(-50%,-60%) scale(0.9);pointer-events:none}
-.portal-icon{width:56px;height:56px;margin:0 auto 14px;background:rgba(37,99,235,0.25);border:1.5px solid rgba(96,165,250,0.5);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#60a5fa;box-shadow:0 0 20px rgba(59,130,246,0.35)}
-.portal-title{font-size:19px;font-weight:800;color:#f8fafc;letter-spacing:0.5px;margin-bottom:6px}
-.portal-sub{font-size:11px;color:#94a3b8;margin-bottom:22px;font-weight:500;line-height:1.4}
-.portal-field{width:100%;padding:13px 16px;border:1.5px solid rgba(96,165,250,0.35);border-radius:12px;background:rgba(15,23,42,0.85);color:#93c5fd;font-size:15px;outline:none;text-align:center;letter-spacing:3px;margin-bottom:18px;font-weight:700;transition:all .2s}
-.portal-field:focus{border-color:#60a5fa;box-shadow:0 0 16px rgba(96,165,250,0.5);background:rgba(15,23,42,0.95)}
-.portal-btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(37,99,235,0.45);transition:all 0.2s}
-.portal-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
+/* IMAGE-STYLE PROMPT FLOATING CARD */
+.portal-box{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;
+  width:92%;max-width:440px;
+  background:#ffffff;
+  border:1.5px solid #e2e8f0;
+  border-radius:28px;
+  padding:32px 26px 26px;
+  text-align:center;
+  box-shadow: 0 20px 45px -10px rgba(37, 99, 235, 0.12), 0 0 1px 1px rgba(0,0,0,0.04);
+  transition:all .45s ease;
+}
+.portal-box.hide{opacity:0;transform:translate(-50%,-60%) scale(0.92);pointer-events:none}
+.portal-title{
+  font-size:22px;font-weight:600;color:#1e293b;
+  letter-spacing:-0.4px;margin-bottom:6px;
+}
+.portal-sub{
+  font-size:12px;color:#64748b;
+  margin-bottom:24px;font-weight:500;
+}
+.portal-field-container{
+  position:relative;width:100%;margin-bottom:20px;
+}
+.portal-field{
+  width:100%;padding:14px 18px;
+  border:1.5px solid #e2e8f0;
+  border-radius:18px;
+  background:#f8fafc;
+  color:#0f172a;
+  font-size:15px;
+  outline:none;
+  text-align:center;
+  letter-spacing:3px;
+  font-weight:700;
+  transition:all .2s ease;
+}
+.portal-field:focus{
+  border-color:#2563eb;
+  background:#ffffff;
+  box-shadow:0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+.portal-field::placeholder{
+  color:#94a3b8;
+  letter-spacing:1px;
+  font-weight:500;
+}
+.portal-btn{
+  width:100%;padding:13px;
+  border:none;border-radius:18px;
+  background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color:#fff;font-size:14px;font-weight:600;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  box-shadow:0 6px 18px rgba(37, 99, 235, 0.28);
+  transition:all 0.2s ease;
+}
+.portal-btn:hover{
+  filter:brightness(1.08);
+  transform:translateY(-1px);
+  box-shadow:0 8px 22px rgba(37, 99, 235, 0.35);
+}
 
 /* TAMPER / CLONE LOCK OVERLAY */
 .tamper-barrier{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,0,0,.98);z-index:999999;justify-content:center;align-items:center;padding:20px}
@@ -110,16 +168,17 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </head>
 <body>
 
-<!-- THEMED ENTRANCE CURTAIN -->
+<!-- IMAGE THEMED CLEAN ENTRANCE CURTAIN -->
 <div class="curtain-container" id="curtainLayer">
   <div class="curtain-left"></div>
   <div class="curtain-right"></div>
   <div class="portal-box" id="portalBox">
-    <div class="portal-icon"><i class="fa-solid fa-layer-group"></i></div>
-    <div class="portal-title">Performance Matrix</div>
-    <div class="portal-sub">Authenticate session to load workspace</div>
-    <input type="password" id="portalKey" class="portal-field" placeholder="Pass-key" autofocus onkeydown="if(event.key==='Enter')_0x_entry()">
-    <button class="portal-btn" onclick="_0x_entry()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button>
+    <div class="portal-title">The mic is yours, Team</div>
+    <div class="portal-sub">Authenticate session to unlock matrix dashboard</div>
+    <div class="portal-field-container">
+      <input type="password" id="portalKey" class="portal-field" placeholder="Pass-key" autofocus onkeydown="if(event.key==='Enter')_0x_entry()">
+    </div>
+    <button class="portal-btn" onclick="_0x_entry()"><i class="fa-solid fa-arrow-up"></i> Unlock Workspace</button>
   </div>
 </div>
 
@@ -244,18 +303,22 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </div>
 
 <script>
-// CRYPTO ONE-WAY VERIFICATION
-async function _0x_hash(s){const b=new TextEncoder().encode(s);const h=await crypto.subtle.digest("SHA-512",b);return Array.from(new Uint8Array(h)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+// CRYPTO VERIFICATION ENGINE
+async function _0x_hash(s){
+  const b = new TextEncoder().encode(s);
+  const h = await crypto.subtle.digest("SHA-512", b);
+  return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
+}
 
-// MASTER TOKEN SIGNATURE HASH (2026@Rakesh@yadav@79263@947)
-const _0x_MASTER="9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
-const _0x_DEF_VAL="123456";
+// MASTER SIGNATURE HASH (2026@Rakesh@yadav@79263@947)
+const _0x_MASTER = "9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
+const _0x_DEF_VAL = "123456";
+const _0x_RAW_MASTER = "2026@Rakesh@yadav@79263@947";
 
-// GLOBAL VARIABLES
+// GLOBAL STATE
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
 var rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="ZH",targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};
 
-// Zero-Based Index Mapping
 var C={
   LOAN:0, POS:1, PRODUCT:2, CYCLE_DATE:3, FOS_SURN:4, EMP_CODE:5,
   FOS_NAME:6, PAN:7, AGENCY:8, CM:9, SH:10, DZH:11, ZH:12,
@@ -270,7 +333,7 @@ function prefetchDashboardData(){
   fetch(SCRIPT_URL,{method:"GET",mode:"cors"})
     .then(r=>r.json())
     .then(d=>{
-      handleManagerData(d);
+      window.handleManagerData(d);
     })
     .catch(()=>{
       var o=document.getElementById("jsonpScript");if(o)o.remove();
@@ -281,27 +344,35 @@ function prefetchDashboardData(){
 }
 prefetchDashboardData();
 
-// ENTRY AUTHENTICATION & CURTAIN LIFT
+// ENTRY AUTHENTICATION & MINIMALIST CURTAIN LIFT
 async function _0x_entry(){
-  const val=document.getElementById('portalKey').value.trim();
-  const inputHash=await _0x_hash(val);
+  const val = document.getElementById('portalKey').value.trim();
+  let isValid = (val === _0x_DEF_VAL || val === _0x_RAW_MASTER);
   
-  if(val===_0x_DEF_VAL || inputHash===_0x_MASTER){
+  if(!isValid && val.length > 0){
+    try {
+      const inputHash = await _0x_hash(val);
+      if(inputHash === _0x_MASTER) isValid = true;
+    } catch(err){}
+  }
+
+  if(isValid){
     document.getElementById('portalBox').classList.add('hide');
     setTimeout(()=>{
       document.getElementById('curtainLayer').classList.add('curtain-open');
       setTimeout(()=>{
-        document.getElementById('curtainLayer').style.display='none';
-      },850);
-    },150);
-    if(rawSheetRows.length>0){
+        document.getElementById('curtainLayer').style.display = 'none';
+      }, 850);
+    }, 150);
+
+    if(rawSheetRows && rawSheetRows.length > 0){
       initAllDropdowns();
       updateHierarchyVisibility();
       renderAll();
     }
   } else {
-    document.getElementById('curtainLayer').style.display='none';
-    document.getElementById('tamperLock').style.display='flex';
+    document.getElementById('curtainLayer').style.display = 'none';
+    document.getElementById('tamperLock').style.display = 'flex';
   }
 }
 
@@ -335,7 +406,7 @@ window.handleSingleCheck=function(e){var t=e.closest(".multi-select");if(t&&t.da
 window.handleTargetChange=function(e){handleSingleCheck(e);targetShortfallPct=parseFloat(e.value)||92.5;updateMultiSelectText("shortfallTargetFilter");closeAllMultiSelects();renderAll();}
 function getPureDataRows(){if(!rawSheetRows||rawSheetRows.length===0)return [];return (rawSheetRows[0]&&String(rawSheetRows[0][C.LOAN]||"").toLowerCase().indexOf("loan")!==-1)?rawSheetRows.slice(1):rawSheetRows;}
 
-function buildMultiSelectMenu(mId,cId,items,oLabel,cb){var m=document.getElementById(mId);if(!m)return;var h='<label class="multi-option"><input type="checkbox" value="Overall" checked onchange="'+cb+'(this,true)"> '+oLabel+'</label>';for(var i=0;i<items.length;i++){h+='<label class="multi-option"><input type="checkbox" value="''+String(items[i]).replace(/"/g,"&quot;")+'" onchange="'+cb+'(this,false)"> '+items[i]+'</label>';}m.innerHTML=h;updateMultiSelectText(cId);}
+function buildMultiSelectMenu(mId,cId,items,oLabel,cb){var m=document.getElementById(mId);if(!m)return;var h='<label class="multi-option"><input type="checkbox" value="Overall" checked onchange="'+cb+'(this,true)"> '+oLabel+'</label>';for(var i=0;i<items.length;i++){h+='<label class="multi-option"><input type="checkbox" value="'+String(items[i]).replace(/"/g,"&quot;")+'" onchange="'+cb+'(this,false)"> '+items[i]+'</label>';}m.innerHTML=h;updateMultiSelectText(cId);}
 window.handleGenericMultiCheck=function(cb,isO,cId,renderCb){var m=document.getElementById(cId),o=m.querySelector('input[value="Overall"]');if(isO){var a=m.querySelectorAll('input[type="checkbox"]');for(var i=0;i<a.length;i++)if(a[i]!==o)a[i].checked=false;o.checked=true;}else{if(o)o.checked=false;var c=getCheckedValues(cId);if(c.length===0&&o)o.checked=true;}updateMultiSelectText(cId);if(renderCb)renderCb();}
 
 function initAllDropdowns(){var d=getPureDataRows();buildMultiSelectMenu("cycleMenu","cycleFilter",uniqueValues(d,C.CYCLE_BKT),"Overall Cycle","onCycleCheck");buildMultiSelectMenu("productMenu","productFilter",uniqueValues(d,C.PRODUCT),"Overall Product","onProductCheck");buildMultiSelectMenu("menuZH","msZH",uniqueValues(d,C.ZH),"All ZH","onHierarchyCheck");buildMultiSelectMenu("menuDZH","msDZH",uniqueValues(d,C.DZH),"All DZH","onHierarchyCheck");buildMultiSelectMenu("menuSH","msSH",uniqueValues(d,C.SH),"All SH","onHierarchyCheck");buildMultiSelectMenu("menuCM","msCM",uniqueValues(d,C.CM),"All CM","onHierarchyCheck");}
