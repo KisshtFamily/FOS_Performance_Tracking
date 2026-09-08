@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=3.0, user-scalable=yes, viewport-fit=cover">
 <title>Hierarchy Performance Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -56,7 +57,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:center;padding:12px}
 .modal-overlay.active{display:flex}
-.modal-box{background:#fff;width:100%;max-width:1300px;max-height:90vh;border-radius:18px;border:4px solid #0f172a;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden}
+.modal-box{background:#fff;width:100%;max-width:1380px;max-height:90vh;border-radius:18px;border:4px solid #0f172a;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden}
 .modal-header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
 .modal-title{font-size:15px;font-weight:700}
 .modal-close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
@@ -76,13 +77,15 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .curtain-open .curtain-left{transform:translateX(-100%)}
 .curtain-open .curtain-right{transform:translateX(100%)}
 
-.portal-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;width:100%;max-width:380px;background:rgba(15,23,42,0.92);border:1.5px solid rgba(56,189,248,0.3);border-radius:20px;padding:32px;text-align:center;box-shadow:0 25px 50px rgba(0,0,0,0.8),0 0 25px rgba(37,99,235,0.25);backdrop-filter:blur(16px);transition:all .5s ease}
+/* REDESIGNED BLUE GLASSMORPHIC SIGN-IN */
+.portal-box{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;width:100%;max-width:390px;background:linear-gradient(145deg, rgba(30, 58, 138, 0.85), rgba(15, 23, 42, 0.95));border:1.5px solid rgba(96, 165, 250, 0.4);border-radius:24px;padding:34px 28px;text-align:center;box-shadow:0 25px 60px rgba(0,0,0,0.8), 0 0 35px rgba(37,99,235,0.3);backdrop-filter:blur(20px);transition:all .5s ease}
 .portal-box.hide{opacity:0;transform:translate(-50%,-60%) scale(0.9);pointer-events:none}
-.portal-title{font-size:18px;font-weight:800;color:#fff;letter-spacing:0.5px;margin-bottom:6px}
-.portal-sub{font-size:11px;color:#94a3b8;margin-bottom:20px;font-weight:500}
-.portal-field{width:100%;padding:13px 16px;border:1.5px solid rgba(56,189,248,0.3);border-radius:12px;background:rgba(15,23,42,0.95);color:#38bdf8;font-size:15px;outline:none;text-align:center;letter-spacing:4px;margin-bottom:18px;font-weight:700;transition:all .2s}
-.portal-field:focus{border-color:#38bdf8;box-shadow:0 0 12px rgba(56,189,248,0.4)}
-.portal-btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 15px rgba(37,99,235,0.4);transition:all 0.2s}
+.portal-icon{width:56px;height:56px;margin:0 auto 14px;background:rgba(37,99,235,0.25);border:1.5px solid rgba(96,165,250,0.5);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;color:#60a5fa;box-shadow:0 0 20px rgba(59,130,246,0.35)}
+.portal-title{font-size:19px;font-weight:800;color:#f8fafc;letter-spacing:0.5px;margin-bottom:6px}
+.portal-sub{font-size:11px;color:#94a3b8;margin-bottom:22px;font-weight:500;line-height:1.4}
+.portal-field{width:100%;padding:13px 16px;border:1.5px solid rgba(96,165,250,0.35);border-radius:12px;background:rgba(15,23,42,0.85);color:#93c5fd;font-size:15px;outline:none;text-align:center;letter-spacing:3px;margin-bottom:18px;font-weight:700;transition:all .2s}
+.portal-field:focus{border-color:#60a5fa;box-shadow:0 0 16px rgba(96,165,250,0.5);background:rgba(15,23,42,0.95)}
+.portal-btn{width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 20px rgba(37,99,235,0.45);transition:all 0.2s}
 .portal-btn:hover{filter:brightness(1.15);transform:translateY(-1px)}
 
 /* TAMPER / CLONE LOCK OVERLAY */
@@ -98,10 +101,10 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="curtain-left"></div>
   <div class="curtain-right"></div>
   <div class="portal-box" id="portalBox">
-    <div style="font-size:32px;color:#38bdf8;margin-bottom:10px;"><i class="fa-solid fa-chart-line"></i></div>
+    <div class="portal-icon"><i class="fa-solid fa-layer-group"></i></div>
     <div class="portal-title">Performance Matrix</div>
     <div class="portal-sub">Authenticate session to load workspace</div>
-    <input type="password" id="portalKey" class="portal-field" placeholder="Enter Token" autofocus onkeydown="if(event.key==='Enter')_0x_entry()">
+    <input type="password" id="portalKey" class="portal-field" placeholder="Pass-key" autofocus onkeydown="if(event.key==='Enter')_0x_entry()">
     <button class="portal-btn" onclick="_0x_entry()"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button>
   </div>
 </div>
@@ -199,8 +202,26 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
       </div>
       <div class="raw-table-wrapper">
         <table>
-          <thead><tr><th>Loan No</th><th>P O/S</th><th>Product</th><th>Cycle BKT</th><th>FOS SURN</th><th>FOS Name</th><th>City Manager</th><th>State Head Name</th><th>DZH</th><th>Zonal Head Name</th><th>Paid Status</th><th>Final Disposition</th><th>Report Disposition</th></tr></thead>
-          <tbody id="rawModalTableBody"><tr><td colspan="13" style="text-align:center;padding:15px;color:var(--ts);">Loading raw records...</td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Loan No</th>
+              <th>Customer Name</th>
+              <th>EMI Pending Amt</th>
+              <th>P O/S</th>
+              <th>Product</th>
+              <th>Cycle BKT</th>
+              <th>FOS SURN</th>
+              <th>FOS Name</th>
+              <th>City Manager</th>
+              <th>State Head Name</th>
+              <th>DZH</th>
+              <th>Zonal Head Name</th>
+              <th>Paid Status</th>
+              <th>Final Disposition</th>
+              <th>Report Disposition</th>
+            </tr>
+          </thead>
+          <tbody id="rawModalTableBody"><tr><td colspan="15" style="text-align:center;padding:15px;color:var(--ts);">Loading raw records...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -216,19 +237,26 @@ async function _0x_hash(s){const b=new TextEncoder().encode(s);const h=await cry
 const _0x_MASTER="9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
 const _0x_DEF_VAL="123456";
 
-// GLOBAL PRE-LOAD VARIABLES
+// GLOBAL VARIABLES
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
 var rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="ZH",targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};
-var C={LOAN:0,POS:1,PRODUCT:2,CYCLE_DATE:3,FOS_SURN:4,EMP_CODE:5,FOS_NAME:6,PAN:7,AGENCY:8,CM:9,SH:10,DZH:11,ZH:12,COLL:13,PAID_STATUS:14,PAID_DATE:15,CYCLE_BKT:16,CYCLE_END:17,UPDATED_DATE:18,AVP:19,FINAL_DISP:20,REPORT_DISP:21};
-var isDataPreloaded=false;
 
-// BACKGROUND DATA PRE-LOAD (Starts Immediately on Load)
+// Complete Zero-Based Column Index Mapping
+var C={
+  LOAN:0, POS:1, PRODUCT:2, CYCLE_DATE:3, FOS_SURN:4, EMP_CODE:5,
+  FOS_NAME:6, PAN:7, AGENCY:8, CM:9, SH:10, DZH:11, ZH:12,
+  COLL:13, PAID_STATUS:14, PAID_DATE:15, CYCLE_BKT:16, CYCLE_END:17,
+  UPDATED_DATE:18, AVP:19, FINAL_DISP:20, REPORT_DISP:21,
+  CUST_NAME:22,   // Col 23 (W)
+  EMI_PENDING:23  // Col 24 (X)
+};
+
+// BACKGROUND PRE-LOAD (Immediately Starts Fetching)
 function prefetchDashboardData(){
   fetch(SCRIPT_URL,{method:"GET",mode:"cors"})
     .then(r=>r.json())
     .then(d=>{
       handleManagerData(d);
-      isDataPreloaded=true;
     })
     .catch(()=>{
       var o=document.getElementById("jsonpScript");if(o)o.remove();
@@ -239,7 +267,7 @@ function prefetchDashboardData(){
 }
 prefetchDashboardData();
 
-// ENTRY LOGIC WITH ROYAL BLUE CURTAIN OPEN
+// ENTRY AUTHENTICATION & CURTAIN LIFT
 async function _0x_entry(){
   const val=document.getElementById('portalKey').value.trim();
   const inputHash=await _0x_hash(val);
@@ -315,8 +343,36 @@ function getDisplayName(e){var i=getLevelIndex();return (e&&e[i]!==undefined&&e[
 function nameKey(e){return String(e||"").trim().replace(/\s+/g," ").toLowerCase();}
 function uniqueValues(d,idx){var m={};for(var i=0;i<d.length;i++){var v=d[i][idx];if(v!==undefined&&v!==null&&String(v).trim()!==""){var k=nameKey(v);if(k)m[k]=String(v).trim();}}var o=[];for(var k in m)o.push(m[k]);return o.sort((a,b)=>String(a).localeCompare(String(b)));}
 function parseDate(e){if(!e)return null;var t=String(e).trim(),a=new Date(t);if(!isNaN(a.getTime()))return a;var n=t.split(/[-/]/);return n.length===3?(n[0].length===4?new Date(n[0],n[1]-1,n[2]):new Date(n[2],n[1]-1,n[0])):null;}
-function isBKTX(){var c=getCheckedValues("cycleFilter");return (c.indexOf("Overall")===-1&&c.length>0)?c.some(x=>String(x||"").toUpperCase().indexOf("BKT-X")!==-1):false;}
-function getRemDays(d){if(!isBKTX())return null;var ld=null;for(var i=0;i<d.length;i++){var n=String(d[i][C.CYCLE_END]||"").trim();if(n){var l=parseDate(n);if(l&&(!ld||l>ld))ld=l;}}if(!ld)return 1;var r=new Date();r.setHours(0,0,0,0);ld.setHours(0,0,0,0);var diff=Math.ceil((ld.getTime()-r.getTime())/864e5)+1;return diff>0?diff:1;}
+
+/* RESTORED & ENHANCED DRP LOGIC */
+function isBKTX(){
+  var c=getCheckedValues("cycleFilter");
+  if(c.indexOf("Overall")!==-1 || c.length===0) return false;
+  return c.some(function(x){ return String(x||"").toUpperCase().indexOf("BKT-X")!==-1; });
+}
+
+function getRemDays(d){
+  if(!isBKTX()) return null;
+  var selCycles = getCheckedValues("cycleFilter");
+  var targetData = d.filter(function(r){
+    return selCycles.indexOf(String(r[C.CYCLE_BKT]||"").trim()) !== -1;
+  });
+  if(targetData.length === 0) targetData = d;
+  
+  var latestDate = null;
+  for(var i=0; i<targetData.length; i++){
+    var n = String(targetData[i][C.CYCLE_END] || "").trim();
+    if(n){
+      var l = parseDate(n);
+      if(l && (!latestDate || l > latestDate)) latestDate = l;
+    }
+  }
+  if(!latestDate) return 1;
+  var r = new Date(); r.setHours(0,0,0,0);
+  latestDate.setHours(0,0,0,0);
+  var diff = Math.ceil((latestDate.getTime() - r.getTime()) / 864e5) + 1;
+  return diff > 0 ? diff : 1;
+}
 
 function getFilteredTableData(){
   var s=document.getElementById("searchInput")?document.getElementById("searchInput").value.toLowerCase().trim():"",d=getPureDataRows();
@@ -398,24 +454,64 @@ function getFilteredRawRows(){
 function renderRawModalData(){
   var rows=getFilteredRawRows(),c=document.getElementById("rawModalCount");if(c)c.textContent="Total Records: "+fmtNum(rows.length);
   var b=document.getElementById("rawModalTableBody");if(!b)return;
-  if(rows.length===0){b.innerHTML='<tr><td colspan="13" style="text-align:center;padding:20px;color:red;">No records found.</td></tr>';return;}
+  if(rows.length===0){b.innerHTML='<tr><td colspan="15" style="text-align:center;padding:20px;color:red;">No records found.</td></tr>';return;}
   var h="",lim=Math.min(rows.length,100);
   for(var i=0;i<lim;i++){
     var r=rows[i];
-    h+="<tr><td>"+(r[C.LOAN]||"")+"</td><td>₹"+fmtAmt(r[C.POS]||0)+"</td><td>"+(r[C.PRODUCT]||"")+"</td><td>"+(r[C.CYCLE_BKT]||"")+"</td><td>"+(r[C.FOS_SURN]||"")+"</td><td>"+(r[C.FOS_NAME]||"")+"</td><td>"+(r[C.CM]||"")+"</td><td>"+(r[C.SH]||"")+"</td><td>"+(r[C.DZH]||"")+"</td><td>"+(r[C.ZH]||"")+"</td><td>"+(r[C.PAID_STATUS]||"")+"</td><td>"+(r[C.FINAL_DISP]||"")+"</td><td>"+(r[C.REPORT_DISP]||"")+"</td></tr>";
+    h+="<tr>" +
+      "<td>"+(r[C.LOAN]||"")+"</td>" +
+      "<td style='text-align:left;'>"+(r[C.CUST_NAME]||"-")+"</td>" +
+      "<td>₹"+fmtAmt(r[C.EMI_PENDING]||0)+"</td>" +
+      "<td>₹"+fmtAmt(r[C.POS]||0)+"</td>" +
+      "<td>"+(r[C.PRODUCT]||"")+"</td>" +
+      "<td>"+(r[C.CYCLE_BKT]||"")+"</td>" +
+      "<td>"+(r[C.FOS_SURN]||"")+"</td>" +
+      "<td>"+(r[C.FOS_NAME]||"")+"</td>" +
+      "<td>"+(r[C.CM]||"")+"</td>" +
+      "<td>"+(r[C.SH]||"")+"</td>" +
+      "<td>"+(r[C.DZH]||"")+"</td>" +
+      "<td>"+(r[C.ZH]||"")+"</td>" +
+      "<td>"+(r[C.PAID_STATUS]||"")+"</td>" +
+      "<td>"+(r[C.FINAL_DISP]||"")+"</td>" +
+      "<td>"+(r[C.REPORT_DISP]||"")+"</td>" +
+    "</tr>";
   }
   b.innerHTML=h;
 }
 
 window.downloadRawExcel=async function(){
   var rows=getFilteredRawRows();if(rows.length===0){alert("No records to export.");return;}
-  var headers=["Loan No","P O/S","Product","Cycle BKT","FOS SURN","FOS Name","City Manager","State Head Name","DZH","Zonal Head Name","Paid Status","Final Disposition","Report Disposition"];
+  var headers=[
+    "Loan No","Customer Name","EMI Pending Amount","P O/S","Product","Cycle BKT",
+    "FOS SURN","FOS Name","City Manager","State Head Name","DZH","Zonal Head Name",
+    "Paid Status","Final Disposition","Report Disposition"
+  ];
   var wb=new ExcelJS.Workbook(),ws=wb.addWorksheet("Raw Data",{views:[{state:'frozen',ySplit:1,showGridLines:true}]});
   var hr=ws.addRow(headers);hr.height=28;
   hr.eachCell(c=>{c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1E3A8A'}};c.font={name:'Calibri',size:11,bold:true,color:{argb:'FFFFFFFF'}};c.alignment={vertical:'middle',horizontal:'center'};});
   for(var i=0;i<rows.length;i++){
-    var r=rows[i],rv=[r[C.LOAN]!==undefined&&r[C.LOAN]!==null?String(r[C.LOAN]):"",cleanNum(r[C.POS]),r[C.PRODUCT]||"",r[C.CYCLE_BKT]||"",r[C.FOS_SURN]||"",r[C.FOS_NAME]||"",r[C.CM]||"",r[C.SH]||"",r[C.DZH]||"",r[C.ZH]||"",r[C.PAID_STATUS]||"",r[C.FINAL_DISP]||"",r[C.REPORT_DISP]||""];
-    var dr=ws.addRow(rv);dr.height=20;dr.eachCell((c,cn)=>{c.font={name:'Calibri',size:10};c.alignment={vertical:'middle',horizontal:'center'};if(cn===2)c.numFmt='#,##0';});
+    var r=rows[i],rv=[
+      r[C.LOAN]!==undefined&&r[C.LOAN]!==null?String(r[C.LOAN]):"",
+      r[C.CUST_NAME]!==undefined&&r[C.CUST_NAME]!==null?String(r[C.CUST_NAME]):"-",
+      cleanNum(r[C.EMI_PENDING]),
+      cleanNum(r[C.POS]),
+      r[C.PRODUCT]||"",
+      r[C.CYCLE_BKT]||"",
+      r[C.FOS_SURN]||"",
+      r[C.FOS_NAME]||"",
+      r[C.CM]||"",
+      r[C.SH]||"",
+      r[C.DZH]||"",
+      r[C.ZH]||"",
+      r[C.PAID_STATUS]||"",
+      r[C.FINAL_DISP]||"",
+      r[C.REPORT_DISP]||""
+    ];
+    var dr=ws.addRow(rv);dr.height=20;dr.eachCell((c,cn)=>{
+      c.font={name:'Calibri',size:10};
+      c.alignment={vertical:'middle',horizontal:(cn===2?'left':'center')};
+      if(cn===3 || cn===4) c.numFmt='#,##0';
+    });
   }
   ws.columns.forEach((col,idx)=>{var m=headers[idx].length;col.eachCell({includeEmpty:true},c=>{if(c.value)m=Math.max(m,c.value.toString().length);});col.width=Math.min(Math.max(m+4,12),45);});
   var buf=await wb.xlsx.writeBuffer();saveAs(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"Raw_Data_Export_"+Date.now()+".xlsx");
