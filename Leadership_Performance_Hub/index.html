@@ -58,7 +58,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .pagination-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 
-/* POPUP MODAL STYLES (SEAMLESS FIXED POSITION & BALANCED TOP GAP) */
+/* POPUP MODAL STYLES (VERTICAL FREEZE ONLY, SMOOTH HORIZONTAL SCROLL) */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:flex-start;padding:16px;overflow:hidden}
 .modal-overlay.active{display:flex}
 .modal-box{background:#fff;width:95%;max-width:1380px;height:90vh;height:90dvh;max-height:90dvh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
@@ -70,46 +70,24 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch;background:#fff}
 .raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content;background:#fff}
 
-/* RAW MODAL TABLE HEADER & FIRST COLUMN FREEZE FIX */
+/* TOP HEADER VERTICAL FREEZE ONLY */
 .raw-table-wrapper th{background:#e2e8f0!important;color:#0f172a;position:sticky!important;top:0!important;z-index:60!important;text-align:center!important;padding:9px 12px;font-weight:700;border-bottom:1px solid var(--b);border-right:1px solid var(--b)}
-.raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap;background:#fff}
+.raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap;background:#fff;border-bottom:1px solid var(--b);border-right:1px solid var(--b)}
 
-/* FREEZE COLUMN 1 (LOAN NO) PROPERLY */
+/* HORIZONTAL UNFREEZE ON LOAN NO COLUMN */
+.raw-table-wrapper th:first-child,
 .raw-table-wrapper td:first-child{
-  position: sticky !important;
-  left: 0 !important;
-  background: #ffffff !important;
-  z-index: 40 !important;
-  font-weight: 600;
-  border-right: 2px solid var(--b) !important;
-}
-.raw-table-wrapper th:first-child{
-  position: sticky !important;
-  top: 0 !important;
-  left: 0 !important;
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
-  z-index: 80 !important;
-  border-right: 2px solid var(--b) !important;
+  position: static !important;
+  left: auto !important;
+  border-right: 1px solid var(--b) !important;
 }
 
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
-/* MOBILE SCREEN ADJUSTMENTS (PROPER GAP & FULL FIT) */
 @media(max-width:768px){
-  .modal-overlay{
-    padding: 10px 8px env(safe-area-inset-bottom) 8px !important;
-    align-items: flex-start !important;
-  }
-  .modal-box{
-    width: 100% !important;
-    max-width: 100% !important;
-    height: calc(100dvh - 20px) !important;
-    max-height: calc(100dvh - 20px) !important;
-    border-radius: 14px !important;
-    margin: 0 !important;
-  }
+  .modal-overlay{padding:10px 8px env(safe-area-inset-bottom) 8px !important;align-items:flex-start !important}
+  .modal-box{width:100%!important;max-width:100%!important;height:calc(100dvh - 20px)!important;max-height:calc(100dvh - 20px)!important;border-radius:14px!important;margin:0!important}
   .modal-header{padding:10px 14px!important}
   .modal-title{font-size:13px!important}
   .modal-body{padding:8px!important;gap:6px!important}
@@ -149,54 +127,14 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   transition:all .45s ease;
 }
 .portal-box.hide{opacity:0;transform:translate(-50%,-60%) scale(0.92);pointer-events:none}
-.portal-title{
-  font-size:22px;font-weight:600;color:#1e293b;
-  letter-spacing:-0.4px;margin-bottom:6px;
-}
-.portal-sub{
-  font-size:12px;color:#64748b;
-  margin-bottom:24px;font-weight:500;
-}
-.portal-field-container{
-  position:relative;width:100%;margin-bottom:20px;
-}
-.portal-field{
-  width:100%;padding:14px 18px;
-  border:1.5px solid #e2e8f0;
-  border-radius:18px;
-  background:#f8fafc;
-  color:#0f172a;
-  font-size:15px;
-  outline:none;
-  text-align:center;
-  letter-spacing:3px;
-  font-weight:700;
-  transition:all .2s ease;
-}
-.portal-field:focus{
-  border-color:#2563eb;
-  background:#ffffff;
-  box-shadow:0 0 0 4px rgba(37, 99, 235, 0.12);
-}
-.portal-field::placeholder{
-  color:#94a3b8;
-  letter-spacing:1px;
-  font-weight:500;
-}
-.portal-btn{
-  width:100%;padding:13px;
-  border:none;border-radius:18px;
-  background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-  color:#fff;font-size:14px;font-weight:600;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
-  box-shadow:0 6px 18px rgba(37, 99, 235, 0.28);
-  transition:all 0.2s ease;
-}
-.portal-btn:hover{
-  filter:brightness(1.08);
-  transform:translateY(-1px);
-  box-shadow:0 8px 22px rgba(37, 99, 235, 0.35);
-}
+.portal-title{font-size:22px;font-weight:600;color:#1e293b;letter-spacing:-0.4px;margin-bottom:6px}
+.portal-sub{font-size:12px;color:#64748b;margin-bottom:24px;font-weight:500}
+.portal-field-container{position:relative;width:100%;margin-bottom:20px}
+.portal-field{width:100%;padding:14px 18px;border:1.5px solid #e2e8f0;border-radius:18px;background:#f8fafc;color:#0f172a;font-size:15px;outline:none;text-align:center;letter-spacing:3px;font-weight:700;transition:all .2s ease}
+.portal-field:focus{border-color:#2563eb;background:#ffffff;box-shadow:0 0 0 4px rgba(37, 99, 235, 0.12)}
+.portal-field::placeholder{color:#94a3b8;letter-spacing:1px;font-weight:500}
+.portal-btn{width:100%;padding:13px;border:none;border-radius:18px;background:linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);color:#fff;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 6px 18px rgba(37, 99, 235, 0.28);transition:all 0.2s ease}
+.portal-btn:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 8px 22px rgba(37, 99, 235, 0.35)}
 
 .tamper-barrier{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,0,0,.98);z-index:999999;justify-content:center;align-items:center;padding:20px}
 .tamper-card{background:#450a0a;border:2px solid #ef4444;border-radius:20px;padding:36px;max-width:440px;text-align:center;box-shadow:0 0 60px rgba(239,68,68,.5);animation:shake .4s ease-in-out}
@@ -376,7 +314,7 @@ window.handleManagerData = function(e){
     rawSheetRows = r;
     try { localStorage.setItem("fast_dash_cache", JSON.stringify(e)); } catch(err){}
     updateHeaderTimestamp(getPureDataRows());
-    initAllDropdowns();
+    rebuildAllDynamicFilters();
     updateHierarchyVisibility();
     renderAll();
   } else {
@@ -431,7 +369,7 @@ async function _0x_entry(){
     }, 150);
 
     if(rawSheetRows && rawSheetRows.length > 0){
-      initAllDropdowns();
+      rebuildAllDynamicFilters();
       updateHierarchyVisibility();
       renderAll();
     }
@@ -448,16 +386,92 @@ window.updateMultiSelectText=function(c){var el=document.getElementById(c);if(!e
 window.handleSingleCheck=function(e){var t=e.closest(".multi-select");if(t&&t.dataset.single==="true"&&e.checked){var a=t.querySelectorAll("input[type=checkbox]");for(var i=0;i<a.length;i++)if(a[i]!==e)a[i].checked=false;}}
 window.handleTargetChange=function(e){handleSingleCheck(e);targetShortfallPct=parseFloat(e.value)||92.5;updateMultiSelectText("shortfallTargetFilter");closeAllMultiSelects();renderAll();}
 
-function buildMultiSelectMenu(mId,cId,items,oLabel,cb){var m=document.getElementById(mId);if(!m)return;var h='<label class="multi-option"><input type="checkbox" value="Overall" checked onchange="'+cb+'(this,true)"> '+oLabel+'</label>';for(var i=0;i<items.length;i++){h+='<label class="multi-option"><input type="checkbox" value="'+String(items[i]).replace(/"/g,"&quot;")+'" onchange="'+cb+'(this,false)"> '+items[i]+'</label>';}m.innerHTML=h;updateMultiSelectText(cId);}
-window.handleGenericMultiCheck=function(cb,isO,cId,renderCb){var m=document.getElementById(cId),o=m.querySelector('input[value="Overall"]');if(isO){var a=m.querySelectorAll('input[type="checkbox"]');for(var i=0;i<a.length;i++)if(a[i]!==o)a[i].checked=false;o.checked=true;}else{if(o)o.checked=false;var c=getCheckedValues(cId);if(c.length===0&&o)o.checked=true;}updateMultiSelectText(cId);if(renderCb)renderCb();}
+function buildMultiSelectMenu(mId,cId,items,oLabel,cb){
+  var m=document.getElementById(mId);if(!m)return;
+  var currentSelected = getCheckedValues(cId);
+  var isAll = currentSelected.length === 0 || currentSelected.indexOf("Overall") !== -1;
+  
+  var h='<label class="multi-option"><input type="checkbox" value="Overall" '+(isAll?'checked':'')+' onchange="'+cb+'(this,true)"> '+oLabel+'</label>';
+  for(var i=0;i<items.length;i++){
+    var it = items[i];
+    var isChk = !isAll && currentSelected.indexOf(it) !== -1;
+    h+='<label class="multi-option"><input type="checkbox" value="'+String(it).replace(/"/g,"&quot;")+'" '+(isChk?'checked':'')+' onchange="'+cb+'(this,false)"> '+it+'</label>';
+  }
+  m.innerHTML=h;
+  updateMultiSelectText(cId);
+}
 
-function initAllDropdowns(){var d=getPureDataRows();buildMultiSelectMenu("cycleMenu","cycleFilter",uniqueValues(d,C.CYCLE_BKT),"Overall Cycle","onCycleCheck");buildMultiSelectMenu("productMenu","productFilter",uniqueValues(d,C.PRODUCT),"Overall Product","onProductCheck");buildMultiSelectMenu("menuZH","msZH",uniqueValues(d,C.ZH),"All ZH","onHierarchyCheck");buildMultiSelectMenu("menuDZH","msDZH",uniqueValues(d,C.DZH),"All DZH","onHierarchyCheck");buildMultiSelectMenu("menuSH","msSH",uniqueValues(d,C.SH),"All SH","onHierarchyCheck");buildMultiSelectMenu("menuCM","msCM",uniqueValues(d,C.CM),"All CM","onHierarchyCheck");}
+window.handleGenericMultiCheck=function(cb,isO,cId,renderCb){
+  var m=document.getElementById(cId),o=m.querySelector('input[value="Overall"]');
+  if(isO){
+    var a=m.querySelectorAll('input[type="checkbox"]');
+    for(var i=0;i<a.length;i++)if(a[i]!==o)a[i].checked=false;
+    o.checked=true;
+  }else{
+    if(o)o.checked=false;
+    var c=getCheckedValues(cId);
+    if(c.length===0&&o)o.checked=true;
+  }
+  updateMultiSelectText(cId);
+  if(renderCb)renderCb();
+};
+
+/* SMART BIDIRECTIONAL LINKING ENGINE */
+function getActiveHierarchyFilteredRows(excludeLevel){
+  var d = getPureDataRows();
+  var sZ = excludeLevel === "ZH" ? ["Overall"] : getCheckedValues("msZH");
+  var sD = excludeLevel === "DZH" ? ["Overall"] : getCheckedValues("msDZH");
+  var sS = excludeLevel === "SH" ? ["Overall"] : getCheckedValues("msSH");
+  var sC = excludeLevel === "CM" ? ["Overall"] : getCheckedValues("msCM");
+  
+  return d.filter(function(r){
+    if(sZ.indexOf("Overall")===-1 && sZ.length>0 && sZ.indexOf(String(r[C.ZH]||"").trim())===-1) return false;
+    if(sD.indexOf("Overall")===-1 && sD.length>0 && sD.indexOf(String(r[C.DZH]||"").trim())===-1) return false;
+    if(sS.indexOf("Overall")===-1 && sS.length>0 && sS.indexOf(String(r[C.SH]||"").trim())===-1) return false;
+    if(sC.indexOf("Overall")===-1 && sC.length>0 && sC.indexOf(String(r[C.CM]||"").trim())===-1) return false;
+    return true;
+  });
+}
+
+function rebuildAllDynamicFilters(){
+  var d = getPureDataRows();
+  buildMultiSelectMenu("cycleMenu","cycleFilter",uniqueValues(d,C.CYCLE_BKT),"Overall Cycle","onCycleCheck");
+  buildMultiSelectMenu("productMenu","productFilter",uniqueValues(d,C.PRODUCT),"Overall Product","onProductCheck");
+  rebuildHierarchyDropdowns();
+}
+
+function rebuildHierarchyDropdowns(){
+  var zhRows = getActiveHierarchyFilteredRows("ZH");
+  var dzhRows = getActiveHierarchyFilteredRows("DZH");
+  var shRows = getActiveHierarchyFilteredRows("SH");
+  var cmRows = getActiveHierarchyFilteredRows("CM");
+  
+  buildMultiSelectMenu("menuZH","msZH",uniqueValues(zhRows,C.ZH),"All ZH","onHierarchyCheck");
+  buildMultiSelectMenu("menuDZH","msDZH",uniqueValues(dzhRows,C.DZH),"All DZH","onHierarchyCheck");
+  buildMultiSelectMenu("menuSH","msSH",uniqueValues(shRows,C.SH),"All SH","onHierarchyCheck");
+  buildMultiSelectMenu("menuCM","msCM",uniqueValues(cmRows,C.CM),"All CM","onHierarchyCheck");
+}
 
 window.onCycleCheck=function(cb,isO){handleGenericMultiCheck(cb,isO,"cycleFilter",()=>{updateMainHeaderTitle();renderAll();});};
 window.onProductCheck=function(cb,isO){handleGenericMultiCheck(cb,isO,"productFilter",renderAll);};
-window.onHierarchyCheck=function(cb,isO){handleGenericMultiCheck(cb,isO,cb.closest('.multi-select').id,renderAll);};
+window.onHierarchyCheck=function(cb,isO){
+  handleGenericMultiCheck(cb,isO,cb.closest('.multi-select').id,()=>{
+    rebuildHierarchyDropdowns();
+    renderAll();
+  });
+};
 
-function updateHierarchyVisibility(){var h=document.getElementById("hierarchyFilter"),z=document.getElementById("msZH"),d=document.getElementById("msDZH"),s=document.getElementById("msSH"),c=document.getElementById("msCM");if(!h)return;h.classList.add("show");z.style.display="none";d.style.display="none";s.style.display="none";c.style.display="none";if(currentLevel==="DZ"){z.style.display="block";}else if(currentLevel==="SH"){z.style.display="block";d.style.display="block";}else if(currentLevel==="CM"){z.style.display="block";d.style.display="block";s.style.display="block";}else if(currentLevel==="FOS Wise"){z.style.display="block";d.style.display="block";s.style.display="block";c.style.display="block";}else{h.classList.remove("show");}}
+function updateHierarchyVisibility(){
+  var h=document.getElementById("hierarchyFilter"),z=document.getElementById("msZH"),d=document.getElementById("msDZH"),s=document.getElementById("msSH"),c=document.getElementById("msCM");
+  if(!h)return;
+  h.classList.add("show");
+  z.style.display="none";d.style.display="none";s.style.display="none";c.style.display="none";
+  if(currentLevel==="DZ"){z.style.display="block";}
+  else if(currentLevel==="SH"){z.style.display="block";d.style.display="block";}
+  else if(currentLevel==="CM"){z.style.display="block";d.style.display="block";s.style.display="block";}
+  else if(currentLevel==="FOS Wise"){z.style.display="block";d.style.display="block";s.style.display="block";c.style.display="block";}
+  else{h.classList.remove("show");}
+}
 
 window.changeLevel=function(lvl,b){currentLevel=lvl;var btns=document.querySelectorAll(".level-nav .level-btn");for(var i=0;i<btns.length;i++)btns[i].classList.remove("active");b.classList.add("active");updateHierarchyVisibility();renderAll();}
 
@@ -548,10 +562,10 @@ function getFilteredTableData(){
     var r=d[i];
     if(sP.indexOf("Overall")===-1&&sP.length>0&&sP.indexOf(String(r[C.PRODUCT]||"").trim())===-1)continue;
     if(sC.indexOf("Overall")===-1&&sC.length>0&&sC.indexOf(String(r[C.CYCLE_BKT]||"").trim())===-1)continue;
-    if((currentLevel==="DZ"||currentLevel==="SH"||currentLevel==="CM"||currentLevel==="FOS Wise")&&sZ.indexOf("Overall")===-1&&sZ.length>0&&sZ.indexOf(String(r[C.ZH]||"").trim())===-1)continue;
-    if((currentLevel==="SH"||currentLevel==="CM"||currentLevel==="FOS Wise")&&sD.indexOf("Overall")===-1&&sD.length>0&&sD.indexOf(String(r[C.DZH]||"").trim())===-1)continue;
-    if((currentLevel==="CM"||currentLevel==="FOS Wise")&&sS.indexOf("Overall")===-1&&sS.length>0&&sS.indexOf(String(r[C.SH]||"").trim())===-1)continue;
-    if(currentLevel==="FOS Wise"&&sCM.indexOf("Overall")===-1&&sCM.length>0&&sCM.indexOf(String(r[C.CM]||"").trim())===-1)continue;
+    if(sZ.indexOf("Overall")===-1&&sZ.length>0&&sZ.indexOf(String(r[C.ZH]||"").trim())===-1)continue;
+    if(sD.indexOf("Overall")===-1&&sD.length>0&&sD.indexOf(String(r[C.DZH]||"").trim())===-1)continue;
+    if(sS.indexOf("Overall")===-1&&sS.length>0&&sS.indexOf(String(r[C.SH]||"").trim())===-1)continue;
+    if(sCM.indexOf("Overall")===-1&&sCM.length>0&&sCM.indexOf(String(r[C.CM]||"").trim())===-1)continue;
     if(s&&r.join(" ").toLowerCase().indexOf(s)===-1)continue;
     f.push(r);
   }
@@ -614,11 +628,54 @@ function renderTable(){
 }
 
 window.goToPage=function(p){currentPage=p;renderTable();}
-window.openRawDataModal=function(){populateRawModalDropdowns();renderRawModalData();document.getElementById("rawDataModal").classList.add("active");}
+
+/* OPEN MODAL WITH DASHBOARD PRE-FILTERS LINKED */
+window.openRawDataModal=function(){
+  populateRawModalDropdowns();
+  syncDashboardFiltersToModal();
+  renderRawModalData();
+  document.getElementById("rawDataModal").classList.add("active");
+};
 window.closeRawDataModal=function(){document.getElementById("rawDataModal").classList.remove("active");}
 
-function populateRawModalDropdowns(){var d=getPureDataRows();buildMultiSelectMenu("menuRfCycle","rfCycle",uniqueValues(d,C.CYCLE_BKT),"All Cycle BKT","onModalFilterCheck");buildMultiSelectMenu("menuRfZH","rfZH",uniqueValues(d,C.ZH),"All Zonal Head","onModalFilterCheck");buildMultiSelectMenu("menuRfDZH","rfDZH",uniqueValues(d,C.DZH),"All Deputy Zonal","onModalFilterCheck");buildMultiSelectMenu("menuRfSH","rfSH",uniqueValues(d,C.SH),"All State Head","onModalFilterCheck");buildMultiSelectMenu("menuRfCM","rfCM",uniqueValues(d,C.CM),"All City Manager","onModalFilterCheck");buildMultiSelectMenu("menuRfFOS","rfFOS",uniqueValues(d,C.FOS_NAME),"All FOS","onModalFilterCheck");buildMultiSelectMenu("menuRfPaid","rfPaid",uniqueValues(d,C.PAID_STATUS),"All Paid Status","onModalFilterCheck");buildMultiSelectMenu("menuRfReportDisp","rfReportDisp",uniqueValues(d,C.REPORT_DISP),"All Report Disp","onModalFilterCheck");}
-window.onModalFilterCheck=function(cb,isO){handleGenericMultiCheck(cb,isO,cb.closest('.multi-select').id,renderRawModalData);};
+function populateRawModalDropdowns(){
+  var d=getPureDataRows();
+  buildMultiSelectMenu("menuRfCycle","rfCycle",uniqueValues(d,C.CYCLE_BKT),"All Cycle BKT","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfZH","rfZH",uniqueValues(d,C.ZH),"All Zonal Head","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfDZH","rfDZH",uniqueValues(d,C.DZH),"All Deputy Zonal","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfSH","rfSH",uniqueValues(d,C.SH),"All State Head","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfCM","rfCM",uniqueValues(d,C.CM),"All City Manager","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfFOS","rfFOS",uniqueValues(d,C.FOS_NAME),"All FOS","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfPaid","rfPaid",uniqueValues(d,C.PAID_STATUS),"All Paid Status","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfReportDisp","rfReportDisp",uniqueValues(d,C.REPORT_DISP),"All Report Disp","onModalFilterCheck");
+}
+
+function syncDashboardFiltersToModal(){
+  function sync(fromId, toId){
+    var v = getCheckedValues(fromId);
+    var menu = document.getElementById(toId);
+    if(!menu) return;
+    var checks = menu.querySelectorAll('input[type="checkbox"]');
+    var isO = (v.indexOf("Overall") !== -1 || v.length === 0);
+    for(var i=0; i<checks.length; i++){
+      if(isO){
+        checks[i].checked = (checks[i].value === "Overall");
+      } else {
+        checks[i].checked = (v.indexOf(checks[i].value) !== -1);
+      }
+    }
+    updateMultiSelectText(toId);
+  }
+  sync("cycleFilter","rfCycle");
+  sync("msZH","rfZH");
+  sync("msDZH","rfDZH");
+  sync("msSH","rfSH");
+  sync("msCM","rfCM");
+}
+
+window.onModalFilterCheck=function(cb,isO){
+  handleGenericMultiCheck(cb,isO,cb.closest('.multi-select').id,renderRawModalData);
+};
 
 function getFilteredRawRows(){
   var d=getPureDataRows(),sC=getCheckedValues("rfCycle"),sZ=getCheckedValues("rfZH"),sD=getCheckedValues("rfDZH"),sS=getCheckedValues("rfSH"),sCM=getCheckedValues("rfCM"),sF=getCheckedValues("rfFOS"),sP=getCheckedValues("rfPaid"),sDP=getCheckedValues("rfReportDisp"),res=[];
