@@ -58,21 +58,21 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .pagination-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 
-/* POPUP MODAL STYLES (CENTERED VIEW) */
+/* POPUP MODAL STYLES (CENTERED VIEW & MOBILE RESPONSIVE) */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:center;padding:16px}
 .modal-overlay.active{display:flex}
 .modal-box{background:#fff;width:95%;max-width:1380px;height:88vh;max-height:88vh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
-.modal-header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center}
-.modal-title{font-size:15px;font-weight:700}
-.modal-close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
+.modal-header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modal-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
+.modal-close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
 .modal-body{padding:14px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:12px}
 .raw-filters-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid var(--b);flex-shrink:0}
-.raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative}
-.raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%}
+.raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch}
+.raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content}
 
 /* MODAL TABLE STYLING */
-.raw-table-wrapper th{background:#e2e8f0!important;color:#0f172a;position:sticky!important;top:0!important;z-index:50!important;text-align:center!important;padding:9px 10px}
-.raw-table-wrapper td{text-align:center!important;padding:8px 10px}
+.raw-table-wrapper th{background:#e2e8f0!important;color:#0f172a;position:sticky!important;top:0!important;z-index:50!important;text-align:center!important;padding:9px 12px;font-weight:700}
+.raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap}
 .raw-table-wrapper th:first-child,
 .raw-table-wrapper td:first-child{
   position: static !important;
@@ -83,7 +83,24 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
-/* IMAGE-MATCHED MINIMALIST ENTRANCE CURTAIN */
+/* MOBILE RESPONSIVENESS OVERRIDES */
+@media(max-width:768px){
+  .modal-overlay{padding:8px!important}
+  .modal-box{width:100%!important;max-width:100%!important;height:92vh!important;height:92dvh!important;max-height:92dvh!important;border-radius:14px!important}
+  .modal-header{padding:10px 14px!important}
+  .modal-title{font-size:13px!important}
+  .modal-body{padding:8px!important;gap:8px!important}
+  .raw-filters-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important;padding:8px!important}
+  .raw-filters-grid .multi-select-btn{font-size:10px!important;padding:6px 8px!important}
+  .raw-table-wrapper table{font-size:10px!important}
+  .raw-table-wrapper th{padding:8px 10px!important;font-size:10.5px!important}
+  .raw-table-wrapper td{padding:7px 10px!important;font-size:10.5px!important}
+  .modal-footer{padding:10px 14px!important}
+  .modal-footer span{font-size:11px!important}
+  .download-excel-btn{padding:7px 12px!important;font-size:11px!important}
+}
+
+/* ENTRANCE CURTAIN */
 .curtain-container{
   position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;
   display:flex;pointer-events:all;transition:visibility .9s;
@@ -98,7 +115,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .curtain-open .curtain-left{transform:translateX(-100%)}
 .curtain-open .curtain-right{transform:translateX(100%)}
 
-/* IMAGE-STYLE PROMPT FLOATING CARD */
 .portal-box{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;
   width:92%;max-width:440px;
@@ -160,7 +176,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   box-shadow:0 8px 22px rgba(37, 99, 235, 0.35);
 }
 
-/* TAMPER / CLONE LOCK OVERLAY */
 .tamper-barrier{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(15,0,0,.98);z-index:999999;justify-content:center;align-items:center;padding:20px}
 .tamper-card{background:#450a0a;border:2px solid #ef4444;border-radius:20px;padding:36px;max-width:440px;text-align:center;box-shadow:0 0 60px rgba(239,68,68,.5);animation:shake .4s ease-in-out}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
@@ -168,7 +183,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </head>
 <body>
 
-<!-- IMAGE THEMED CLEAN ENTRANCE CURTAIN -->
+<!-- ENTRANCE CURTAIN -->
 <div class="curtain-container" id="curtainLayer">
   <div class="curtain-left"></div>
   <div class="curtain-right"></div>
@@ -261,7 +276,10 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 <!-- POPUP MODAL -->
 <div class="modal-overlay" id="rawDataModal">
   <div class="modal-box">
-    <div class="modal-header"><div class="modal-title"><i class="fa-solid fa-database"></i> Export_Raw Data</div><button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="modal-header">
+      <div class="modal-title"><i class="fa-solid fa-database"></i> Export_Raw Data</div>
+      <button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
     <div class="modal-body">
       <div class="raw-filters-grid">
         <div class="multi-select" id="rfCycle" data-placeholder-desktop="All Cycle BKT" data-placeholder-mobile="All Cycle"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCycle')">All Cycle BKT</button><div class="multi-select-menu" id="menuRfCycle"></div></div>
@@ -333,7 +351,7 @@ function getPureDataRows(){if(!rawSheetRows||rawSheetRows.length===0)return [];r
 function updateMainHeaderTitle(){var e=document.getElementById("mainHeaderTitle");if(!e)return;var curCycles=getCheckedValues("cycleFilter");e.textContent=(curCycles.indexOf("Overall")!==-1||curCycles.length===0)?"Performance Matrix":"Performance Matrix ("+curCycles.join(", ")+")";}
 function updateHeaderTimestamp(r){var s=document.getElementById("updatedDateTimeLabel");if(!s)return;var c="";if(r&&Array.isArray(r)&&r.length>0){for(var i=0;i<Math.min(r.length,100);i++){if(r[i]&&r[i][C.UPDATED_DATE]){var v=String(r[i][C.UPDATED_DATE]).trim();if(v&&v!=="undefined"&&v!=="null"&&v.toUpperCase()!=="UPDATED DATE"){c=v;break;}}}}s.textContent=c?c:"-- | --";}
 
-// DATA HANDLER DECLARED BEFORE CALLING FETCH
+// DATA HANDLER
 window.handleManagerData = function(e){
   var r = null;
   if(e && e.status === "success" && Array.isArray(e.data)) r = e.data;
@@ -354,7 +372,7 @@ window.handleManagerData = function(e){
   }
 };
 
-// RELIABLE FETCH WITH JSONP FALLBACK
+// FETCH DATA
 function prefetchDashboardData(){
   fetch(SCRIPT_URL, {method:"GET", redirect:"follow"})
     .then(r => r.json())
@@ -432,7 +450,57 @@ function getLevelDisplayName(){if("AVP"===currentLevel)return "AVP";if("DZ"===cu
 function getDisplayName(e){var i=getLevelIndex();return (e&&e[i]!==undefined&&e[i]!==null&&String(e[i]).trim()!=="")?String(e[i]).trim():"Other";}
 function nameKey(e){return String(e||"").trim().replace(/\s+/g," ").toLowerCase();}
 function uniqueValues(d,idx){var m={};for(var i=0;i<d.length;i++){var v=d[i][idx];if(v!==undefined&&v!==null&&String(v).trim()!==""){var k=nameKey(v);if(k)m[k]=String(v).trim();}}var o=[];for(var k in m)o.push(m[k]);return o.sort((a,b)=>String(a).localeCompare(String(b)));}
-function parseDate(e){if(!e)return null;var t=String(e).trim(),a=new Date(t);if(!isNaN(a.getTime()))return a;var n=t.split(/[-/]/);return n.length===3?(n[0].length===4?new Date(n[0],n[1]-1,n[2]):new Date(n[2],n[1]-1,n[0])):null;}
+
+// ADVANCED DATE PARSER (SUPPORTS DD-MMM-YYYY, DD/MM/YYYY, YYYY-MM-DD, TIMESTAMPS)
+const MONTH_MAP = {
+  "jan":0, "feb":1, "mar":2, "apr":3, "may":4, "jun":5,
+  "jul":6, "aug":7, "sep":8, "oct":9, "nov":10, "dec":11
+};
+
+function parseDate(e){
+  if(!e) return null;
+  if(e instanceof Date && !isNaN(e.getTime())) return e;
+  var t = String(e).trim();
+  if(!t) return null;
+  
+  var cleanT = t.split(" ")[0].split("T")[0];
+  
+  // Match DD-MMM-YYYY or DD-MMM-YY (e.g. 08-Sep-2026, 8-Sep-26)
+  var textMonthMatch = cleanT.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,9})[-/ ](\d{2,4})$/);
+  if(textMonthMatch){
+    var day = parseInt(textMonthMatch[1], 10);
+    var monStr = textMonthMatch[2].toLowerCase().substring(0, 3);
+    var yr = parseInt(textMonthMatch[3], 10);
+    if(yr < 100) yr += 2000;
+    if(MONTH_MAP[monStr] !== undefined){
+      return new Date(yr, MONTH_MAP[monStr], day);
+    }
+  }
+  
+  // Standard split by delimiter
+  var n = cleanT.split(/[-/.]/);
+  if(n.length === 3){
+    var p0 = parseInt(n[0], 10), p1 = parseInt(n[1], 10), p2 = parseInt(n[2], 10);
+    if(n[0].length === 4) { // YYYY-MM-DD
+      return new Date(p0, p1 - 1, p2);
+    } else if(n[2].length === 4 || n[2].length === 2) { // DD-MM-YYYY
+      var year = n[2].length === 2 ? 2000 + p2 : p2;
+      return new Date(year, p1 - 1, p0);
+    }
+  }
+  
+  var a = new Date(t);
+  if(!isNaN(a.getTime())) return a;
+  return null;
+}
+
+function formatDateISO(d){
+  if(!d || isNaN(d.getTime())) return "";
+  var yr = d.getFullYear();
+  var mo = String(d.getMonth() + 1).padStart(2, '0');
+  var da = String(d.getDate()).padStart(2, '0');
+  return yr + "-" + mo + "-" + da;
+}
 
 /* DRP EXACT DATE REMAINING CALCULATION */
 function isBKTX(){
@@ -479,16 +547,37 @@ function getFilteredTableData(){
     if(s&&r.join(" ").toLowerCase().indexOf(s)===-1)continue;
     f.push(r);
   }
-  var agg={},yd=new Date();yd.setDate(yd.getDate()-1);
-  var yY=yd.getFullYear(),yM=yd.getMonth(),yD=yd.getDate();
+  
+  // YESTERDAY DATE (IN YYYY-MM-DD FORMAT)
+  var yd = new Date();
+  yd.setDate(yd.getDate() - 1);
+  var yesterdayStr = formatDateISO(yd);
+
+  var agg={};
   for(var j=0;j<f.length;j++){
     var row=f[j],dn=getDisplayName(row),k=nameKey(dn);if(!k)continue;
-    var pos=cleanNum(row[C.POS]),coll=cleanNum(row[C.COLL]),pst=String(row[C.PAID_STATUS]||"").trim().toUpperCase(),res=(pst==="PAID"||pst==="1")?pos:0,pdt=String(row[C.PAID_DATE]||"").trim(),yres=0;
-    if(res>0&&pdt){var pd=parseDate(pdt);if(pd&&pd.getFullYear()===yY&&pd.getMonth()===yM&&pd.getDate()===yD)yres=pos;}
-    if(!agg[k]){agg[k]={row:row.slice(0),pos:pos,res:res,coll:coll,ydayRes:yres};}else{agg[k].pos+=pos;agg[k].res+=res;agg[k].coll+=coll;agg[k].ydayRes+=yres;}
+    var pos=cleanNum(row[C.POS]),coll=cleanNum(row[C.COLL]),pst=String(row[C.PAID_STATUS]||"").trim().toUpperCase();
+    var isPaid = (pst==="PAID" || pst==="1" || pst==="YES");
+    var res=isPaid?pos:0, pdt=String(row[C.PAID_DATE]||"").trim(), yres=0;
+    
+    if(isPaid && pdt){
+      var pd = parseDate(pdt);
+      if(pd && formatDateISO(pd) === yesterdayStr){
+        yres = pos;
+      }
+    }
+    
+    if(!agg[k]){
+      agg[k]={row:row.slice(0),pos:pos,res:res,coll:coll,ydayRes:yres};
+    }else{
+      agg[k].pos+=pos;
+      agg[k].res+=res;
+      agg[k].coll+=coll;
+      agg[k].ydayRes+=yres;
+    }
   }
   var resList=[];for(var key in agg){var it=agg[key].row;it.pos=agg[key].pos;it.res=agg[key].res;it.coll=agg[key].coll;it.ydayRes=agg[key].ydayRes;resList.push(it);}
-  resList.sort((a,b)=>{var n=activeSort.direction==="asc"?1:-1;if(activeSort.field==="name")return getDisplayName(a).localeCompare(getDisplayName(b))*n;var fld=activeSort.field==="cases"?"pos":activeSort.field==="paid"?"res":activeSort.field==="visitPending"?"coll":"pos";return ((a[fld]||0)-(b[fld]||0))*n;});
+  resList.sort((a,b)=>{var n=activeSort.direction==="asc"?1:-1;if(activeSort.field==="name")return getDisplayName(a).localeCompare(getDisplayName(b))*n;var fld=activeSort.field==="cases"?"pos":activeSort.field==="paid"?"res":activeSort.field==="visitPending"?"ydayRes":"pos";return ((a[fld]||0)-(b[fld]||0))*n;});
   return resList;
 }
 
