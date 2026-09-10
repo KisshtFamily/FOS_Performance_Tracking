@@ -400,7 +400,7 @@ function dismissSimpleLoader(){
   if(overlay) overlay.classList.remove("active");
 }
 
-/* HIGH-SPEED DATA HANDLER */
+/* HIGH-SPEED DATA INGESTION */
 window.handleManagerData = function(e){
   var r = null;
   if(e && e.status === "success" && Array.isArray(e.data)) r = e.data;
@@ -410,10 +410,6 @@ window.handleManagerData = function(e){
   if(r && r.length > 0){
     rawSheetRows = r;
     isDataLoaded = true;
-    
-    setTimeout(() => {
-      try { sessionStorage.setItem("fast_dash_cache_v4", JSON.stringify(e)); } catch(err){}
-    }, 50);
 
     updateHeaderTimestamp(getPureDataRows());
     
@@ -428,16 +424,8 @@ window.handleManagerData = function(e){
   }
 };
 
-/* MULTI-TIER PREFETCH */
+/* SCRIPT DATA FETCH ENGINE */
 function prefetchDashboardData(){
-  try {
-    var cached = sessionStorage.getItem("fast_dash_cache_v4");
-    if(cached){
-      var parsed = JSON.parse(cached);
-      window.handleManagerData(parsed);
-    }
-  } catch(e){}
-
   var s = document.createElement("script");
   s.id = "jsonpScriptDynamic";
   s.src = SCRIPT_URL + (SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "callback=handleManagerData&_=" + Date.now();
@@ -635,7 +623,7 @@ const MONTH_MAP = {
   "jul":6, "aug":7, "sep":8, "oct":9, "nov":10, "dec":11
 };
 
-// SMART DUAL-FORMAT DATE PARSER (Auto-detects MM-DD-YYYY, DD-MMM-YY, YYYY-MM-DD)
+// RELIABLE SMART DATE PARSER (MM-DD-YYYY & DD-MMM-YY)
 function parseDate(e){
   if(!e) return null;
   if(e instanceof Date && !isNaN(e.getTime())) return e;
@@ -644,7 +632,6 @@ function parseDate(e){
 
   var cleanT = t.split(" ")[0].split("T")[0];
 
-  // DD-MMM-YY Format
   var textMonthMatch = cleanT.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,9})[-/ ](\d{2,4})$/);
   if(textMonthMatch){
     var day = parseInt(textMonthMatch[1], 10);
@@ -654,7 +641,6 @@ function parseDate(e){
     if(MONTH_MAP[monStr] !== undefined) return new Date(yr, MONTH_MAP[monStr], day);
   }
 
-  // Numeric Formats (MM-DD-YYYY, DD-MM-YYYY, YYYY-MM-DD)
   var n = cleanT.split(/[-/.]/);
   if(n.length === 3){
     var p0 = parseInt(n[0], 10), p1 = parseInt(n[1], 10), p2 = parseInt(n[2], 10);
@@ -667,7 +653,6 @@ function parseDate(e){
     var month = p0 - 1;
     var day = p1;
 
-    // Auto-swap fallback if day is in first position
     if(p0 > 12 && p1 <= 12){
       month = p1 - 1;
       day = p0;
@@ -689,7 +674,7 @@ function formatDateISO(d){
   return yr + "-" + mo + "-" + da;
 }
 
-// BULLETPROOF DRP REMAINING DAYS
+// DRP ENGINE
 function getRemDays(d){
   if(!d || d.length === 0) return 1;
   var selCycles = getCheckedValues("cycleFilter");
