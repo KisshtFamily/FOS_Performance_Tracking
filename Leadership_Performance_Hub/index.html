@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.3, maximum-scale=3.0, user-scalable=yes">
+<link rel="icon" href="data:,">
 <title>Hierarchy Performance Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -47,7 +48,6 @@ body{display:flex;justify-content:center;align-items:stretch;padding:0!important
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;background:#fff}
 th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--b);border-right:1px solid var(--b);white-space:nowrap}
 
-/* MAIN SUMMARY TABLE COLUMN 1 FREEZE */
 .table-area th{background:#dbeafe!important;color:#1e3a8a;font-weight:700;position:sticky!important;top:0!important;z-index:80!important;cursor:pointer}
 .table-area th:first-child,.table-area td:first-child{text-align:left!important;position:sticky!important;left:0!important;font-weight:600;border-right:2px solid var(--b)!important}
 .table-area th:first-child{background:#dbeafe!important;color:#1e3a8a;z-index:95!important}
@@ -58,7 +58,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .pagination-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 
-/* POPUP MODAL STYLES (CENTERED VIEW & MOBILE RESPONSIVE) */
+/* POPUP MODAL STYLES (MOBILE RESPONSIVE) */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:center;padding:16px}
 .modal-overlay.active{display:flex}
 .modal-box{background:#fff;width:95%;max-width:1380px;height:88vh;max-height:88vh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
@@ -70,7 +70,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch}
 .raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content}
 
-/* MODAL TABLE STYLING */
 .raw-table-wrapper th{background:#e2e8f0!important;color:#0f172a;position:sticky!important;top:0!important;z-index:50!important;text-align:center!important;padding:9px 12px;font-weight:700}
 .raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap}
 .raw-table-wrapper th:first-child,
@@ -83,7 +82,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
-/* MOBILE RESPONSIVENESS OVERRIDES */
 @media(max-width:768px){
   .modal-overlay{padding:8px!important}
   .modal-box{width:100%!important;max-width:100%!important;height:92vh!important;height:92dvh!important;max-height:92dvh!important;border-radius:14px!important}
@@ -100,7 +98,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   .download-excel-btn{padding:7px 12px!important;font-size:11px!important}
 }
 
-/* ENTRANCE CURTAIN */
 .curtain-container{
   position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;
   display:flex;pointer-events:all;transition:visibility .9s;
@@ -183,7 +180,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </head>
 <body>
 
-<!-- ENTRANCE CURTAIN -->
 <div class="curtain-container" id="curtainLayer">
   <div class="curtain-left"></div>
   <div class="curtain-right"></div>
@@ -197,7 +193,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   </div>
 </div>
 
-<!-- ANTI-CLONE ACCESS DENIED -->
 <div class="tamper-barrier" id="tamperLock">
   <div class="tamper-card">
     <div style="font-size:48px;color:#ef4444;margin-bottom:12px;"><i class="fa-solid fa-shield-halved"></i></div>
@@ -206,7 +201,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   </div>
 </div>
 
-<!-- DASHBOARD APP -->
 <div class="app-wrapper" id="appWrapper">
   <div class="header-bar">
     <div class="header-title-container">
@@ -328,12 +322,10 @@ async function _0x_hash(s){
   return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
 }
 
-// MASTER SIGNATURE HASH (2026@Rakesh@yadav@79263@947)
 const _0x_MASTER = "9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
 const _0x_DEF_VAL = "123456";
 const _0x_RAW_MASTER = "2026@Rakesh@yadav@79263@947";
 
-// GLOBAL STATE
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
 var rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="ZH",targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};
 
@@ -351,7 +343,7 @@ function getPureDataRows(){if(!rawSheetRows||rawSheetRows.length===0)return [];r
 function updateMainHeaderTitle(){var e=document.getElementById("mainHeaderTitle");if(!e)return;var curCycles=getCheckedValues("cycleFilter");e.textContent=(curCycles.indexOf("Overall")!==-1||curCycles.length===0)?"Performance Matrix":"Performance Matrix ("+curCycles.join(", ")+")";}
 function updateHeaderTimestamp(r){var s=document.getElementById("updatedDateTimeLabel");if(!s)return;var c="";if(r&&Array.isArray(r)&&r.length>0){for(var i=0;i<Math.min(r.length,100);i++){if(r[i]&&r[i][C.UPDATED_DATE]){var v=String(r[i][C.UPDATED_DATE]).trim();if(v&&v!=="undefined"&&v!=="null"&&v.toUpperCase()!=="UPDATED DATE"){c=v;break;}}}}s.textContent=c?c:"-- | --";}
 
-// DATA HANDLER
+// FAST DATA PROCESSOR
 window.handleManagerData = function(e){
   var r = null;
   if(e && e.status === "success" && Array.isArray(e.data)) r = e.data;
@@ -360,21 +352,28 @@ window.handleManagerData = function(e){
   
   if(r && r.length > 0){
     rawSheetRows = r;
+    try { localStorage.setItem("fast_dash_cache", JSON.stringify(e)); } catch(err){}
     updateHeaderTimestamp(getPureDataRows());
     initAllDropdowns();
     updateHierarchyVisibility();
     renderAll();
   } else {
     var st = document.getElementById("kpiStatusVal");
-    if(st) st.textContent = "No Data";
-    var tb = document.getElementById("tableDataBody");
-    if(tb) tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:red;">No records found.</td></tr>';
+    if(st && (!rawSheetRows || rawSheetRows.length===0)) st.textContent = "No Data";
   }
 };
 
-// FETCH DATA
+// 1-SECOND INSTANT FETCH ENGINE
 function prefetchDashboardData(){
-  fetch(SCRIPT_URL, {method:"GET", redirect:"follow"})
+  try {
+    var localCached = localStorage.getItem("fast_dash_cache");
+    if(localCached){
+      var parsed = JSON.parse(localCached);
+      window.handleManagerData(parsed);
+    }
+  } catch(e){}
+
+  fetch(SCRIPT_URL, {method:"GET", redirect:"follow", cache:"no-cache"})
     .then(r => r.json())
     .then(d => {
       window.handleManagerData(d);
@@ -390,7 +389,6 @@ function prefetchDashboardData(){
 }
 prefetchDashboardData();
 
-// ENTRY AUTHENTICATION & CURTAIN LIFT
 async function _0x_entry(){
   const val = document.getElementById('portalKey').value.trim();
   let isValid = (val === _0x_DEF_VAL || val === _0x_RAW_MASTER);
@@ -451,7 +449,6 @@ function getDisplayName(e){var i=getLevelIndex();return (e&&e[i]!==undefined&&e[
 function nameKey(e){return String(e||"").trim().replace(/\s+/g," ").toLowerCase();}
 function uniqueValues(d,idx){var m={};for(var i=0;i<d.length;i++){var v=d[i][idx];if(v!==undefined&&v!==null&&String(v).trim()!==""){var k=nameKey(v);if(k)m[k]=String(v).trim();}}var o=[];for(var k in m)o.push(m[k]);return o.sort((a,b)=>String(a).localeCompare(String(b)));}
 
-// ADVANCED DATE PARSER (SUPPORTS DD-MMM-YYYY, DD/MM/YYYY, YYYY-MM-DD, TIMESTAMPS)
 const MONTH_MAP = {
   "jan":0, "feb":1, "mar":2, "apr":3, "may":4, "jun":5,
   "jul":6, "aug":7, "sep":8, "oct":9, "nov":10, "dec":11
@@ -462,33 +459,24 @@ function parseDate(e){
   if(e instanceof Date && !isNaN(e.getTime())) return e;
   var t = String(e).trim();
   if(!t) return null;
-  
   var cleanT = t.split(" ")[0].split("T")[0];
-  
-  // Match DD-MMM-YYYY or DD-MMM-YY (e.g. 08-Sep-2026, 8-Sep-26)
   var textMonthMatch = cleanT.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,9})[-/ ](\d{2,4})$/);
   if(textMonthMatch){
     var day = parseInt(textMonthMatch[1], 10);
     var monStr = textMonthMatch[2].toLowerCase().substring(0, 3);
     var yr = parseInt(textMonthMatch[3], 10);
     if(yr < 100) yr += 2000;
-    if(MONTH_MAP[monStr] !== undefined){
-      return new Date(yr, MONTH_MAP[monStr], day);
-    }
+    if(MONTH_MAP[monStr] !== undefined) return new Date(yr, MONTH_MAP[monStr], day);
   }
-  
-  // Standard split by delimiter
   var n = cleanT.split(/[-/.]/);
   if(n.length === 3){
     var p0 = parseInt(n[0], 10), p1 = parseInt(n[1], 10), p2 = parseInt(n[2], 10);
-    if(n[0].length === 4) { // YYYY-MM-DD
-      return new Date(p0, p1 - 1, p2);
-    } else if(n[2].length === 4 || n[2].length === 2) { // DD-MM-YYYY
+    if(n[0].length === 4) return new Date(p0, p1 - 1, p2);
+    else if(n[2].length === 4 || n[2].length === 2){
       var year = n[2].length === 2 ? 2000 + p2 : p2;
       return new Date(year, p1 - 1, p0);
     }
   }
-  
   var a = new Date(t);
   if(!isNaN(a.getTime())) return a;
   return null;
@@ -502,7 +490,6 @@ function formatDateISO(d){
   return yr + "-" + mo + "-" + da;
 }
 
-/* DRP EXACT DATE REMAINING CALCULATION */
 function isBKTX(){
   var c=getCheckedValues("cycleFilter");
   if(c.indexOf("Overall")!==-1 || c.length===0) return false;
@@ -548,7 +535,6 @@ function getFilteredTableData(){
     f.push(r);
   }
   
-  // YESTERDAY DATE (IN YYYY-MM-DD FORMAT)
   var yd = new Date();
   yd.setDate(yd.getDate() - 1);
   var yesterdayStr = formatDateISO(yd);
