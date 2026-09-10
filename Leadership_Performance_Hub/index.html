@@ -14,10 +14,15 @@
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
 html,body{width:100%;height:100%;min-height:100%;margin:0;padding:0;background:var(--bg);touch-action:manipulation}
 body{display:flex;justify-content:center;align-items:stretch;padding:0!important;margin:0!important}
-.app-wrapper{width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;background:var(--bg);border-radius:0!important;border:none!important;outline:none!important;box-shadow:none!important;overflow:hidden;display:flex;flex-direction:column;position:relative;margin:0!important}
+.app-wrapper{width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;background:var(--bg);border-radius:0!important;border:none!important;outline:none!important;box-shadow:none!important;overflow:hidden;display:flex;flex-direction:column;position:relative;margin:0!important;transition:transform 0.2s ease, width 0.2s ease, height 0.2s ease;transform-origin:top left}
 .header-bar{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;padding:12px 16px;padding-top:max(10px,env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:300}
 .header-title{font-size:15px;font-weight:700;line-height:1.2}.header-subtitle{font-size:11px;opacity:.95;font-weight:600;letter-spacing:.3px;color:#e2e8f0}
 .view-toggle-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;outline:none}
+
+/* ZOOM SELECT DROPDOWN */
+.zoom-select-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 8px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;outline:none}
+.zoom-select-btn option{background:#1e3a8a;color:#fff}
+
 .level-nav{background:#fff;padding:8px 12px;border-bottom:1px solid var(--b);display:flex;gap:6px;overflow-x:auto;flex-shrink:0;z-index:250}
 .level-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--b);background:#f1f5f9;color:var(--ts);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
 .level-btn.active{background:var(--a);color:#fff;border-color:var(--a)}
@@ -61,7 +66,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 /* POPUP MODAL STYLES (VERTICAL FREEZE AT TOP, NATURAL HORIZONTAL SCROLL) */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:flex-start;padding:16px;overflow:hidden}
 .modal-overlay.active{display:flex}
-.modal-box{background:#fff;width:95%;max-width:1380px;height:90vh;height:90dvh;max-height:90dvh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
+.modal-box{background:#fff;width:95%;max-width:1380px;height:90vh;height:90dvh;max-height:90dvh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto;transition:transform 0.2s ease, width 0.2s ease, height 0.2s ease;transform-origin:top center}
 .modal-header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .modal-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
 .modal-close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
@@ -182,7 +187,13 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
       <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
       <div class="header-subtitle" id="updatedDateTimeLabel">Loading...</div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
+    <div style="display:flex;align-items:center;gap:6px;">
+      <!-- ZOOM DROPDOWN -->
+      <select class="zoom-select-btn" id="appZoomSelect" onchange="applyAppZoom(this.value)">
+        <option value="1">100%</option>
+        <option value="0.9">90%</option>
+        <option value="0.8">80%</option>
+      </select>
       <button class="view-toggle-btn" onclick="openRawDataModal()"><i class="fa-solid fa-download"></i> Data</button>
     </div>
   </div>
@@ -242,8 +253,9 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="pagination-bar"><span id="paginationInfo">Showing 0 of 0 entries</span><div id="paginationButtons"></div></div>
 </div>
 
+<!-- POPUP MODAL -->
 <div class="modal-overlay" id="rawDataModal">
-  <div class="modal-box">
+  <div class="modal-box" id="rawModalBox">
     <div class="modal-header">
       <div class="modal-title"><i class="fa-solid fa-database"></i> Export_Raw Data</div>
       <button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -289,6 +301,37 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </div>
 
 <script>
+/* DUAL ZOOM APPLICATION FUNCTION (WRAPPER + POPUP MODAL) */
+window.applyAppZoom = function(scaleVal){
+  var app = document.getElementById("appWrapper");
+  var modalBox = document.getElementById("rawModalBox");
+  var s = parseFloat(scaleVal) || 1;
+  
+  if(app){
+    if(s === 1){
+      app.style.transform = "none";
+      app.style.width = "100vw";
+      app.style.height = "100vh";
+    } else {
+      app.style.transform = "scale(" + s + ")";
+      app.style.width = (100 / s) + "vw";
+      app.style.height = (100 / s) + "vh";
+    }
+  }
+
+  if(modalBox){
+    if(s === 1){
+      modalBox.style.transform = "none";
+      modalBox.style.width = "95%";
+      modalBox.style.height = (window.innerWidth <= 768 ? "calc(100dvh - 20px)" : "90vh");
+    } else {
+      modalBox.style.transform = "scale(" + s + ")";
+      modalBox.style.width = (95 / s) + "%";
+      modalBox.style.height = ( (window.innerWidth <= 768 ? 96 : 90) / s ) + "vh";
+    }
+  }
+};
+
 async function _0x_hash(s){
   const b = new TextEncoder().encode(s);
   const h = await crypto.subtle.digest("SHA-512", b);
@@ -430,7 +473,6 @@ window.handleGenericMultiCheck=function(cb,isO,cId,renderCb){
   if(renderCb)renderCb();
 };
 
-/* SMART BIDIRECTIONAL ENGINE FOR MAIN DASHBOARD */
 function autoSelectParentHierarchy(sourceLevel, selectedValues){
   if(!selectedValues || selectedValues.length===0 || selectedValues.indexOf("Overall")!==-1) return;
   var d = getPureDataRows();
@@ -686,10 +728,7 @@ function renderTable(){
 
 window.goToPage=function(p){currentPage=p;renderTable();}
 
-/* =========================================================================
-   POPUP MODAL HIERARCHY ENGINE (ZH > DZH > SH > CM > FOS) + BIDIRECTIONAL
-   ========================================================================= */
-
+/* POPUP MODAL HIERARCHY ENGINE (ZH > DZH > SH > CM > FOS) + BIDIRECTIONAL */
 function getModalActiveHierarchyRows(excludeLevel){
   var d = getPureDataRows();
   var sC = getCheckedValues("rfCycle");
@@ -779,6 +818,10 @@ window.openRawDataModal=function(){
   syncDashboardFiltersToModal();
   rebuildModalHierarchyDropdowns();
   renderRawModalData();
+  
+  var currentScale = document.getElementById("appZoomSelect") ? document.getElementById("appZoomSelect").value : "1";
+  applyAppZoom(currentScale);
+
   document.getElementById("rawDataModal").classList.add("active");
 };
 window.closeRawDataModal=function(){document.getElementById("rawDataModal").classList.remove("active");}
