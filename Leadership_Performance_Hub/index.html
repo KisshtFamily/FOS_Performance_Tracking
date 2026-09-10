@@ -193,10 +193,11 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
       <select class="zoom-select-btn" id="appZoomSelect" onchange="applyAppZoom(this.value)">
-        <option value="1">100%</option>
-        <option value="0.9">90%</option>
+        <option value="0.9" selected>90%</option>
         <option value="0.8">80%</option>
-        <option value="0.75">75%</option>
+        <option value="0.7">70%</option>
+        <option value="0.6">60%</option>
+        <option value="0.5">50%</option>
       </select>
       <button class="view-toggle-btn" onclick="openRawDataModal()"><i class="fa-solid fa-download"></i> Data</button>
     </div>
@@ -257,7 +258,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="pagination-bar" id="paginationArea"><span id="paginationInfo">Showing 0 of 0 entries</span><div id="paginationButtons"></div></div>
 </div>
 
-<!-- POPUP MODAL -->
 <div class="modal-overlay" id="rawDataModal">
   <div class="modal-box" id="rawModalBox">
     <div class="modal-header">
@@ -271,7 +271,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
         <div class="multi-select" id="rfDZH" data-placeholder-desktop="All Deputy Zonal" data-placeholder-mobile="All DZH"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfDZH')">All Deputy Zonal</button><div class="multi-select-menu" id="menuRfDZH"></div></div>
         <div class="multi-select" id="rfSH" data-placeholder-desktop="All State Head" data-placeholder-mobile="All SH"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfSH')">All State Head</button><div class="multi-select-menu" id="menuRfSH"></div></div>
         <div class="multi-select" id="rfCM" data-placeholder-desktop="All City Manager" data-placeholder-mobile="All CM"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCM')">All City Manager</button><div class="multi-select-menu" id="menuRfCM"></div></div>
-        <div class="multi-select" id="rfFOS" data-placeholder-desktop="All扩大FOS" data-placeholder-mobile="All FOS"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfFOS')">All FOS</button><div class="multi-select-menu" id="menuRfFOS"></div></div>
+        <div class="multi-select" id="rfFOS" data-placeholder-desktop="All FOS" data-placeholder-mobile="All FOS"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfFOS')">All FOS</button><div class="multi-select-menu" id="menuRfFOS"></div></div>
         <div class="multi-select" id="rfPaid" data-placeholder-desktop="All Paid Status" data-placeholder-mobile="All Status"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfPaid')">All Paid Status</button><div class="multi-select-menu" id="menuRfPaid"></div></div>
         <div class="multi-select" id="rfReportDisp" data-placeholder-desktop="All Report Disp" data-placeholder-mobile="All Disp"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfReportDisp')">All Report Disp</button><div class="multi-select-menu" id="menuRfReportDisp"></div></div>
       </div>
@@ -309,7 +309,7 @@ window.applyAppZoom = function(scaleVal){
   if(window.innerWidth > 768) {
     scaleVal = "1";
   }
-  var s = parseFloat(scaleVal) || 1;
+  var s = parseFloat(scaleVal) || 0.9;
 
   var elementsToZoom = [
     document.getElementById("levelNavArea"),
@@ -326,21 +326,8 @@ window.applyAppZoom = function(scaleVal){
   });
 };
 
-/* ROBUST MULTI-FALLBACK HASH ENGINE */
-async function _0x_hash(s){
-  if(window.crypto && crypto.subtle){
-    try {
-      const b = new TextEncoder().encode(s);
-      const h = await crypto.subtle.digest("SHA-512", b);
-      return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
-    } catch(err){}
-  }
-  return "";
-}
-
-const _0x_MASTER = "9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
 const _0x_DEF_VAL = "123456";
-const _0x_RAW_MASTER = "2026@Rakesh@yadav@79263@947";
+const _0x_MASTER = "9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
 
 var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
 var rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="ZH",targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};
@@ -403,37 +390,28 @@ function prefetchDashboardData(){
 }
 prefetchDashboardData();
 
-/* INSTANT AND ERROR-FREE LOGIN VALIDATOR */
-async function _0x_entry(){
+/* PURE PASSKEY ENTRY (DEFAULT: 123456) */
+function _0x_entry(){
   var rawInput = document.getElementById('portalKey').value;
   var val = String(rawInput || "").replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
-  
-  var isValid = false;
-  if(val === _0x_DEF_VAL || val === _0x_RAW_MASTER || val.toLowerCase() === _0x_RAW_MASTER.toLowerCase()){
-    isValid = true;
-  }
-  
-  if(!isValid && val.length > 0){
-    try {
-      var inputHash = await _0x_hash(val);
-      if(inputHash === _0x_MASTER) isValid = true;
-    } catch(err){}
-  }
 
-  if(isValid){
+  if(val === _0x_DEF_VAL){
     document.getElementById('portalBox').classList.add('hide');
     setTimeout(()=>{
       document.getElementById('curtainLayer').classList.add('curtain-open');
       setTimeout(()=>{
         document.getElementById('curtainLayer').style.display = 'none';
+        if(window.innerWidth <= 768){
+          var selZoom = document.getElementById("appZoomSelect") ? document.getElementById("appZoomSelect").value : "0.9";
+          applyAppZoom(selZoom);
+        }
+        if(rawSheetRows && rawSheetRows.length > 0){
+          rebuildAllDynamicFilters();
+          updateHierarchyVisibility();
+          renderAll();
+        }
       }, 850);
     }, 150);
-
-    if(rawSheetRows && rawSheetRows.length > 0){
-      rebuildAllDynamicFilters();
-      updateHierarchyVisibility();
-      renderAll();
-    }
   } else {
     document.getElementById('curtainLayer').style.display = 'none';
     document.getElementById('tamperLock').style.display = 'flex';
@@ -825,7 +803,7 @@ window.openRawDataModal=function(){
   rebuildModalHierarchyDropdowns();
   renderRawModalData();
   
-  var currentScale = (document.getElementById("appZoomSelect") && window.innerWidth <= 768) ? document.getElementById("appZoomSelect").value : "1";
+  var currentScale = (document.getElementById("appZoomSelect") && window.innerWidth <= 768) ? document.getElementById("appZoomSelect").value : "0.9";
   applyAppZoom(currentScale);
 
   document.getElementById("rawDataModal").classList.add("active");
@@ -956,6 +934,9 @@ document.addEventListener("click",e=>{if(!e.target.closest(".multi-select"))clos
 window.addEventListener("resize",()=>{
   if(window.innerWidth > 768){
     applyAppZoom(1);
+  } else {
+    var selZoom = document.getElementById("appZoomSelect") ? document.getElementById("appZoomSelect").value : "0.9";
+    applyAppZoom(selZoom);
   }
   renderKPI();renderTable();
 });
