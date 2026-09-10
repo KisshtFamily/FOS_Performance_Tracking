@@ -19,86 +19,12 @@ body{display:flex;justify-content:center;align-items:stretch;padding:0!important
 .header-title{font-size:15px;font-weight:700;line-height:1.2}.header-subtitle{font-size:11px;opacity:.95;font-weight:600;letter-spacing:.3px;color:#e2e8f0}
 .view-toggle-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;outline:none}
 
-/* =======================================================
-   PREMIUM CUSTOM ZOOM PILL (MOBILE ONLY)
-   ======================================================= */
-.premium-zoom-wrapper{position:relative;display:none;}
+/* ZOOM SELECT DROPDOWN (ONLY MOBILE) */
+.zoom-select-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 8px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;outline:none;display:none;}
+.zoom-select-btn option{background:#1e3a8a;color:#fff}
+
 @media(max-width:768px){
-  .premium-zoom-wrapper{display:inline-block!important;}
-}
-.premium-zoom-btn{
-  background:rgba(255,255,255,0.18);
-  border:1px solid rgba(255,255,255,0.45);
-  backdrop-filter:blur(8px);
-  -webkit-backdrop-filter:blur(8px);
-  color:#fff;
-  padding:6px 10px;
-  border-radius:20px;
-  font-size:11px;
-  font-weight:700;
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  gap:5px;
-  box-shadow:0 2px 10px rgba(0,0,0,0.12);
-  transition:all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  outline:none;
-}
-.premium-zoom-btn:active{transform:scale(0.95);background:rgba(255,255,255,0.28);}
-.premium-zoom-btn i{font-size:10px;opacity:0.9;transition:transform 0.25s ease;}
-.premium-zoom-wrapper.open .premium-zoom-btn i{transform:rotate(180deg);}
-
-.premium-zoom-popup{
-  display:none;
-  position:absolute;
-  top:calc(100% + 8px);
-  right:0;
-  min-width:140px;
-  background:#ffffff;
-  border:1px solid #cbd5e1;
-  border-radius:14px;
-  padding:6px;
-  box-shadow:0 14px 35px -5px rgba(15,23,42,0.35), 0 0 0 1px rgba(0,0,0,0.05);
-  z-index:999999;
-  animation:popZoom 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-.premium-zoom-wrapper.open .premium-zoom-popup{display:block;}
-
-@keyframes popZoom{
-  0%{opacity:0;transform:translateY(-8px) scale(0.92);}
-  100%{opacity:1;transform:translateY(0) scale(1);}
-}
-
-.zoom-opt-item{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:8px 12px;
-  border-radius:10px;
-  font-size:11.5px;
-  font-weight:700;
-  color:#1e293b;
-  cursor:pointer;
-  transition:all 0.15s ease;
-  user-select:none;
-}
-.zoom-opt-item:hover{background:#f1f5f9;color:#2563eb;}
-.zoom-opt-item.active{
-  background:#eff6ff;
-  color:#2563eb;
-  border:1px solid #bfdbfe;
-}
-.zoom-opt-item .zoom-badge{
-  font-size:9.5px;
-  padding:2px 6px;
-  border-radius:12px;
-  background:#e2e8f0;
-  color:#64748b;
-  font-weight:700;
-}
-.zoom-opt-item.active .zoom-badge{
-  background:#2563eb;
-  color:#ffffff;
+  .zoom-select-btn{display:inline-block!important;}
 }
 
 .level-nav{background:#fff;padding:8px 12px;border-bottom:1px solid var(--b);display:flex;gap:6px;overflow-x:auto;flex-shrink:0;z-index:250}
@@ -118,7 +44,6 @@ body{display:flex;justify-content:center;align-items:stretch;padding:0!important
 .hierarchy-filter{display:none;gap:8px;flex-wrap:wrap;width:100%;margin-top:8px;padding-top:8px;border-top:1px solid var(--b)}
 .hierarchy-filter.show{display:flex}
 
-/* MAIN CONTENT CONTAINER */
 .scroll-container{flex:1;overflow-y:auto;overflow-x:auto;display:flex;flex-direction:column;background:var(--bg)}
 .kpi-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px;background:#fff;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:70!important}
 @media(max-width:768px){.kpi-container{grid-template-columns:repeat(2,1fr)!important;padding:8px!important;gap:6px!important}}
@@ -266,27 +191,13 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
       <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
       <div class="header-subtitle" id="updatedDateTimeLabel">Loading...</div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <div class="premium-zoom-wrapper" id="zoomDropdownWrapper">
-        <button type="button" class="premium-zoom-btn" onclick="toggleZoomPopup(event)">
-          <i class="fa-solid fa-expand"></i> <span id="currentZoomLabel">100%</span> <i class="fa-solid fa-chevron-down"></i>
-        </button>
-        <div class="premium-zoom-popup" id="zoomPopupBox">
-          <div class="zoom-opt-item active" onclick="selectAppZoom('1', '100%')">
-            <span>Standard</span> <span class="zoom-badge">100%</span>
-          </div>
-          <div class="zoom-opt-item" onclick="selectAppZoom('0.9', '90%')">
-            <span>Compact</span> <span class="zoom-badge">90%</span>
-          </div>
-          <div class="zoom-opt-item" onclick="selectAppZoom('0.8', '80%')">
-            <span>Dense</span> <span class="zoom-badge">80%</span>
-          </div>
-          <div class="zoom-opt-item" onclick="selectAppZoom('0.75', '75%')">
-            <span>Mini</span> <span class="zoom-badge">75%</span>
-          </div>
-        </div>
-      </div>
-
+    <div style="display:flex;align-items:center;gap:6px;">
+      <select class="zoom-select-btn" id="appZoomSelect" onchange="applyAppZoom(this.value)">
+        <option value="1">100%</option>
+        <option value="0.9">90%</option>
+        <option value="0.8">80%</option>
+        <option value="0.75">75%</option>
+      </select>
       <button class="view-toggle-btn" onclick="openRawDataModal()"><i class="fa-solid fa-download"></i> Data</button>
     </div>
   </div>
@@ -346,6 +257,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="pagination-bar" id="paginationArea"><span id="paginationInfo">Showing 0 of 0 entries</span><div id="paginationButtons"></div></div>
 </div>
 
+<!-- POPUP MODAL -->
 <div class="modal-overlay" id="rawDataModal">
   <div class="modal-box" id="rawModalBox">
     <div class="modal-header">
@@ -359,7 +271,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
         <div class="multi-select" id="rfDZH" data-placeholder-desktop="All Deputy Zonal" data-placeholder-mobile="All DZH"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfDZH')">All Deputy Zonal</button><div class="multi-select-menu" id="menuRfDZH"></div></div>
         <div class="multi-select" id="rfSH" data-placeholder-desktop="All State Head" data-placeholder-mobile="All SH"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfSH')">All State Head</button><div class="multi-select-menu" id="menuRfSH"></div></div>
         <div class="multi-select" id="rfCM" data-placeholder-desktop="All City Manager" data-placeholder-mobile="All CM"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCM')">All City Manager</button><div class="multi-select-menu" id="menuRfCM"></div></div>
-        <div class="multi-select" id="rfFOS" data-placeholder-desktop="All FOS" data-placeholder-mobile="All FOS"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfFOS')">All FOS</button><div class="multi-select-menu" id="menuRfFOS"></div></div>
+        <div class="multi-select" id="rfFOS" data-placeholder-desktop="All扩大FOS" data-placeholder-mobile="All FOS"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfFOS')">All FOS</button><div class="multi-select-menu" id="menuRfFOS"></div></div>
         <div class="multi-select" id="rfPaid" data-placeholder-desktop="All Paid Status" data-placeholder-mobile="All Status"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfPaid')">All Paid Status</button><div class="multi-select-menu" id="menuRfPaid"></div></div>
         <div class="multi-select" id="rfReportDisp" data-placeholder-desktop="All Report Disp" data-placeholder-mobile="All Disp"><button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfReportDisp')">All Report Disp</button><div class="multi-select-menu" id="menuRfReportDisp"></div></div>
       </div>
@@ -393,44 +305,12 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </div>
 
 <script>
-/* =========================================================================
-   PREMIUM INNER ZOOM ENGINE (CLEAN COMPACT VIEW WITHOUT SQUEEZING BACKGROUND)
-   ========================================================================= */
-var activeZoomValue = "1";
-
-window.toggleZoomPopup = function(e){
-  e.stopPropagation();
-  var wrap = document.getElementById("zoomDropdownWrapper");
-  if(wrap) wrap.classList.toggle("open");
-};
-
-window.selectAppZoom = function(scaleVal, label){
-  activeZoomValue = scaleVal;
-  var wrap = document.getElementById("zoomDropdownWrapper");
-  var lbl = document.getElementById("currentZoomLabel");
-  if(lbl) lbl.textContent = label;
-  
-  if(wrap){
-    var items = wrap.querySelectorAll(".zoom-opt-item");
-    items.forEach(function(it){
-      var b = it.querySelector(".zoom-badge");
-      if(b && b.textContent.trim() === label){
-        it.classList.add("active");
-      } else {
-        it.classList.remove("active");
-      }
-    });
-    wrap.classList.remove("open");
-  }
-  
-  applyInnerZoom(scaleVal);
-};
-
-function applyInnerZoom(scaleVal){
-  if(window.innerWidth > 768){
+window.applyAppZoom = function(scaleVal){
+  if(window.innerWidth > 768) {
     scaleVal = "1";
   }
   var s = parseFloat(scaleVal) || 1;
+
   var elementsToZoom = [
     document.getElementById("levelNavArea"),
     document.getElementById("searchFilterArea"),
@@ -440,14 +320,22 @@ function applyInnerZoom(scaleVal){
   ];
 
   elementsToZoom.forEach(function(el){
-    if(el) el.style.zoom = s;
+    if(el){
+      el.style.zoom = s;
+    }
   });
-}
+};
 
+/* ROBUST MULTI-FALLBACK HASH ENGINE */
 async function _0x_hash(s){
-  const b = new TextEncoder().encode(s);
-  const h = await crypto.subtle.digest("SHA-512", b);
-  return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
+  if(window.crypto && crypto.subtle){
+    try {
+      const b = new TextEncoder().encode(s);
+      const h = await crypto.subtle.digest("SHA-512", b);
+      return Array.from(new Uint8Array(h)).map(x => x.toString(16).padStart(2, '0')).join('');
+    } catch(err){}
+  }
+  return "";
 }
 
 const _0x_MASTER = "9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
@@ -515,13 +403,19 @@ function prefetchDashboardData(){
 }
 prefetchDashboardData();
 
+/* INSTANT AND ERROR-FREE LOGIN VALIDATOR */
 async function _0x_entry(){
-  const val = document.getElementById('portalKey').value.trim();
-  let isValid = (val === _0x_DEF_VAL || val === _0x_RAW_MASTER);
+  var rawInput = document.getElementById('portalKey').value;
+  var val = String(rawInput || "").replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
+  
+  var isValid = false;
+  if(val === _0x_DEF_VAL || val === _0x_RAW_MASTER || val.toLowerCase() === _0x_RAW_MASTER.toLowerCase()){
+    isValid = true;
+  }
   
   if(!isValid && val.length > 0){
     try {
-      const inputHash = await _0x_hash(val);
+      var inputHash = await _0x_hash(val);
       if(inputHash === _0x_MASTER) isValid = true;
     } catch(err){}
   }
@@ -546,12 +440,7 @@ async function _0x_entry(){
   }
 }
 
-window.closeAllMultiSelects=function(){
-  var m=document.querySelectorAll(".multi-select");
-  for(var i=0;i<m.length;i++)m[i].classList.remove("open");
-  var zw = document.getElementById("zoomDropdownWrapper");
-  if(zw) zw.classList.remove("open");
-}
+window.closeAllMultiSelects=function(){var m=document.querySelectorAll(".multi-select");for(var i=0;i<m.length;i++)m[i].classList.remove("open");}
 window.toggleMultiSelect=function(e){var m=document.querySelectorAll(".multi-select");for(var i=0;i<m.length;i++)if(m[i].id!==e)m[i].classList.remove("open");var t=document.getElementById(e);if(t)t.classList.toggle("open");}
 window.getCheckedValues=function(c){var inp=document.querySelectorAll("#"+c+" input[type=checkbox]:checked"),res=[];for(var i=0;i<inp.length;i++)res.push(inp[i].value);return res;}
 window.updateMultiSelectText=function(c){var el=document.getElementById(c);if(!el)return;var b=el.querySelector(".multi-select-btn"),v=getCheckedValues(c),isMob=window.innerWidth<=768,p=isMob?(el.dataset.placeholderMobile||el.dataset.placeholderDesktop):(el.dataset.placeholderDesktop||"Select");if(c==="shortfallTargetFilter"){b.textContent=(isMob?"SF: ":"Shortfall: ")+targetShortfallPct+"%";}else if(v.length===0||v.indexOf("Overall")!==-1){b.textContent=p;}else if(v.length===1){b.textContent=v[0];}else{b.textContent=v.length+" Selected";}}
@@ -936,7 +825,8 @@ window.openRawDataModal=function(){
   rebuildModalHierarchyDropdowns();
   renderRawModalData();
   
-  applyInnerZoom(activeZoomValue);
+  var currentScale = (document.getElementById("appZoomSelect") && window.innerWidth <= 768) ? document.getElementById("appZoomSelect").value : "1";
+  applyAppZoom(currentScale);
 
   document.getElementById("rawDataModal").classList.add("active");
 };
@@ -1031,4 +921,44 @@ window.downloadRawExcel=async function(){
     "FOS SURN","FOS Name","City Manager","State Head Name","DZH","Zonal Head Name",
     "Paid Status","Final Disposition","Report Disposition"
   ];
-  var wb=new ExcelJS.Workbook(),ws=wb.addWorksheet("Raw Data",{
+  var wb=new ExcelJS.Workbook(),ws=wb.addWorksheet("Raw Data",{views:[{state:'frozen',ySplit:1,showGridLines:true}]});
+  var hr=ws.addRow(headers);hr.height=28;
+  hr.eachCell(c=>{c.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF1E3A8A'}};c.font={name:'Calibri',size:11,bold:true,color:{argb:'FFFFFFFF'}};c.alignment={vertical:'middle',horizontal:'center'};});
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i],rv=[
+      r[C.LOAN]!==undefined&&r[C.LOAN]!==null?String(r[C.LOAN]):"",
+      r[C.CUST_NAME]!==undefined&&r[C.CUST_NAME]!==null?String(r[C.CUST_NAME]):"-",
+      cleanNum(r[C.EMI_PENDING]),
+      cleanNum(r[C.POS]),
+      r[C.PRODUCT]||"",
+      r[C.CYCLE_BKT]||"",
+      r[C.FOS_SURN]||"",
+      r[C.FOS_NAME]||"",
+      r[C.CM]||"",
+      r[C.SH]||"",
+      r[C.DZH]||"",
+      r[C.ZH]||"",
+      r[C.PAID_STATUS]||"",
+      r[C.FINAL_DISP]||"",
+      r[C.REPORT_DISP]||""
+    ];
+    var dr=ws.addRow(rv);dr.height=20;dr.eachCell((c,cn)=>{
+      c.font={name:'Calibri',size:10};
+      c.alignment={vertical:'middle',horizontal:'center'};
+      if(cn===3 || cn===4) c.numFmt='#,##0';
+    });
+  }
+  ws.columns.forEach((col,idx)=>{var m=headers[idx].length;col.eachCell({includeEmpty:true},c=>{if(c.value)m=Math.max(m,c.value.toString().length);});col.width=Math.min(Math.max(m+4,12),45);});
+  var buf=await wb.xlsx.writeBuffer();saveAs(new Blob([buf],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}),"Raw_Data_Export_"+Date.now()+".xlsx");
+};
+
+document.addEventListener("click",e=>{if(!e.target.closest(".multi-select"))closeAllMultiSelects();});
+window.addEventListener("resize",()=>{
+  if(window.innerWidth > 768){
+    applyAppZoom(1);
+  }
+  renderKPI();renderTable();
+});
+</script>
+</body>
+</html>
