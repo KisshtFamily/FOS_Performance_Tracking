@@ -58,36 +58,61 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .pagination-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 
-/* POPUP MODAL STYLES (MOBILE RESPONSIVE) */
-.modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:center;padding:16px}
+/* POPUP MODAL STYLES (SEAMLESS FIXED POSITION & BALANCED TOP GAP) */
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:flex-start;padding:16px;overflow:hidden}
 .modal-overlay.active{display:flex}
-.modal-box{background:#fff;width:95%;max-width:1380px;height:88vh;max-height:88vh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
+.modal-box{background:#fff;width:95%;max-width:1380px;height:90vh;height:90dvh;max-height:90dvh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
 .modal-header{background:linear-gradient(135deg,#1e3a8a,#2563eb);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .modal-title{font-size:15px;font-weight:700;display:flex;align-items:center;gap:8px}
 .modal-close-btn{background:rgba(255,255,255,.2);border:none;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px}
-.modal-body{padding:14px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:12px}
+.modal-body{padding:14px;flex:1;overflow:hidden;display:flex;flex-direction:column;gap:10px}
 .raw-filters-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid var(--b);flex-shrink:0}
-.raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch}
-.raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content}
+.raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch;background:#fff}
+.raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content;background:#fff}
 
-.raw-table-wrapper th{background:#e2e8f0!important;color:#0f172a;position:sticky!important;top:0!important;z-index:50!important;text-align:center!important;padding:9px 12px;font-weight:700}
-.raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap}
-.raw-table-wrapper th:first-child,
+/* RAW MODAL TABLE HEADER & FIRST COLUMN FREEZE FIX */
+.raw-table-wrapper th{background:#e2e8f0!important;color:#0f172a;position:sticky!important;top:0!important;z-index:60!important;text-align:center!important;padding:9px 12px;font-weight:700;border-bottom:1px solid var(--b);border-right:1px solid var(--b)}
+.raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap;background:#fff}
+
+/* FREEZE COLUMN 1 (LOAN NO) PROPERLY */
 .raw-table-wrapper td:first-child{
-  position: static !important;
-  border-right: 1px solid var(--b)!important;
-  background: inherit !important;
+  position: sticky !important;
+  left: 0 !important;
+  background: #ffffff !important;
+  z-index: 40 !important;
+  font-weight: 600;
+  border-right: 2px solid var(--b) !important;
+}
+.raw-table-wrapper th:first-child{
+  position: sticky !important;
+  top: 0 !important;
+  left: 0 !important;
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+  z-index: 80 !important;
+  border-right: 2px solid var(--b) !important;
 }
 
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
+/* MOBILE SCREEN ADJUSTMENTS (PROPER GAP & FULL FIT) */
 @media(max-width:768px){
-  .modal-overlay{padding:8px!important}
-  .modal-box{width:100%!important;max-width:100%!important;height:92vh!important;height:92dvh!important;max-height:92dvh!important;border-radius:14px!important}
+  .modal-overlay{
+    padding: 10px 8px env(safe-area-inset-bottom) 8px !important;
+    align-items: flex-start !important;
+  }
+  .modal-box{
+    width: 100% !important;
+    max-width: 100% !important;
+    height: calc(100dvh - 20px) !important;
+    max-height: calc(100dvh - 20px) !important;
+    border-radius: 14px !important;
+    margin: 0 !important;
+  }
   .modal-header{padding:10px 14px!important}
   .modal-title{font-size:13px!important}
-  .modal-body{padding:8px!important;gap:8px!important}
+  .modal-body{padding:8px!important;gap:6px!important}
   .raw-filters-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important;padding:8px!important}
   .raw-filters-grid .multi-select-btn{font-size:10px!important;padding:6px 8px!important}
   .raw-table-wrapper table{font-size:10px!important}
@@ -267,7 +292,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="pagination-bar"><span id="paginationInfo">Showing 0 of 0 entries</span><div id="paginationButtons"></div></div>
 </div>
 
-<!-- POPUP MODAL -->
 <div class="modal-overlay" id="rawDataModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -315,7 +339,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </div>
 
 <script>
-// CRYPTO VERIFICATION ENGINE
 async function _0x_hash(s){
   const b = new TextEncoder().encode(s);
   const h = await crypto.subtle.digest("SHA-512", b);
@@ -343,7 +366,6 @@ function getPureDataRows(){if(!rawSheetRows||rawSheetRows.length===0)return [];r
 function updateMainHeaderTitle(){var e=document.getElementById("mainHeaderTitle");if(!e)return;var curCycles=getCheckedValues("cycleFilter");e.textContent=(curCycles.indexOf("Overall")!==-1||curCycles.length===0)?"Performance Matrix":"Performance Matrix ("+curCycles.join(", ")+")";}
 function updateHeaderTimestamp(r){var s=document.getElementById("updatedDateTimeLabel");if(!s)return;var c="";if(r&&Array.isArray(r)&&r.length>0){for(var i=0;i<Math.min(r.length,100);i++){if(r[i]&&r[i][C.UPDATED_DATE]){var v=String(r[i][C.UPDATED_DATE]).trim();if(v&&v!=="undefined"&&v!=="null"&&v.toUpperCase()!=="UPDATED DATE"){c=v;break;}}}}s.textContent=c?c:"-- | --";}
 
-// FAST DATA PROCESSOR
 window.handleManagerData = function(e){
   var r = null;
   if(e && e.status === "success" && Array.isArray(e.data)) r = e.data;
@@ -363,7 +385,6 @@ window.handleManagerData = function(e){
   }
 };
 
-// 1-SECOND INSTANT FETCH ENGINE
 function prefetchDashboardData(){
   try {
     var localCached = localStorage.getItem("fast_dash_cache");
