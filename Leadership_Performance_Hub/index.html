@@ -107,10 +107,10 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   .download-excel-btn{padding:7px 12px!important;font-size:11px!important}
 }
 
-/* EXACT SIMPLE IMAGE LOADER */
+/* EXACT CLEAN SIMPLE LOADER (IMAGE MATCHED) */
 .simple-loader-overlay{
   position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;
-  background:rgba(0,0,0,0.45);
+  background:rgba(0,0,0,0.35);
   z-index:90000;
   display:none;
   justify-content:center;
@@ -404,7 +404,7 @@ function dismissSimpleLoader(){
   }
 }
 
-/* DATA INGESTION HANDLER */
+/* DATA INGESTION HANDLER WITH IMMEDIATE ASYNC RENDER */
 window.handleManagerData = function(e){
   var r = null;
   if(e && e.status === "success" && Array.isArray(e.data)) r = e.data;
@@ -414,15 +414,21 @@ window.handleManagerData = function(e){
   if(r && r.length > 0){
     rawSheetRows = r;
     isDataLoaded = true;
+    
+    // Save to storage async
+    setTimeout(() => {
+      try { localStorage.setItem("fast_dash_cache_v4", JSON.stringify(e)); } catch(err){}
+    }, 100);
+
     updateHeaderTimestamp(getPureDataRows());
     
-    // Non-blocking asynchronous UI render for smooth mobile speed
-    requestAnimationFrame(function(){
+    // Non-blocking UI rendering
+    setTimeout(() => {
       rebuildAllDynamicFilters();
       updateHierarchyVisibility();
       renderAll();
       dismissSimpleLoader();
-    });
+    }, 10);
   } else {
     var st = document.getElementById("kpiStatusVal");
     if(st && (!rawSheetRows || rawSheetRows.length === 0)) st.textContent = "No Data";
@@ -430,29 +436,26 @@ window.handleManagerData = function(e){
   }
 };
 
-/* MULTI-TIER FAST DATA FETCH ENGINE FOR MOBILE */
+/* MULTI-TIER FAST DATA FETCH ENGINE */
 function prefetchDashboardData(){
-  // 1. Direct JSONP approach which is instantly parsed on Mobile Browsers
-  var oldScript = document.getElementById("jsonpScriptDynamic");
-  if(oldScript) oldScript.remove();
+  // 1. Instant cache retrieval
+  try {
+    var localCached = localStorage.getItem("fast_dash_cache_v4");
+    if(localCached){
+      var parsed = JSON.parse(localCached);
+      window.handleManagerData(parsed);
+    }
+  } catch(e){}
+
+  // 2. High-speed Direct Script Injection
   var s = document.createElement("script");
   s.id = "jsonpScriptDynamic";
   s.src = SCRIPT_URL + (SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "callback=handleManagerData&_=" + Date.now();
   document.body.appendChild(s);
-
-  // 2. Parallel Fast Fetch
-  try {
-    fetch(SCRIPT_URL, { method: "GET", redirect: "follow", mode: "cors" })
-      .then(res => res.json())
-      .then(data => {
-        if(!isDataLoaded) window.handleManagerData(data);
-      })
-      .catch(()=>{});
-  } catch(err){}
 }
 prefetchDashboardData();
 
-/* LOGIN ENTRY */
+/* LOGIN ENTRY (123456) */
 function _0x_entry(){
   var rawInput = document.getElementById('portalKey').value;
   var val = String(rawInput || "").replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
@@ -461,7 +464,6 @@ function _0x_entry(){
     isUserLoggedIn = true;
     document.getElementById('portalBox').classList.add('hide');
 
-    // Show clean simple loader if data is still in transit
     if(!isDataLoaded){
       var simpleOl = document.getElementById("simpleLoaderOverlay");
       if(simpleOl) simpleOl.classList.add("active");
