@@ -58,7 +58,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .pagination-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 
-/* POPUP MODAL STYLES WITH PROPER VERTICAL FREEZE & UNCONSTRAINED HORIZONTAL SCROLL */
+/* POPUP MODAL STYLES (VERTICAL FREEZE AT TOP, NATURAL HORIZONTAL SCROLL) */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:flex-start;padding:16px;overflow:hidden}
 .modal-overlay.active{display:flex}
 .modal-box{background:#fff;width:95%;max-width:1380px;height:90vh;height:90dvh;max-height:90dvh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
@@ -70,7 +70,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch;background:#fff}
 .raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content;background:#fff}
 
-/* ALL HEADER CELLS VERTICALLY FROZEN AT TOP */
+/* PROPER VERTICAL FREEZE FOR MODAL HEADERS */
 .raw-table-wrapper th{
   background:#dbeafe!important;
   color:#1e3a8a!important;
@@ -84,7 +84,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   border-right:1px solid var(--b)!important;
 }
 
-/* HORIZONTALLY UNFROZEN CELLS */
 .raw-table-wrapper td{
   text-align:center!important;
   padding:8px 12px;
@@ -93,11 +92,6 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   border-bottom:1px solid var(--b);
   border-right:1px solid var(--b);
   position:static!important;
-}
-.raw-table-wrapper th:first-child{
-  position:sticky!important;
-  top:0!important;
-  left:auto!important;
 }
 
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
@@ -407,12 +401,14 @@ window.handleTargetChange=function(e){handleSingleCheck(e);targetShortfallPct=pa
 function buildMultiSelectMenu(mId,cId,items,oLabel,cb){
   var m=document.getElementById(mId);if(!m)return;
   var currentSelected = getCheckedValues(cId);
-  var isAll = currentSelected.length === 0 || currentSelected.indexOf("Overall") !== -1;
+  var validItems = items.map(x=>String(x).trim());
+  var retained = currentSelected.filter(x=>x!=="Overall" && validItems.indexOf(x)!==-1);
+  var isAll = retained.length === 0 || currentSelected.indexOf("Overall") !== -1;
   
   var h='<label class="multi-option"><input type="checkbox" value="Overall" '+(isAll?'checked':'')+' onchange="'+cb+'(this,true)"> '+oLabel+'</label>';
   for(var i=0;i<items.length;i++){
     var it = items[i];
-    var isChk = !isAll && currentSelected.indexOf(it) !== -1;
+    var isChk = !isAll && retained.indexOf(it) !== -1;
     h+='<label class="multi-option"><input type="checkbox" value="'+String(it).replace(/"/g,"&quot;")+'" '+(isChk?'checked':'')+' onchange="'+cb+'(this,false)"> '+it+'</label>';
   }
   m.innerHTML=h;
@@ -434,7 +430,7 @@ window.handleGenericMultiCheck=function(cb,isO,cId,renderCb){
   if(renderCb)renderCb();
 };
 
-/* BIDIRECTIONAL AUTO LINKING ENGINE */
+/* SMART BIDIRECTIONAL ENGINE FOR MAIN DASHBOARD */
 function autoSelectParentHierarchy(sourceLevel, selectedValues){
   if(!selectedValues || selectedValues.length===0 || selectedValues.indexOf("Overall")!==-1) return;
   var d = getPureDataRows();
@@ -690,26 +686,102 @@ function renderTable(){
 
 window.goToPage=function(p){currentPage=p;renderTable();}
 
-/* OPEN MODAL WITH LINKED FILTERS */
+/* =========================================================================
+   POPUP MODAL HIERARCHY ENGINE (ZH > DZH > SH > CM > FOS) + BIDIRECTIONAL
+   ========================================================================= */
+
+function getModalActiveHierarchyRows(excludeLevel){
+  var d = getPureDataRows();
+  var sC = getCheckedValues("rfCycle");
+  var sZ = excludeLevel === "ZH" ? ["Overall"] : getCheckedValues("rfZH");
+  var sD = excludeLevel === "DZH" ? ["Overall"] : getCheckedValues("rfDZH");
+  var sS = excludeLevel === "SH" ? ["Overall"] : getCheckedValues("rfSH");
+  var sCM = excludeLevel === "CM" ? ["Overall"] : getCheckedValues("rfCM");
+  var sF = excludeLevel === "FOS" ? ["Overall"] : getCheckedValues("rfFOS");
+  var sP = getCheckedValues("rfPaid");
+  var sDP = getCheckedValues("rfReportDisp");
+
+  return d.filter(function(r){
+    if(sC.indexOf("Overall")===-1 && sC.length>0 && sC.indexOf(String(r[C.CYCLE_BKT]||"").trim())===-1) return false;
+    if(sZ.indexOf("Overall")===-1 && sZ.length>0 && sZ.indexOf(String(r[C.ZH]||"").trim())===-1) return false;
+    if(sD.indexOf("Overall")===-1 && sD.length>0 && sD.indexOf(String(r[C.DZH]||"").trim())===-1) return false;
+    if(sS.indexOf("Overall")===-1 && sS.length>0 && sS.indexOf(String(r[C.SH]||"").trim())===-1) return false;
+    if(sCM.indexOf("Overall")===-1 && sCM.length>0 && sCM.indexOf(String(r[C.CM]||"").trim())===-1) return false;
+    if(sF.indexOf("Overall")===-1 && sF.length>0 && sF.indexOf(String(r[C.FOS_NAME]||"").trim())===-1) return false;
+    if(sP.indexOf("Overall")===-1 && sP.length>0 && sP.indexOf(String(r[C.PAID_STATUS]||"").trim())===-1) return false;
+    if(sDP.indexOf("Overall")===-1 && sDP.length>0 && sDP.indexOf(String(r[C.REPORT_DISP]||"").trim())===-1) return false;
+    return true;
+  });
+}
+
+function autoSelectModalParentHierarchy(sourceLevel, selectedValues){
+  if(!selectedValues || selectedValues.length===0 || selectedValues.indexOf("Overall")!==-1) return;
+  var d = getPureDataRows();
+  var matchedRows = d.filter(function(r){
+    var colVal = (sourceLevel==="FOS"?r[C.FOS_NAME]:sourceLevel==="CM"?r[C.CM]:sourceLevel==="SH"?r[C.SH]:sourceLevel==="DZH"?r[C.DZH]:"");
+    return selectedValues.indexOf(String(colVal||"").trim()) !== -1;
+  });
+
+  function setModalDropdownValues(cId, colIndex){
+    var vals = uniqueValues(matchedRows, colIndex);
+    if(vals.length > 0){
+      var menu = document.getElementById(cId);
+      if(!menu) return;
+      var checkboxes = menu.querySelectorAll('input[type="checkbox"]');
+      var o = menu.querySelector('input[value="Overall"]');
+      if(o) o.checked = false;
+      checkboxes.forEach(function(chk){
+        if(chk.value !== "Overall"){
+          chk.checked = (vals.indexOf(chk.value) !== -1);
+        }
+      });
+      updateMultiSelectText(cId);
+    }
+  }
+
+  if(sourceLevel === "FOS"){
+    setModalDropdownValues("rfCM", C.CM);
+    setModalDropdownValues("rfSH", C.SH);
+    setModalDropdownValues("rfDZH", C.DZH);
+    setModalDropdownValues("rfZH", C.ZH);
+  } else if(sourceLevel === "CM"){
+    setModalDropdownValues("rfSH", C.SH);
+    setModalDropdownValues("rfDZH", C.DZH);
+    setModalDropdownValues("rfZH", C.ZH);
+  } else if(sourceLevel === "SH"){
+    setModalDropdownValues("rfDZH", C.DZH);
+    setModalDropdownValues("rfZH", C.ZH);
+  } else if(sourceLevel === "DZH"){
+    setModalDropdownValues("rfZH", C.ZH);
+  }
+}
+
+function rebuildModalHierarchyDropdowns(){
+  var zhRows = getModalActiveHierarchyRows("ZH");
+  var dzhRows = getModalActiveHierarchyRows("DZH");
+  var shRows = getModalActiveHierarchyRows("SH");
+  var cmRows = getModalActiveHierarchyRows("CM");
+  var fosRows = getModalActiveHierarchyRows("FOS");
+
+  buildMultiSelectMenu("menuRfZH","rfZH",uniqueValues(zhRows,C.ZH),"All Zonal Head","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfDZH","rfDZH",uniqueValues(dzhRows,C.DZH),"All Deputy Zonal","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfSH","rfSH",uniqueValues(shRows,C.SH),"All State Head","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfCM","rfCM",uniqueValues(cmRows,C.CM),"All City Manager","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfFOS","rfFOS",uniqueValues(fosRows,C.FOS_NAME),"All FOS","onModalFilterCheck");
+}
+
 window.openRawDataModal=function(){
-  populateRawModalDropdowns();
+  var d = getPureDataRows();
+  buildMultiSelectMenu("menuRfCycle","rfCycle",uniqueValues(d,C.CYCLE_BKT),"All Cycle BKT","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfPaid","rfPaid",uniqueValues(d,C.PAID_STATUS),"All Paid Status","onModalFilterCheck");
+  buildMultiSelectMenu("menuRfReportDisp","rfReportDisp",uniqueValues(d,C.REPORT_DISP),"All Report Disp","onModalFilterCheck");
+  
   syncDashboardFiltersToModal();
+  rebuildModalHierarchyDropdowns();
   renderRawModalData();
   document.getElementById("rawDataModal").classList.add("active");
 };
 window.closeRawDataModal=function(){document.getElementById("rawDataModal").classList.remove("active");}
-
-function populateRawModalDropdowns(){
-  var d=getPureDataRows();
-  buildMultiSelectMenu("menuRfCycle","rfCycle",uniqueValues(d,C.CYCLE_BKT),"All Cycle BKT","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfZH","rfZH",uniqueValues(d,C.ZH),"All Zonal Head","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfDZH","rfDZH",uniqueValues(d,C.DZH),"All Deputy Zonal","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfSH","rfSH",uniqueValues(d,C.SH),"All State Head","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfCM","rfCM",uniqueValues(d,C.CM),"All City Manager","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfFOS","rfFOS",uniqueValues(d,C.FOS_NAME),"All FOS","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfPaid","rfPaid",uniqueValues(d,C.PAID_STATUS),"All Paid Status","onModalFilterCheck");
-  buildMultiSelectMenu("menuRfReportDisp","rfReportDisp",uniqueValues(d,C.REPORT_DISP),"All Report Disp","onModalFilterCheck");
-}
 
 function syncDashboardFiltersToModal(){
   function sync(fromId, toId){
@@ -735,7 +807,17 @@ function syncDashboardFiltersToModal(){
 }
 
 window.onModalFilterCheck=function(cb,isO){
-  handleGenericMultiCheck(cb,isO,cb.closest('.multi-select').id,renderRawModalData);
+  var parentId = cb.closest('.multi-select').id;
+  handleGenericMultiCheck(cb,isO,parentId,()=>{
+    if(!isO){
+      if(parentId === "rfFOS") autoSelectModalParentHierarchy("FOS", getCheckedValues("rfFOS"));
+      else if(parentId === "rfCM") autoSelectModalParentHierarchy("CM", getCheckedValues("rfCM"));
+      else if(parentId === "rfSH") autoSelectModalParentHierarchy("SH", getCheckedValues("rfSH"));
+      else if(parentId === "rfDZH") autoSelectModalParentHierarchy("DZH", getCheckedValues("rfDZH"));
+    }
+    rebuildModalHierarchyDropdowns();
+    renderRawModalData();
+  });
 };
 
 function getFilteredRawRows(){
