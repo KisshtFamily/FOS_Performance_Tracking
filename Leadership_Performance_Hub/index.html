@@ -4,34 +4,42 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.3, maximum-scale=3.0, user-scalable=yes">
 <link rel="icon" href="data:,">
-<title>Hierarchy Performance Dashboard</title>
+<title>Performance Matrix Dashboard</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 <style>
-:root{--p:#1e3a8a;--a:#2563eb;--bg:#f8fafc;--c:#fff;--tm:#0f172a;--ts:#64748b;--b:#e2e8f0;--g:#16a34a;--r:#dc2626}
+:root{
+  --p:#1e3a8a;--a:#2563eb;--bg:#f8fafc;--c:#fff;--tm:#0f172a;--ts:#64748b;--b:#e2e8f0;--g:#16a34a;--r:#dc2626;
+  --glow-cyan:#06b6d4;--glow-blue:#3b82f6;
+}
 *{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',sans-serif}
 html,body{width:100%;height:100%;min-height:100%;margin:0;padding:0;background:var(--bg);touch-action:manipulation}
-body{display:flex;justify-content:center;align-items:stretch;padding:0!important;margin:0!important}
-.app-wrapper{width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;background:var(--bg);border-radius:0!important;border:none!important;outline:none!important;box-shadow:none!important;overflow:hidden;display:flex;flex-direction:column;position:relative;margin:0!important}
+body{display:flex;justify-content:center;align-items:stretch;overflow:hidden}
+
+.app-wrapper{
+  width:100vw!important;max-width:100vw!important;height:100vh!important;height:100dvh!important;
+  background:var(--bg);overflow:hidden;display:flex;flex-direction:column;position:relative;
+}
+
+/* HEADER */
 .header-bar{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;padding:12px 16px;padding-top:max(10px,env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;flex-shrink:0;z-index:300}
 .header-title{font-size:15px;font-weight:700;line-height:1.2}.header-subtitle{font-size:11px;opacity:.95;font-weight:600;letter-spacing:.3px;color:#e2e8f0}
 .view-toggle-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:6px 12px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;display:flex;align-items:center;gap:6px;outline:none}
 
-/* ZOOM SELECT DROPDOWN (ONLY MOBILE) */
 .zoom-select-btn{background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;padding:5px 8px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;outline:none;display:none;}
 .zoom-select-btn option{background:#1e3a8a;color:#fff}
+@media(max-width:768px){.zoom-select-btn{display:inline-block!important;}}
 
-@media(max-width:768px){
-  .zoom-select-btn{display:inline-block!important;}
-}
-
+/* LEVEL NAVIGATION */
 .level-nav{background:#fff;padding:8px 12px;border-bottom:1px solid var(--b);display:flex;gap:6px;overflow-x:auto;flex-shrink:0;z-index:250}
 .level-btn{padding:6px 14px;border-radius:20px;border:1px solid var(--b);background:#f1f5f9;color:var(--ts);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s}
 .level-btn.active{background:var(--a);color:#fff;border-color:var(--a)}
 .label-short{display:none}.label-full{display:inline}
 @media(max-width:768px){.label-short{display:inline}.label-full{display:none}}
+
+/* SEARCH & FILTERS */
 .fixed-search-bar{background:#fff;padding:10px;border-bottom:1px solid var(--b);flex-shrink:0;z-index:200}
 .filter-section{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .search-box{padding:7px 10px;border:1px solid var(--b);border-radius:8px;font-size:11px;background:#f8fafc;outline:none;flex:1;min-width:120px}
@@ -44,20 +52,23 @@ body{display:flex;justify-content:center;align-items:stretch;padding:0!important
 .hierarchy-filter{display:none;gap:8px;flex-wrap:wrap;width:100%;margin-top:8px;padding-top:8px;border-top:1px solid var(--b)}
 .hierarchy-filter.show{display:flex}
 
+/* DATA SCROLL & KPI */
 .scroll-container{flex:1;overflow-y:auto;overflow-x:auto;display:flex;flex-direction:column;background:var(--bg)}
 .kpi-container{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;padding:10px;background:#fff;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:70!important}
 @media(max-width:768px){.kpi-container{grid-template-columns:repeat(2,1fr)!important;padding:8px!important;gap:6px!important}}
 .kpi-card{background:var(--c);border:1px solid var(--b);border-radius:10px;padding:8px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.02)}
 .kpi-icon{font-size:14px;margin-bottom:2px}.kpi-title{font-size:9px;font-weight:600;color:var(--ts);text-transform:uppercase;margin-bottom:2px}
 .kpi-value{font-size:13px;font-weight:700;color:var(--tm)}.kpi-value.green{color:var(--g)}.kpi-value.red{color:var(--r)}
+
 @keyframes rgbGlow{0%{color:#2563eb;text-shadow:0 0 8px rgba(37,99,235,.45)}33%{color:#8b5cf6;text-shadow:0 0 8px rgba(139,92,246,.45)}66%{color:#ec4899;text-shadow:0 0 8px rgba(236,72,153,.45)}100%{color:#10b981;text-shadow:0 0 8px rgba(16,185,129,.45)}}
 @keyframes rgbBadgeAnim{0%{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(245,158,11,.12));border-color:rgba(239,68,68,.4);color:#dc2626}25%{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(16,185,129,.12));border-color:rgba(245,158,11,.4);color:#d97706}50%{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.12));border-color:rgba(16,185,129,.4);color:#059669}75%{background:linear-gradient(135deg,rgba(6,182,212,.12),rgba(99,102,241,.12));border-color:rgba(6,182,212,.4);color:#0891b2}100%{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(239,68,68,.12));border-color:rgba(99,102,241,.4);color:#4f46e5}}
 .rgb-kpi-text{font-size:14px;font-weight:800;animation:rgbGlow 3.5s linear infinite alternate}
 .res-badge{display:inline-block;padding:3px 8px;border-radius:6px;font-weight:800;border:1px solid transparent;animation:rgbBadgeAnim 6s linear infinite}
+
+/* TABLE */
 .table-area{flex:1;width:100%;min-width:max-content}
 table{width:100%;border-collapse:separate;border-spacing:0;font-size:11px;background:#fff}
 th,td{padding:8px 12px;text-align:right;border-bottom:1px solid var(--b);border-right:1px solid var(--b);white-space:nowrap}
-
 .table-area th{background:#dbeafe!important;color:#1e3a8a;font-weight:700;position:sticky!important;top:0!important;z-index:80!important;cursor:pointer}
 .table-area th:first-child,.table-area td:first-child{text-align:left!important;position:sticky!important;left:0!important;font-weight:600;border-right:2px solid var(--b)!important}
 .table-area th:first-child{background:#dbeafe!important;color:#1e3a8a;z-index:95!important}
@@ -68,7 +79,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .pagination-bar{padding:10px 14px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;font-size:11px;flex-shrink:0;position:sticky!important;left:0!important;width:100%!important;z-index:100!important}
 .page-btn{padding:5px 10px;border:1px solid var(--b);background:#f8fafc;border-radius:6px;cursor:pointer;font-weight:600}
 
-/* POPUP MODAL STYLES */
+/* POPUP MODAL */
 .modal-overlay{display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;background:rgba(2,6,23,.75);backdrop-filter:blur(6px);z-index:10000;justify-content:center;align-items:center;padding:16px;overflow:hidden}
 .modal-overlay.active{display:flex}
 .modal-box{background:#fff;width:95%;max-width:1380px;height:90vh;height:90dvh;max-height:90dvh;border-radius:18px;border:2px solid #334155;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);display:flex;flex-direction:column;overflow:hidden;margin:auto}
@@ -79,49 +90,154 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 .raw-filters-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;background:#f8fafc;padding:12px;border-radius:10px;border:1px solid var(--b);flex-shrink:0}
 .raw-table-wrapper{flex:1;overflow:auto;border:1px solid var(--b);border-radius:8px;position:relative;-webkit-overflow-scrolling:touch;background:#fff}
 .raw-table-wrapper table{font-size:11px;border-collapse:separate;border-spacing:0;width:100%;min-width:max-content;background:#fff}
-
-.raw-table-wrapper th{
-  background:#dbeafe!important;
-  color:#1e3a8a!important;
-  position:sticky!important;
-  top:0!important;
-  z-index:60!important;
-  text-align:center!important;
-  padding:9px 12px;
-  font-weight:700;
-  border-bottom:2px solid var(--b)!important;
-  border-right:1px solid var(--b)!important;
-}
-
-.raw-table-wrapper td{
-  text-align:center!important;
-  padding:8px 12px;
-  white-space:nowrap;
-  background:#fff;
-  border-bottom:1px solid var(--b);
-  border-right:1px solid var(--b);
-  position:static!important;
-}
-
+.raw-table-wrapper th{background:#dbeafe!important;color:#1e3a8a!important;position:sticky!important;top:0!important;z-index:60!important;text-align:center!important;padding:9px 12px;font-weight:700;border-bottom:2px solid var(--b)!important;border-right:1px solid var(--b)!important;}
+.raw-table-wrapper td{text-align:center!important;padding:8px 12px;white-space:nowrap;background:#fff;border-bottom:1px solid var(--b);border-right:1px solid var(--b);position:static!important;}
 .modal-footer{padding:12px 18px;background:#fff;border-top:1px solid var(--b);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
 .download-excel-btn{background:#16a34a;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px}
 
 @media(max-width:768px){
   .modal-overlay{padding:10px 8px env(safe-area-inset-bottom) 8px !important}
   .modal-box{width:100%!important;max-width:100%!important;height:calc(100dvh - 20px)!important;max-height:calc(100dvh - 20px)!important;border-radius:14px!important;margin:0!important}
-  .modal-header{padding:10px 14px!important}
-  .modal-title{font-size:13px!important}
-  .modal-body{padding:8px!important;gap:6px!important}
+  .modal-header{padding:10px 14px!important}.modal-title{font-size:13px!important}.modal-body{padding:8px!important;gap:6px!important}
   .raw-filters-grid{grid-template-columns:repeat(2,1fr)!important;gap:6px!important;padding:8px!important}
   .raw-filters-grid .multi-select-btn{font-size:10px!important;padding:6px 8px!important}
   .raw-table-wrapper table{font-size:10px!important}
   .raw-table-wrapper th{padding:8px 10px!important;font-size:10.5px!important}
   .raw-table-wrapper td{padding:7px 10px!important;font-size:10.5px!important}
-  .modal-footer{padding:10px 14px!important}
-  .modal-footer span{font-size:11px!important}
+  .modal-footer{padding:10px 14px!important}.modal-footer span{font-size:11px!important}
   .download-excel-btn{padding:7px 12px!important;font-size:11px!important}
 }
 
+/* ==================================================== */
+/* FULLSCREEN BLURRED LIVE SYNC ANIMATED LOADER        */
+/* ==================================================== */
+.live-sync-overlay{
+  position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;
+  background:rgba(15, 23, 42, 0.72);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  z-index:90000;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  transition:opacity 0.5s ease, visibility 0.5s ease;
+}
+.live-sync-overlay.active{
+  display:flex;opacity:1;visibility:visible;
+}
+.live-sync-overlay.fade-out{
+  opacity:0;visibility:hidden;
+}
+
+.sync-card{
+  background: rgba(30, 41, 59, 0.85);
+  border: 1.5px solid rgba(56, 189, 248, 0.28);
+  border-radius: 24px;
+  padding: 34px 28px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.65), 0 0 30px rgba(6, 182, 212, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: cardFloat 3s ease-in-out infinite alternate;
+}
+
+@keyframes cardFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-6px); }
+}
+
+.sync-spinner-box{
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sync-pulse-ring{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid rgba(6, 182, 212, 0.2);
+  border-top-color: #38bdf8;
+  border-right-color: #818cf8;
+  animation: spinRing 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+.sync-pulse-ring-inner{
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  border: 2px dashed rgba(236, 72, 153, 0.6);
+  animation: spinRingRev 2s linear infinite;
+}
+
+.sync-center-icon{
+  font-size: 24px;
+  color: #38bdf8;
+  animation: iconGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes spinRingRev {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+@keyframes iconGlow {
+  0% { transform: scale(0.9); filter: drop-shadow(0 0 4px #38bdf8); }
+  100% { transform: scale(1.15); filter: drop-shadow(0 0 12px #06b6d4); }
+}
+
+.sync-title{
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sync-subtext{
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.sync-progress-bar-bg{
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  margin-top: 4px;
+}
+.sync-progress-bar-fill{
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #06b6d4, #3b82f6, #a855f7);
+  border-radius: 10px;
+  position: absolute;
+  animation: progressMove 1.8s ease-in-out infinite;
+}
+@keyframes progressMove {
+  0% { left: -40%; width: 40%; }
+  50% { left: 30%; width: 60%; }
+  100% { left: 100%; width: 40%; }
+}
+
+/* CURTAIN LOGIN (DEFAULT PASS: 123456) */
 .curtain-container{
   position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:99999;
   display:flex;pointer-events:all;transition:visibility .9s;
@@ -164,6 +280,23 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
 </head>
 <body>
 
+<div class="live-sync-overlay" id="liveSyncOverlay">
+  <div class="sync-card">
+    <div class="sync-spinner-box">
+      <div class="sync-pulse-ring"></div>
+      <div class="sync-pulse-ring-inner"></div>
+      <i class="fa-solid fa-bolt-lightning sync-center-icon"></i>
+    </div>
+    <div>
+      <div class="sync-title">Syncing real-time records...</div>
+      <div class="sync-subtext">Analyzing Performance Metrics</div>
+    </div>
+    <div class="sync-progress-bar-bg">
+      <div class="sync-progress-bar-fill"></div>
+    </div>
+  </div>
+</div>
+
 <div class="curtain-container" id="curtainLayer">
   <div class="curtain-left"></div>
   <div class="curtain-right"></div>
@@ -189,7 +322,7 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   <div class="header-bar">
     <div class="header-title-container">
       <div class="header-title" id="mainHeaderTitle">Performance Matrix</div>
-      <div class="header-subtitle" id="updatedDateTimeLabel">Loading...</div>
+      <div class="header-subtitle" id="updatedDateTimeLabel">Loading live records...</div>
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
       <select class="zoom-select-btn" id="appZoomSelect" onchange="applyAppZoom(this.value)">
@@ -246,11 +379,11 @@ tr.total-row td{background:#eff6ff!important;font-weight:700;border-top:2px soli
   </div>
 
   <div class="scroll-container" id="scrollDataContainer">
-    <div class="kpi-container" id="kpiBox"><div class="kpi-card"><div class="kpi-title">Status</div><div class="kpi-value" id="kpiStatusVal">Loading Data...</div></div></div>
+    <div class="kpi-container" id="kpiBox"><div class="kpi-card"><div class="kpi-title">Status</div><div class="kpi-value" id="kpiStatusVal">Syncing Data...</div></div></div>
     <div class="table-area">
       <table>
         <thead><tr id="tableHead"></tr></thead>
-        <tbody id="tableDataBody"><tr><td colspan="7" style="text-align:center;padding:20px;color:var(--ts);">Fetching live records...</td></tr></tbody>
+        <tbody id="tableDataBody"><tr><td colspan="7" style="text-align:center;padding:25px;color:var(--ts);">Fetching live records...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -310,7 +443,6 @@ window.applyAppZoom = function(scaleVal){
     scaleVal = "1";
   }
   var s = parseFloat(scaleVal) || 0.9;
-
   var elementsToZoom = [
     document.getElementById("levelNavArea"),
     document.getElementById("searchFilterArea"),
@@ -318,19 +450,16 @@ window.applyAppZoom = function(scaleVal){
     document.getElementById("paginationArea"),
     document.getElementById("rawModalBodyArea")
   ];
-
   elementsToZoom.forEach(function(el){
-    if(el){
-      el.style.zoom = s;
-    }
+    if(el) el.style.zoom = s;
   });
 };
 
 const _0x_DEF_VAL = "123456";
-const _0x_MASTER = "9eb55b9e289bf65d8a86378546b961da8e154f3fec86c47dbf157adbb8476839bb002f2fa92c2865ffb5f00e960e659b867caaeecbb58e39f3796d11bb7cefe5";
-
-var SCRIPT_URL="https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
-var rawSheetRows=[],rowsPerPage=15,currentPage=1,currentLevel="ZH",targetShortfallPct=92.5,activeSort={field:"name",direction:"asc"};
+var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
+var rawSheetRows = [], rowsPerPage = 15, currentPage = 1, currentLevel = "ZH", targetShortfallPct = 92.5, activeSort = {field:"name",direction:"asc"};
+var isUserLoggedIn = false;
+var isDataLoaded = false;
 
 var C={
   LOAN:0, POS:1, PRODUCT:2, CYCLE_DATE:3, FOS_SURN:4, EMP_CODE:5,
@@ -341,11 +470,51 @@ var C={
   EMI_PENDING:23
 };
 
-function getPureDataRows(){if(!rawSheetRows||rawSheetRows.length===0)return [];return (rawSheetRows[0]&&String(rawSheetRows[0][C.LOAN]||"").toLowerCase().indexOf("loan")!==-1)?rawSheetRows.slice(1):rawSheetRows;}
+function getPureDataRows(){
+  if(!rawSheetRows || rawSheetRows.length === 0) return [];
+  return (rawSheetRows[0] && String(rawSheetRows[0][C.LOAN]||"").toLowerCase().indexOf("loan") !== -1) ? rawSheetRows.slice(1) : rawSheetRows;
+}
 
-function updateMainHeaderTitle(){var e=document.getElementById("mainHeaderTitle");if(!e)return;var curCycles=getCheckedValues("cycleFilter");e.textContent=(curCycles.indexOf("Overall")!==-1||curCycles.length===0)?"Performance Matrix":"Performance Matrix ("+curCycles.join(", ")+")";}
-function updateHeaderTimestamp(r){var s=document.getElementById("updatedDateTimeLabel");if(!s)return;var c="";if(r&&Array.isArray(r)&&r.length>0){for(var i=0;i<Math.min(r.length,100);i++){if(r[i]&&r[i][C.UPDATED_DATE]){var v=String(r[i][C.UPDATED_DATE]).trim();if(v&&v!=="undefined"&&v!=="null"&&v.toUpperCase()!=="UPDATED DATE"){c=v;break;}}}}s.textContent=c?c:"-- | --";}
+function updateMainHeaderTitle(){
+  var e = document.getElementById("mainHeaderTitle");
+  if(!e) return;
+  var curCycles = getCheckedValues("cycleFilter");
+  e.textContent = (curCycles.indexOf("Overall") !== -1 || curCycles.length === 0) ? "Performance Matrix" : "Performance Matrix (" + curCycles.join(", ") + ")";
+}
 
+function updateHeaderTimestamp(r){
+  var s = document.getElementById("updatedDateTimeLabel");
+  if(!s) return;
+  var c = "";
+  if(r && Array.isArray(r) && r.length > 0){
+    for(var i=0; i<Math.min(r.length, 100); i++){
+      if(r[i] && r[i][C.UPDATED_DATE]){
+        var v = String(r[i][C.UPDATED_DATE]).trim();
+        if(v && v !== "undefined" && v !== "null" && v.toUpperCase() !== "UPDATED DATE"){
+          c = v;
+          break;
+        }
+      }
+    }
+  }
+  s.textContent = c ? c : "Live Updated";
+}
+
+/* AUTO-HIDE LOADER ONCE DATA & LOGIN COMPLETE */
+function dismissLoaderIfReady(){
+  if(isUserLoggedIn && isDataLoaded){
+    var overlay = document.getElementById("liveSyncOverlay");
+    if(overlay){
+      overlay.classList.add("fade-out");
+      setTimeout(function(){
+        overlay.classList.remove("active");
+        overlay.classList.remove("fade-out");
+      }, 500);
+    }
+  }
+}
+
+/* DATA INGESTION HANDLER */
 window.handleManagerData = function(e){
   var r = null;
   if(e && e.status === "success" && Array.isArray(e.data)) r = e.data;
@@ -354,49 +523,60 @@ window.handleManagerData = function(e){
   
   if(r && r.length > 0){
     rawSheetRows = r;
-    try { localStorage.setItem("fast_dash_cache", JSON.stringify(e)); } catch(err){}
+    isDataLoaded = true;
+    try { localStorage.setItem("fast_dash_cache_v2", JSON.stringify(e)); } catch(err){}
     updateHeaderTimestamp(getPureDataRows());
     rebuildAllDynamicFilters();
     updateHierarchyVisibility();
     renderAll();
+    dismissLoaderIfReady();
   } else {
     var st = document.getElementById("kpiStatusVal");
-    if(st && (!rawSheetRows || rawSheetRows.length===0)) st.textContent = "No Data";
+    if(st && (!rawSheetRows || rawSheetRows.length === 0)) st.textContent = "No Data";
   }
 };
 
+/* ROBUST MULTI-CHANNEL DATA FETCHER */
 function prefetchDashboardData(){
   try {
-    var localCached = localStorage.getItem("fast_dash_cache");
+    var localCached = localStorage.getItem("fast_dash_cache_v2");
     if(localCached){
       var parsed = JSON.parse(localCached);
       window.handleManagerData(parsed);
     }
   } catch(e){}
 
-  fetch(SCRIPT_URL, {method:"GET", redirect:"follow", cache:"no-cache"})
-    .then(r => r.json())
-    .then(d => {
-      window.handleManagerData(d);
+  // 1. JSONP Injection
+  var jsonp = document.createElement("script");
+  jsonp.id = "jsonp_loader_script";
+  jsonp.src = SCRIPT_URL + (SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "callback=handleManagerData&_=" + Date.now();
+  document.body.appendChild(jsonp);
+
+  // 2. Fallback Fetch API
+  fetch(SCRIPT_URL, {method:"GET", mode:"cors", cache:"no-cache"})
+    .then(res => res.json())
+    .then(data => {
+      window.handleManagerData(data);
     })
-    .catch(() => {
-      var old = document.getElementById("jsonpScript");
-      if(old) old.remove();
-      var s = document.createElement("script");
-      s.id = "jsonpScript";
-      s.src = SCRIPT_URL + (SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "callback=handleManagerData&_=" + Date.now();
-      document.body.appendChild(s);
-    });
+    .catch(() => {});
 }
 prefetchDashboardData();
 
-/* PURE PASSKEY ENTRY (DEFAULT: 123456) */
+/* LOGIN ENTRY */
 function _0x_entry(){
   var rawInput = document.getElementById('portalKey').value;
   var val = String(rawInput || "").replace(/[\u200B-\u200D\uFEFF]/g, '').trim();
 
   if(val === _0x_DEF_VAL){
+    isUserLoggedIn = true;
     document.getElementById('portalBox').classList.add('hide');
+    
+    // Show animated sync loader with blur background if data is still fetching
+    if(!isDataLoaded){
+      var syncOl = document.getElementById("liveSyncOverlay");
+      if(syncOl) syncOl.classList.add("active");
+    }
+
     setTimeout(()=>{
       document.getElementById('curtainLayer').classList.add('curtain-open');
       setTimeout(()=>{
@@ -405,10 +585,11 @@ function _0x_entry(){
           var selZoom = document.getElementById("appZoomSelect") ? document.getElementById("appZoomSelect").value : "0.9";
           applyAppZoom(selZoom);
         }
-        if(rawSheetRows && rawSheetRows.length > 0){
+        if(isDataLoaded){
           rebuildAllDynamicFilters();
           updateHierarchyVisibility();
           renderAll();
+          dismissLoaderIfReady();
         }
       }, 850);
     }, 150);
@@ -712,7 +893,7 @@ function renderTable(){
 
 window.goToPage=function(p){currentPage=p;renderTable();}
 
-/* POPUP MODAL HIERARCHY ENGINE (ZH > DZH > SH > CM > FOS) + BIDIRECTIONAL */
+/* POPUP MODAL HIERARCHY ENGINE (ZH > DZH > SH > CM > FOS) */
 function getModalActiveHierarchyRows(excludeLevel){
   var d = getPureDataRows();
   var sC = getCheckedValues("rfCycle");
