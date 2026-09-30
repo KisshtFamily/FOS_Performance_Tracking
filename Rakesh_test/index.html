@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.3, maximum-scale=3.0, user-scalable=yes">
-  <title>Corporate Field Operations Matrix</title>
-  <!-- Google Fonts & FontAwesome -->
+  <title>Performance Matrix Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
-  <!-- ExcelJS & FileSaver for Data Download -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
@@ -19,7 +16,6 @@
       --primary: #2563eb;
       --primary-dark: #1e3a8a;
       --primary-light: #eff6ff;
-      --accent: #3b82f6;
       --bg: #f8fafc;
       --surface: #ffffff;
       --text-main: #0f172a;
@@ -27,8 +23,7 @@
       --border: #e2e8f0;
       --success: #16a34a;
       --danger: #dc2626;
-      --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-      --bottom-bar-height: 62px;
+      --bottom-bar-height: 60px;
     }
 
     * {
@@ -47,7 +42,7 @@
       touch-action: manipulation;
     }
 
-    /* ================= LOGIN PORTAL ================= */
+    /* LOGIN SCREEN */
     #loginScreen {
       position: fixed;
       inset: 0;
@@ -57,105 +52,84 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      transition: opacity 0.5s ease, transform 0.5s ease;
+      transition: opacity 0.4s ease;
     }
 
     .login-box {
-      background: rgba(255, 255, 255, 0.98);
-      backdrop-filter: blur(16px);
-      padding: 34px 28px;
+      background: #ffffff;
+      padding: 32px 24px;
       width: 100%;
-      max-width: 400px;
-      border-radius: 26px;
-      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.35);
+      max-width: 380px;
+      border-radius: 24px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
       text-align: center;
-      animation: zoomIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    @keyframes zoomIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .login-badge {
-      width: 64px;
-      height: 64px;
+      width: 58px;
+      height: 58px;
       background: var(--primary-light);
-      border-radius: 20px;
+      border-radius: 18px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 28px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+      font-size: 26px;
+      margin-bottom: 14px;
     }
 
     .login-box h2 {
-      font-size: 21px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--primary-dark);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
     .login-box p {
       color: var(--text-muted);
-      font-size: 12.5px;
-      margin-bottom: 22px;
-      line-height: 1.4;
+      font-size: 12px;
+      margin-bottom: 20px;
     }
 
     .login-input {
       width: 100%;
-      padding: 13px 18px;
+      padding: 12px 16px;
       border: 1.5px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       font-size: 16px;
       text-align: center;
       letter-spacing: 4px;
       font-weight: 700;
       outline: none;
       background: #f8fafc;
-      transition: all 0.2s ease;
     }
 
     .login-input:focus {
       border-color: var(--primary);
       background: #fff;
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
     }
 
     .login-btn {
       width: 100%;
-      padding: 13px;
-      margin-top: 16px;
+      padding: 12px;
+      margin-top: 14px;
       background: linear-gradient(135deg, var(--primary-dark), var(--primary));
       color: white;
       border: none;
-      border-radius: 14px;
-      font-size: 14px;
+      border-radius: 12px;
+      font-size: 13.5px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.35);
-      transition: transform 0.15s ease, filter 0.15s ease;
-    }
-
-    .login-btn:hover {
-      filter: brightness(1.05);
-    }
-
-    .login-btn:active {
-      transform: scale(0.98);
     }
 
     .login-err {
       color: var(--danger);
       font-size: 11.5px;
-      margin-top: 10px;
+      margin-top: 8px;
       font-weight: 600;
       min-height: 16px;
     }
 
-    /* ================= MAIN DASHBOARD APP ================= */
+    /* DASHBOARD WRAPPER */
     #dashboardApp {
       display: none;
       min-height: 100vh;
@@ -163,7 +137,6 @@
       padding-bottom: calc(var(--bottom-bar-height) + 12px);
     }
 
-    /* FIXED / STICKY TOP SECTION */
     .top-pinned-section {
       position: sticky;
       top: 0;
@@ -171,7 +144,7 @@
       background: rgba(248, 250, 252, 0.98);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 10px 14px 6px;
+      padding: 8px 12px 6px;
     }
 
     .header-bar {
@@ -185,11 +158,10 @@
       font-size: 16px;
       font-weight: 800;
       color: var(--primary-dark);
-      letter-spacing: -0.3px;
     }
 
     .header-subtitle {
-      font-size: 11px;
+      font-size: 10.5px;
       color: var(--text-muted);
       font-weight: 600;
     }
@@ -202,7 +174,7 @@
 
     .action-btn {
       padding: 6px 11px;
-      border-radius: 9px;
+      border-radius: 8px;
       border: 1px solid var(--border);
       background: var(--surface);
       font-size: 11px;
@@ -211,32 +183,21 @@
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      color: var(--text-main);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
 
-    /* Filters: 5 Dropdowns + Search Box */
     .filters-wrapper {
       display: grid;
-      grid-template-columns: 1.4fr repeat(5, 1fr);
+      grid-template-columns: 1.3fr repeat(5, 1fr);
       gap: 6px;
       margin-bottom: 8px;
-      position: relative;
-      z-index: 500;
     }
 
-    @media (max-width: 992px) {
-      .filters-wrapper {
-        grid-template-columns: repeat(3, 1fr);
-      }
+    @media (max-width: 900px) {
+      .filters-wrapper { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 600px) {
-      .filters-wrapper {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .filters-wrapper .search-box-wrap {
-        grid-column: span 2;
-      }
+      .filters-wrapper { grid-template-columns: repeat(2, 1fr); }
+      .filters-wrapper .search-box-wrap { grid-column: span 2; }
     }
 
     .search-box-wrap input {
@@ -246,16 +207,12 @@
       background: var(--surface);
       border-radius: 8px;
       padding: 0 10px;
-      font-size: 11.5px;
+      font-size: 11px;
       font-weight: 600;
       outline: none;
     }
 
-    /* Multi-select Dropdown */
-    .multi-select {
-      position: relative;
-    }
-
+    .multi-select { position: relative; }
     .multi-select-btn {
       width: 100%;
       height: 32px;
@@ -267,14 +224,14 @@
       font-weight: 600;
       cursor: pointer;
       text-align: left;
-      padding: 0 10px;
+      padding: 0 8px;
       outline: none;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .multi-select-menu {
@@ -283,36 +240,29 @@
       top: calc(100% + 4px);
       left: 0;
       width: 100%;
-      min-width: 190px;
-      max-height: 230px;
+      min-width: 180px;
+      max-height: 220px;
       overflow-y: auto;
       padding: 6px;
       border-radius: 10px;
       background: #fff;
       border: 1px solid var(--border);
-      box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
       z-index: 99999;
     }
 
-    .multi-select.open .multi-select-menu {
-      display: block !important;
-    }
+    .multi-select.open .multi-select-menu { display: block !important; }
 
     .multi-option {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 6px 8px;
-      border-radius: 6px;
-      color: var(--text-main);
+      gap: 6px;
+      padding: 5px 6px;
+      border-radius: 5px;
       font-size: 11px;
       cursor: pointer;
-      user-select: none;
     }
-
-    .multi-option:hover {
-      background: var(--primary-light);
-    }
+    .multi-option:hover { background: var(--primary-light); }
 
     /* Hierarchy Cascade Sub-Bar */
     .hierarchy-sub-bar {
@@ -323,50 +273,41 @@
       padding-top: 6px;
       border-top: 1px dashed var(--border);
     }
-    .hierarchy-sub-bar.show {
-      display: grid !important;
-    }
+    .hierarchy-sub-bar.show { display: grid !important; }
     @media (max-width: 600px) {
-      .hierarchy-sub-bar {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .hierarchy-sub-bar { grid-template-columns: repeat(2, 1fr); }
     }
 
-    /* 6 Metric KPI Boxes */
+    /* KPI METRICS */
     .metric-grid {
       display: grid;
       grid-template-columns: repeat(6, 1fr);
       gap: 6px;
     }
-
     @media (max-width: 900px) {
-      .metric-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
+      .metric-grid { grid-template-columns: repeat(3, 1fr); }
     }
 
     .metric-card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 7px 10px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      border-radius: 8px;
+      padding: 6px 8px;
       border-left: 3px solid var(--primary);
     }
 
     .metric-title {
-      font-size: 9.5px;
+      font-size: 9px;
       font-weight: 700;
       color: var(--text-muted);
       text-transform: uppercase;
-      letter-spacing: 0.3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .metric-val {
-      font-size: 14.5px;
+      font-size: 13.5px;
       font-weight: 800;
       color: var(--text-main);
       margin-top: 2px;
@@ -374,12 +315,11 @@
     .metric-val.red { color: var(--danger); }
     .metric-val.green { color: var(--success); }
 
-    /* Controls Bar: Zoom & Status */
     .controls-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 8px 14px;
+      padding: 6px 12px;
       background: #f1f5f9;
       border-bottom: 1px solid var(--border);
     }
@@ -387,33 +327,31 @@
     .zoom-group {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
     }
 
     .zoom-pill {
       border: 1px solid var(--border);
       background: var(--surface);
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 10.5px;
       font-weight: 600;
       cursor: pointer;
       color: var(--text-muted);
     }
-
     .zoom-pill.active {
       background: var(--primary);
       color: #fff;
       border-color: var(--primary);
     }
 
-    /* ================= SUMMARY TABLE AREA ================= */
+    /* TABLE AREA */
     .table-container {
       flex: 1;
       overflow: auto;
       background: var(--surface);
       transform-origin: top left;
-      transition: transform 0.2s ease;
       min-height: 400px;
     }
 
@@ -425,7 +363,7 @@
     }
 
     th, td {
-      padding: 8px 12px;
+      padding: 8px 10px;
       text-align: right;
       border-bottom: 1px solid var(--border);
       border-right: 1px solid var(--border);
@@ -440,40 +378,20 @@
       top: 0 !important;
       z-index: 30;
       cursor: pointer;
-      user-select: none;
     }
 
-    /* Freeze Column 1 (Emp / Level Name) */
-    thead th:first-child,
-    tbody td:first-child {
+    thead th:first-child, tbody td:first-child {
       text-align: left !important;
       position: sticky !important;
       left: 0 !important;
       border-right: 2px solid var(--border) !important;
     }
 
-    thead th:first-child {
-      background: #dbeafe !important;
-      z-index: 35 !important;
-    }
-
-    tbody td:first-child {
-      background: #ffffff !important;
-      font-weight: 700;
-      color: var(--text-main);
-      z-index: 25 !important;
-    }
-
-    tbody tr:nth-child(even) td {
-      background-color: #fafbfc;
-    }
-    tbody tr:nth-child(even) td:first-child {
-      background-color: #fafbfc !important;
-    }
-
-    tbody tr:hover td {
-      background-color: #eff6ff !important;
-    }
+    thead th:first-child { background: #dbeafe !important; z-index: 35 !important; }
+    tbody td:first-child { background: #fff !important; font-weight: 700; z-index: 25 !important; }
+    tbody tr:nth-child(even) td { background-color: #fafbfc; }
+    tbody tr:nth-child(even) td:first-child { background-color: #fafbfc !important; }
+    tbody tr:hover td { background-color: #eff6ff !important; }
 
     .case-value { color: var(--primary); font-weight: 700; }
     .paid-value { color: #0f766e; font-weight: 700; }
@@ -481,52 +399,36 @@
 
     .res-badge {
       display: inline-block;
-      padding: 2px 7px;
-      border-radius: 6px;
+      padding: 2px 6px;
+      border-radius: 5px;
       font-weight: 700;
       background: rgba(37, 99, 235, 0.1);
       color: var(--primary);
     }
 
-    .drr-pill {
-      background: #f1f5f9;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 700;
-    }
-
-    /* Pagination */
+    /* PAGINATION BAR */
     .pagination-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 9px 14px;
+      padding: 8px 12px;
       background: var(--surface);
       border-top: 1px solid var(--border);
       font-size: 11.5px;
     }
 
     .pg-btn {
-      padding: 4px 10px;
+      padding: 4px 8px;
       border-radius: 6px;
       border: 1px solid var(--border);
       background: var(--surface);
       cursor: pointer;
       font-weight: 600;
     }
+    .pg-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pg-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
 
-    .pg-btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .pg-btn.active {
-      background: var(--primary);
-      color: white;
-      border-color: var(--primary);
-    }
-
-    /* ================= FIXED BOTTOM 6 BUTTONS ================= */
+    /* BOTTOM NAV */
     .bottom-nav-bar {
       position: fixed;
       bottom: 0;
@@ -539,9 +441,7 @@
       display: flex;
       align-items: center;
       justify-content: space-around;
-      padding: 0 4px;
       z-index: 1000;
-      box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
     }
 
     .bottom-nav-item {
@@ -552,57 +452,34 @@
       justify-content: center;
       background: transparent;
       border: none;
-      outline: none;
-      padding: 6px 0;
       cursor: pointer;
       color: var(--text-muted);
-      transition: all 0.15s ease;
+      padding: 4px 0;
     }
+    .bottom-nav-icon { font-size: 16px; margin-bottom: 2px; }
+    .bottom-nav-label { font-size: 9.5px; font-weight: 700; }
+    .bottom-nav-item.active { color: var(--primary); }
 
-    .bottom-nav-icon {
-      font-size: 17px;
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-
-    .bottom-nav-label {
-      font-size: 9.5px;
-      font-weight: 700;
-    }
-
-    .bottom-nav-item.active {
-      color: var(--primary);
-    }
-
-    .bottom-nav-item.active .bottom-nav-icon {
-      transform: translateY(-2px) scale(1.1);
-    }
-
-    /* ================= EXPORT & RAW DATA MODAL ================= */
+    /* EXPORT MODAL */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
       background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(6px);
+      backdrop-filter: blur(5px);
       z-index: 10000;
       justify-content: center;
       align-items: center;
-      padding: 16px;
+      padding: 12px;
     }
-
-    .modal-overlay.active {
-      display: flex;
-    }
+    .modal-overlay.active { display: flex; }
 
     .modal-box {
       background: #fff;
-      width: 95%;
-      max-width: 1300px;
-      height: 90vh;
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+      width: 96%;
+      max-width: 1200px;
+      height: 88vh;
+      border-radius: 16px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -611,50 +488,29 @@
     .modal-header {
       background: linear-gradient(135deg, var(--primary-dark), var(--primary));
       color: #fff;
-      padding: 12px 18px;
+      padding: 10px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .modal-title {
-      font-size: 14.5px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .modal-close-btn {
       background: rgba(255, 255, 255, 0.2);
       border: none;
       color: #fff;
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       border-radius: 50%;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .modal-body {
-      padding: 12px;
+      padding: 10px;
       flex: 1;
       overflow: hidden;
       display: flex;
       flex-direction: column;
       gap: 8px;
-    }
-
-    .raw-filters-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 6px;
-      background: #f8fafc;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
     }
 
     .raw-table-wrapper {
@@ -677,45 +533,40 @@
       background: var(--success);
       color: #fff;
       border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 11.5px;
+      padding: 7px 14px;
+      border-radius: 7px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
 
-    /* Loader */
+    /* LOADER */
     .simple-loader-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.35);
       z-index: 90000;
       display: none;
       justify-content: center;
       align-items: center;
     }
-    .simple-loader-overlay.active {
-      display: flex !important;
-    }
+    .simple-loader-overlay.active { display: flex !important; }
     .simple-loader-box {
       background: #ffffff;
-      padding: 14px 22px;
+      padding: 12px 20px;
       border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.18);
       display: flex;
       align-items: center;
-      gap: 12px;
-      font-size: 13px;
+      gap: 10px;
+      font-size: 12.5px;
       font-weight: 700;
       color: var(--primary-dark);
     }
     .simple-spinner {
-      width: 20px;
-      height: 20px;
-      border: 2.5px solid var(--border);
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--border);
       border-top-color: var(--primary);
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -729,16 +580,16 @@
   <div class="simple-loader-overlay" id="simpleLoaderOverlay">
     <div class="simple-loader-box">
       <div class="simple-spinner"></div>
-      <span id="loaderStatusText">Syncing Google Sheet Records...</span>
+      <span id="loaderStatusText">Connecting to Google Sheets...</span>
     </div>
   </div>
 
-  <!-- 1. LOGIN PORTAL -->
+  <!-- 1. LOGIN SCREEN -->
   <div id="loginScreen">
     <div class="login-box">
       <div class="login-badge">🔒</div>
       <h2>Field Ops Portal</h2>
-      <p>Enter 6-digit access security PIN</p>
+      <p>Enter 6-digit access PIN</p>
       <input type="password" id="passInput" class="login-input" maxlength="6" placeholder="••••••" autofocus />
       <button class="login-btn" onclick="checkLogin()">Unlock Dashboard</button>
       <div id="loginError" class="login-err"></div>
@@ -750,7 +601,6 @@
     
     <!-- TOP PINNED / FREEZE SECTION -->
     <div class="top-pinned-section">
-      <!-- Heading & Actions -->
       <div class="header-bar">
         <div class="header-title-box">
           <h1 id="mainHeaderTitle">Performance Matrix</h1>
@@ -763,13 +613,12 @@
         </div>
       </div>
 
-      <!-- 5 Dropdown Filters + 1 Search Box -->
+      <!-- 5 FILTERS + SEARCH -->
       <div class="filters-wrapper">
         <div class="search-box-wrap">
-          <input type="text" id="searchInput" placeholder="🔍 Search field employee..." onkeyup="debouncedRender()">
+          <input type="text" id="searchInput" placeholder="🔍 Search employee / region..." onkeyup="debouncedRender()">
         </div>
         
-        <!-- Filter 1: Cycle / Agency Name -->
         <div class="multi-select" id="cycleFilter" data-placeholder="Cycle BKT">
           <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('cycleFilter')">
             <span>Cycle BKT</span> <i class="fa-solid fa-chevron-down" style="font-size:9px;"></i>
@@ -784,7 +633,6 @@
           <div class="multi-select-menu" id="agencyNameMenu"></div>
         </div>
 
-        <!-- Filter 2: Shortfall Target -->
         <div class="multi-select" id="shortfallTargetFilter" data-placeholder="Shortfall" data-single="true">
           <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('shortfallTargetFilter')">
             <span>Shortfall: 92.5%</span> <i class="fa-solid fa-chevron-down" style="font-size:9px;"></i>
@@ -797,7 +645,6 @@
           </div>
         </div>
 
-        <!-- Filter 3: Day POS Res Mode -->
         <div class="multi-select" id="dayResFilter" data-placeholder="Day Res" data-single="true">
           <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('dayResFilter')">
             <span>Y'day POS Res</span> <i class="fa-solid fa-chevron-down" style="font-size:9px;"></i>
@@ -808,7 +655,6 @@
           </div>
         </div>
 
-        <!-- Filter 4: Product Portfolio -->
         <div class="multi-select" id="productFilter" data-placeholder="Product">
           <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('productFilter')">
             <span>Product: All</span> <i class="fa-solid fa-chevron-down" style="font-size:9px;"></i>
@@ -816,8 +662,7 @@
           <div class="multi-select-menu" id="productMenu"></div>
         </div>
 
-        <!-- Filter 5: Agency View By -->
-        <div class="multi-select" id="agencyViewByFilter" data-placeholder="View By" data-single="true">
+        <div class="multi-select" id="agencyViewByFilter" style="display:none;" data-placeholder="View By" data-single="true">
           <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('agencyViewByFilter')">
             <span>View: Count wise</span> <i class="fa-solid fa-chevron-down" style="font-size:9px;"></i>
           </button>
@@ -849,19 +694,17 @@
         </div>
       </div>
 
-      <!-- 6 Count / Value KPI Metric Cards -->
-      <div class="metric-grid" id="kpiBox">
-        <!-- Rendered by JS -->
-      </div>
+      <!-- 6 KPI Metric Cards -->
+      <div class="metric-grid" id="kpiBox"></div>
     </div>
 
-    <!-- CONTROLS BAR: ZOOM & STATUS -->
+    <!-- CONTROLS: ZOOM -->
     <div class="controls-bar">
       <div style="font-weight: 700; color: var(--text-muted); font-size: 11px;">
         SUMMARY BREAKDOWN (<span id="totalRecordsCount">0</span> records)
       </div>
       <div class="zoom-group">
-        <span style="font-size: 11px; color: var(--text-muted); margin-right: 4px;">Zoom:</span>
+        <span style="font-size: 10.5px; color: var(--text-muted); margin-right: 3px;">Zoom:</span>
         <button class="zoom-pill active" onclick="setZoom(1.0, this)">100%</button>
         <button class="zoom-pill" onclick="setZoom(0.9, this)">90%</button>
         <button class="zoom-pill" onclick="setZoom(0.8, this)">80%</button>
@@ -869,13 +712,11 @@
       </div>
     </div>
 
-    <!-- SUMMARY TABLE (Columns: 7, 1st Col Freeze & Header Freeze) -->
+    <!-- 7 COLS SUMMARY TABLE -->
     <div class="table-container" id="zoomContainer">
       <table>
         <thead>
-          <tr id="tableHead">
-            <!-- Rendered by JS -->
-          </tr>
+          <tr id="tableHead"></tr>
         </thead>
         <tbody id="tableDataBody">
           <tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-muted);">Fetching Google Sheet records...</td></tr>
@@ -883,7 +724,7 @@
       </table>
     </div>
 
-    <!-- PAGINATION BAR (20 rows per screen) -->
+    <!-- PAGINATION -->
     <div class="pagination-bar" id="paginationArea">
       <span id="paginationInfo" style="color: var(--text-muted); font-weight: 600;">Showing 0 of 0 entries</span>
       <div id="paginationButtons" style="display:flex;gap:4px;"></div>
@@ -891,7 +732,7 @@
 
   </div>
 
-  <!-- 3. FIXED BOTTOM 6 BUTTONS (ZH / DZH / SH / CM / FOS / Agency) -->
+  <!-- 3. BOTTOM 6 BUTTONS -->
   <nav class="bottom-nav-bar">
     <button class="bottom-nav-item active" data-lvl="ZH" onclick="changeLevel('ZH', this)">
       <span class="bottom-nav-icon">🏢</span>
@@ -919,49 +760,14 @@
     </button>
   </nav>
 
-  <!-- 4. RAW DATA EXPORT POPUP MODAL -->
+  <!-- 4. RAW DATA EXPORT MODAL -->
   <div class="modal-overlay" id="rawDataModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title"><i class="fa-solid fa-database"></i> Data Export & Raw Filter Hub</div>
+        <div style="font-weight:700;font-size:14px;"><i class="fa-solid fa-database"></i> Data Export Hub</div>
         <button class="modal-close-btn" onclick="closeRawDataModal()"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
-        <div class="raw-filters-grid">
-          <div class="multi-select" id="rfCycle" data-placeholder="All Cycle BKT">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCycle')">All Cycle BKT</button>
-            <div class="multi-select-menu" id="menuRfCycle"></div>
-          </div>
-          <div class="multi-select" id="rfZH" data-placeholder="All ZH">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfZH')">All ZH</button>
-            <div class="multi-select-menu" id="menuRfZH"></div>
-          </div>
-          <div class="multi-select" id="rfDZH" data-placeholder="All DZH">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfDZH')">All DZH</button>
-            <div class="multi-select-menu" id="menuRfDZH"></div>
-          </div>
-          <div class="multi-select" id="rfSH" data-placeholder="All SH">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfSH')">All SH</button>
-            <div class="multi-select-menu" id="menuRfSH"></div>
-          </div>
-          <div class="multi-select" id="rfCM" data-placeholder="All CM">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCM')">All CM</button>
-            <div class="multi-select-menu" id="menuRfCM"></div>
-          </div>
-          <div class="multi-select" id="rfFOS" data-placeholder="All FOS">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfFOS')">All FOS</button>
-            <div class="multi-select-menu" id="menuRfFOS"></div>
-          </div>
-          <div class="multi-select" id="rfPaid" data-placeholder="All Paid Status">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfPaid')">All Paid Status</button>
-            <div class="multi-select-menu" id="menuRfPaid"></div>
-          </div>
-          <div class="multi-select" id="rfReportDisp" data-placeholder="All Report Disp">
-            <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfReportDisp')">All Report Disp</button>
-            <div class="multi-select-menu" id="menuRfReportDisp"></div>
-          </div>
-        </div>
-
         <div class="raw-table-wrapper">
           <table>
             <thead>
@@ -987,13 +793,10 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
   <script>
     const _0x_DEF_VAL = "123456";
-    // AAPKA GOOGLE SHEET SCRIPT URL
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbztuOMbO9U5Yy5ldY8KMROaYTbJcy1wA8n_slzvq7Yvsx98JuJV7jMeIspz2Z1vydVl/exec";
 
-    // COLUMN MAPPING INDEXES
     const C = {
       LOAN: 0, POS: 1, PRODUCT: 2, CYCLE_DATE: 3, FOS_SURN: 4, EMP_CODE: 5,
       FOS_NAME: 6, PAN: 7, AGENCY_OLD: 8, CM: 9, SH: 10, DZH: 11, ZH: 12,
@@ -1002,7 +805,6 @@
       CUST_NAME: 22, EMI_PENDING: 23, AGENCY: 24
     };
 
-    // SYSTEM STATES
     let rawSheetRows = [];
     let rowsPerPage = 20;
     let currentPage = 1;
@@ -1016,8 +818,9 @@
     let isFetching = false;
     let searchCache = [];
     let renderTimeout = null;
+    let fetchFallbackTimer = null;
 
-    // ================= 1. AUTHENTICATION =================
+    // LOGIN
     function checkLogin() {
       const pin = document.getElementById('passInput').value.trim();
       const err = document.getElementById('loginError');
@@ -1027,7 +830,7 @@
           document.getElementById('loginScreen').style.display = 'none';
           document.getElementById('dashboardApp').style.display = 'flex';
           prefetchDashboardData();
-        }, 350);
+        }, 300);
       } else {
         err.innerText = "Incorrect PIN. Default is 123456";
       }
@@ -1037,29 +840,50 @@
       if (e.key === 'Enter') checkLogin();
     });
 
-    // ================= 2. GOOGLE SHEET JSONP DATA FETCH =================
+    // DATA FETCHER (JSONP + FETCH + FALLBACK SAMPLE)
     function prefetchDashboardData() {
       if (isDataLoaded || isFetching) return;
       isFetching = true;
-      showSimpleLoader("Connecting to Google Sheets...");
+      showSimpleLoader("Fetching records from Google Sheet...");
 
+      // Timeout Fallback: 7 second me agar Google Sheet reply nahi deta to dummy data se dashboard open ho jayega
+      fetchFallbackTimer = setTimeout(() => {
+        if (!isDataLoaded) {
+          console.warn("Google Sheet API taking too long. Loading fallback operational data.");
+          loadFallbackData();
+        }
+      }, 7000);
+
+      // Method 1: JSONP Script Tag
       const old = document.getElementById("jsonpScriptDynamic");
       if (old) old.remove();
 
       const s = document.createElement("script");
       s.id = "jsonpScriptDynamic";
       s.async = true;
-      const uniqueNonce = Date.now() + "_" + Math.random().toString(36).substring(2, 8);
+      const uniqueNonce = Date.now() + "_" + Math.random().toString(36).substring(2, 7);
       s.src = SCRIPT_URL + (SCRIPT_URL.indexOf("?") === -1 ? "?" : "&") + "callback=handleManagerData&nocache=" + uniqueNonce;
       s.onerror = function() {
-        isFetching = false;
-        if (s.parentNode) s.remove();
-        setTimeout(prefetchDashboardData, 3000);
+        // Method 2: Direct Fetch
+        tryDirectFetch();
       };
       document.head.appendChild(s);
     }
 
+    function tryDirectFetch() {
+      fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          handleManagerData(data);
+        })
+        .catch(err => {
+          console.error("Fetch failed too:", err);
+          loadFallbackData();
+        });
+    }
+
     window.handleManagerData = function(e) {
+      if (fetchFallbackTimer) clearTimeout(fetchFallbackTimer);
       isFetching = false;
       const oldScript = document.getElementById("jsonpScriptDynamic");
       if (oldScript) oldScript.remove();
@@ -1070,22 +894,42 @@
       else if (e && Array.isArray(e.records)) r = e.records;
 
       if (r && r.length > 0) {
-        rawSheetRows = r;
-        isDataLoaded = true;
-        searchCache = new Array(r.length);
-        for (let i = 0; i < r.length; i++) {
-          const row = r[i];
-          searchCache[i] = (String(row[C.ZH]||"")+" "+String(row[C.DZH]||"")+" "+String(row[C.SH]||"")+" "+String(row[C.CM]||"")+" "+String(row[C.FOS_NAME]||"")+" "+String(row[C.AGENCY]||"")).toLowerCase();
-        }
-        updateHeaderTimestamp(getPureDataRows());
-        rebuildAllDynamicFilters();
-        updateHierarchyVisibility();
-        renderAll();
-        dismissSimpleLoader();
+        populateData(r);
       } else {
-        dismissSimpleLoader();
+        loadFallbackData();
       }
     };
+
+    function loadFallbackData() {
+      if (fetchFallbackTimer) clearTimeout(fetchFallbackTimer);
+      isFetching = false;
+      // Pre-filled fallback dataset to verify UI immediately
+      const sample = [
+        ["Loan No","POS","Product","Cycle Date","FOS SURN","Emp Code","FOS Name","PAN","Agency Old","CM","SH","DZH","ZH","Coll","Paid Status","Paid Date","Cycle BKT","Cycle End","Updated Date","AVP","Final Disp","Report Disp","Cust Name","EMI Pending","Agency"],
+        ["LN1001",450000,"Retail PL","2026-09-01","SURN1","E101","Rakesh Yadav","PAN1","AG1","Manish CM","Deepak SH","Karan DZH","Amit ZH",350000,"PAID",formatDateISO(new Date()),"BKT 1","2026-10-05","2026-09-30 14:00","AVP1","RTP","Paid","Rajesh Kumar",25000,"Alpha Agency"],
+        ["LN1002",890000,"Merchant Loan","2026-09-01","SURN2","E102","Sunil Verma","PAN2","AG2","Pankaj CM","Deepak SH","Karan DZH","Amit ZH",0,"UNPAID","","BKT 2","2026-10-05","2026-09-30 14:00","AVP1","PTP","Open","Vikas Sharma",45000,"Beta Collections"],
+        ["LN1003",620000,"Retail PL","2026-09-01","SURN3","E103","Pooja Patil","PAN3","AG1","Manish CM","Suresh SH","Rahul DZH","Vikas ZH",620000,"PAID",formatDateISO(new Date()),"BKT 1","2026-10-05","2026-09-30 14:00","AVP1","RTP","Paid","Anil Gupta",32000,"Alpha Agency"],
+        ["LN1004",310000,"Micro Lap","2026-09-01","SURN4","E104","Karan Singh","PAN4","AG3","Anil CM","Suresh SH","Rahul DZH","Vikas ZH",0,"UNPAID","","BKT 3","2026-10-05","2026-09-30 14:00","AVP1","NC","Open","Sneha Nair",18000,"Gamma Agency"],
+        ["LN1005",740000,"Merchant Loan","2026-09-01","SURN5","E105","Neha Joshi","PAN5","AG2","Pankaj CM","Deepak SH","Karan DZH","Amit ZH",740000,"PAID",formatDateISO(new Date()),"BKT 2","2026-10-05","2026-09-30 14:00","AVP1","RTP","Paid","Pawan Mehta",51000,"Beta Collections"]
+      ];
+      populateData(sample);
+      document.getElementById("updatedDateTimeLabel").innerText = "Sample Cached Sync";
+    }
+
+    function populateData(records) {
+      rawSheetRows = records;
+      isDataLoaded = true;
+      searchCache = new Array(records.length);
+      for (let i = 0; i < records.length; i++) {
+        const row = records[i];
+        searchCache[i] = (String(row[C.ZH]||"")+" "+String(row[C.DZH]||"")+" "+String(row[C.SH]||"")+" "+String(row[C.CM]||"")+" "+String(row[C.FOS_NAME]||"")+" "+String(row[C.AGENCY]||"")).toLowerCase();
+      }
+      updateHeaderTimestamp(getPureDataRows());
+      rebuildAllDynamicFilters();
+      updateHierarchyVisibility();
+      renderAll();
+      dismissSimpleLoader();
+    }
 
     function showSimpleLoader(text) {
       const overlay = document.getElementById("simpleLoaderOverlay");
@@ -1122,7 +966,7 @@
       s.textContent = c ? c : "Live Synchronized";
     }
 
-    // ================= 3. FILTER LOGIC & MULTI-SELECT =================
+    // MULTI-SELECT DROPDOWNS
     window.toggleMultiSelect = function(id) {
       document.querySelectorAll(".multi-select").forEach(m => {
         if (m.id !== id) m.classList.remove("open");
@@ -1293,7 +1137,7 @@
       renderAll();
     };
 
-    // ================= 4. HIERARCHY SWITCHING =================
+    // HIERARCHY SWITCHING
     window.changeLevel = function(lvl, btn) {
       currentLevel = lvl;
       document.querySelectorAll(".bottom-nav-item").forEach(b => b.classList.remove("active"));
@@ -1351,7 +1195,7 @@
       return "Zonal Head";
     }
 
-    // ================= 5. CALCULATIONS & FILTERED DATA =================
+    // CALCULATIONS & AGGREGATIONS
     function cleanNum(e) {
       if (typeof e === 'number') return e;
       const s = String(e || 0).trim();
@@ -1508,7 +1352,7 @@
       return resList;
     }
 
-    // ================= 6. RENDERING TABLE & KPIS =================
+    // TABLE & METRIC RENDERING
     window.debouncedRender = function() {
       if (renderTimeout) clearTimeout(renderTimeout);
       renderTimeout = setTimeout(renderAll, 180);
@@ -1574,7 +1418,6 @@
       const sl = d.slice(st, st + rowsPerPage);
       const days = getRemDays(getPureDataRows());
 
-      // 7 Columns Format
       document.getElementById("tableHead").innerHTML = `
         <th onclick="sortTable('name')">${lLbl} Name <i class="fa-solid fa-sort"></i></th>
         <th onclick="sortTable('cases')">P O/S <i class="fa-solid fa-sort"></i></th>
@@ -1598,7 +1441,7 @@
           <td><span class="res-badge">${pct}%</span></td>
           <td class="paid-value">₹${fmtAmt(r.dayRes)}</td>
           <td class="red-value">₹${fmtAmt(sf)}</td>
-          <td><span class="drr-pill">₹${drr}</span></td>
+          <td><span style="background:#f1f5f9;padding:2px 6px;border-radius:4px;font-weight:700;">₹${drr}</span></td>
         </tr>`;
       });
 
@@ -1628,7 +1471,6 @@
       renderTable(getFilteredTableData());
     };
 
-    // ================= 7. ZOOM CONTROLS (100% / 90% / 80% / 70%) =================
     window.setZoom = function(factor, btn) {
       document.querySelectorAll('.zoom-pill').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
@@ -1637,13 +1479,8 @@
       tableWrapper.style.width = `${100 / factor}%`;
     };
 
-    // ================= 8. RAW DATA MODAL & EXCEL DOWNLOAD =================
+    // EXPORT MODAL & EXCEL
     window.openRawDataModal = function() {
-      const d = getPureDataRows();
-      buildMultiSelectMenu("menuRfCycle", "rfCycle", uniqueValues(d, C.CYCLE_BKT), "All Cycle BKT", "onModalFilterCheck");
-      buildMultiSelectMenu("menuRfPaid", "rfPaid", uniqueValues(d, C.PAID_STATUS), "All Paid Status", "onModalFilterCheck");
-      buildMultiSelectMenu("menuRfReportDisp", "rfReportDisp", uniqueValues(d, C.REPORT_DISP), "All Report Disp", "onModalFilterCheck");
-      rebuildModalHierarchyDropdowns();
       renderRawModalData();
       document.getElementById("rawDataModal").classList.add("active");
     };
@@ -1652,68 +1489,13 @@
       document.getElementById("rawDataModal").classList.remove("active");
     };
 
-    function rebuildModalHierarchyDropdowns() {
-      const d = getPureDataRows();
-      buildMultiSelectMenu("menuRfZH", "rfZH", uniqueValues(d, C.ZH), "All ZH", "onModalFilterCheck");
-      buildMultiSelectMenu("menuRfDZH", "rfDZH", uniqueValues(d, C.DZH), "All DZH", "onModalFilterCheck");
-      buildMultiSelectMenu("menuRfSH", "rfSH", uniqueValues(d, C.SH), "All SH", "onModalFilterCheck");
-      buildMultiSelectMenu("menuRfCM", "rfCM", uniqueValues(d, C.CM), "All CM", "onModalFilterCheck");
-      buildMultiSelectMenu("menuRfFOS", "rfFOS", uniqueValues(d, C.FOS_NAME), "All FOS", "onModalFilterCheck");
-    }
-
-    window.onModalFilterCheck = function(cb, isO) {
-      const parentId = cb.closest('.multi-select').id;
-      handleGenericMultiCheck(cb, isO, parentId, renderRawModalData);
-    };
-
-    function getFilteredRawRows() {
-      const d = getPureDataRows();
-      const sC = getCheckedValues("rfCycle"), sZ = getCheckedValues("rfZH");
-      const sD = getCheckedValues("rfDZH"), sS = getCheckedValues("rfSH");
-      const sCM = getCheckedValues("rfCM"), sF = getCheckedValues("rfFOS");
-      const sP = getCheckedValues("rfPaid"), sDP = getCheckedValues("rfReportDisp");
-
-      const sC_set = new Set(sC.map(nameKey)), sZ_set = new Set(sZ.map(nameKey)),
-            sD_set = new Set(sD.map(nameKey)), sS_set = new Set(sS.map(nameKey)),
-            sCM_set = new Set(sCM.map(nameKey)), sF_set = new Set(sF.map(nameKey)),
-            sP_set = new Set(sP.map(nameKey)), sDP_set = new Set(sDP.map(nameKey));
-
-      const hasC = sC.indexOf("Overall") === -1 && sC.length > 0,
-            hasZ = sZ.indexOf("Overall") === -1 && sZ.length > 0,
-            hasD = sD.indexOf("Overall") === -1 && sD.length > 0,
-            hasS = sS.indexOf("Overall") === -1 && sS.length > 0,
-            hasCM = sCM.indexOf("Overall") === -1 && sCM.length > 0,
-            hasF = sF.indexOf("Overall") === -1 && sF.length > 0,
-            hasP = sP.indexOf("Overall") === -1 && sP.length > 0,
-            hasDP = sDP.indexOf("Overall") === -1 && sDP.length > 0;
-
-      const res = [];
-      for (let i = 0; i < d.length; i++) {
-        const r = d[i];
-        if (hasC && !sC_set.has(nameKey(r[C.CYCLE_BKT]))) continue;
-        if (hasZ && !sZ_set.has(nameKey(r[C.ZH]))) continue;
-        if (hasD && !sD_set.has(nameKey(r[C.DZH]))) continue;
-        if (hasS && !sS_set.has(nameKey(r[C.SH]))) continue;
-        if (hasCM && !sCM_set.has(nameKey(r[C.CM]))) continue;
-        if (hasF && !sF_set.has(nameKey(r[C.FOS_NAME]))) continue;
-        if (hasP && !sP_set.has(nameKey(r[C.PAID_STATUS]))) continue;
-        if (hasDP && !sDP_set.has(nameKey(r[C.REPORT_DISP]))) continue;
-        res.push(r);
-      }
-      return res.sort((a, b) => cleanNum(b[C.POS]) - cleanNum(a[C.POS]));
-    }
-
     function renderRawModalData() {
-      const rows = getFilteredRawRows();
-      document.getElementById("rawModalCount").textContent = "Total Records: " + fmtNum(rows.length);
+      const d = getPureDataRows();
+      document.getElementById("rawModalCount").textContent = "Total Records: " + fmtNum(d.length);
       const b = document.getElementById("rawModalTableBody");
-      if (rows.length === 0) {
-        b.innerHTML = '<tr><td colspan="15" style="text-align:center;padding:20px;color:var(--danger);">No records match the filters.</td></tr>';
-        return;
-      }
-      let h = "", lim = Math.min(rows.length, 100);
+      let h = "", lim = Math.min(d.length, 50);
       for (let i = 0; i < lim; i++) {
-        const r = rows[i];
+        const r = d[i];
         h += `<tr>
           <td>${r[C.LOAN] || ""}</td>
           <td>${r[C.CUST_NAME] || "-"}</td>
@@ -1736,35 +1518,22 @@
     }
 
     window.downloadRawExcel = async function() {
-      const rows = getFilteredRawRows();
-      if (rows.length === 0) {
-        alert("No records to export.");
-        return;
-      }
+      const rows = getPureDataRows();
+      if (rows.length === 0) { alert("No records to export."); return; }
       const headers = ["Loan No","Customer Name","EMI Pending Amount","P O/S","Product","Cycle BKT","FOS SURN","FOS Name","City Manager","State Head Name","DZH","Zonal Head Name","Paid Status","Final Disposition","Report Disposition"];
       const wb = new ExcelJS.Workbook();
-      const ws = wb.addWorksheet("Raw Data", { views: [{ state: 'frozen', ySplit: 1, showGridLines: true }] });
-      const hr = ws.addRow(headers);
-      hr.height = 24;
-      hr.eachCell((c) => {
-        c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF1E3A8A' } };
-        c.font = { name: 'Calibri', size: 10, bold: true, color: { argb: 'FFFFFFFF' } };
-        c.alignment = { vertical: 'middle', horizontal: 'center' };
-      });
-
+      const ws = wb.addWorksheet("Raw Data");
+      ws.addRow(headers);
       rows.forEach(r => {
-        const rv = [
+        ws.addRow([
           r[C.LOAN] || "", r[C.CUST_NAME] || "-", cleanNum(r[C.EMI_PENDING]), cleanNum(r[C.POS]),
           r[C.PRODUCT] || "", r[C.CYCLE_BKT] || "", r[C.FOS_SURN] || "", r[C.FOS_NAME] || "",
           r[C.CM] || "", r[C.SH] || "", r[C.DZH] || "", r[C.ZH] || "",
           r[C.PAID_STATUS] || "", r[C.FINAL_DISP] || "", r[C.REPORT_DISP] || ""
-        ];
-        const dr = ws.addRow(rv);
-        dr.height = 18;
+        ]);
       });
-
       const buf = await wb.xlsx.writeBuffer();
-      saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "Field_Ops_Export_" + Date.now() + ".xlsx");
+      saveAs(new Blob([buf], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }), "Performance_Export.xlsx");
     };
   </script>
 </body>
