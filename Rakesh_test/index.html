@@ -39,7 +39,7 @@
       touch-action: manipulation;
     }
 
-    /* PREMIUM APP LOGIN (Exact Reference Match) */
+    /* AUTHENTIC KISSHT THEME LOGIN */
     #loginScreen {
       position: fixed;
       inset: 0;
@@ -517,15 +517,27 @@
     }
     .raw-filters-bar {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)) 140px;
       gap: 6px;
       background: #f8fafc;
       padding: 8px;
       border-radius: 10px;
       border: 1px solid var(--border);
       align-items: center;
-      position: relative;
-      z-index: 600;
+    }
+    .btn-fetch-trigger {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      height: 32px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
     }
     .raw-table-wrapper {
       flex: 1;
@@ -598,7 +610,6 @@
   <div class="kissht-auth-container">
     <div class="kissht-logo-wrap">
       <div class="kissht-brand">
-        <!-- Exact Kissht Logo Mark -->
         <svg viewBox="0 0 240 70" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 10L24 38L36 10H48L30 45L48 65H36L24 49L12 65H0L18 45L0 10H12Z" fill="#1e40af"/>
           <path d="M22 8L27 20L32 8Z" fill="#eab308"/>
@@ -643,12 +654,10 @@
     </div>
 
     <div class="filters-wrapper">
-      <!-- Search Box (hidden in Agency view) -->
       <div class="search-box-wrap" id="searchWrap">
         <input type="text" id="searchInput" placeholder="🔍 Search employee name..." onkeyup="debouncedRender()">
       </div>
 
-      <!-- General Filters -->
       <div class="multi-select" id="cycleFilter" data-placeholder="Cycle BKT: All">
         <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('cycleFilter')">Cycle BKT: All</button>
         <div class="multi-select-menu" id="cycleMenu"></div>
@@ -741,7 +750,7 @@
   </button>
 </nav>
 
-<!-- Modal: Export Filter Data -->
+<!-- Modal: Export Filter Data (On-Demand Fetch via Apps Script) -->
 <div class="modal-overlay" id="rawDataModal">
   <div class="modal-box">
     <div class="modal-header">
@@ -750,38 +759,18 @@
     </div>
     <div class="modal-body">
       <div class="raw-filters-bar">
-        <div class="multi-select" id="rfCycle" data-placeholder="All Cycle BKT">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCycle')">All Cycle BKT</button>
-          <div class="multi-select-menu" id="menuRfCycle"></div>
-        </div>
-        <div class="multi-select" id="rfZH" data-placeholder="All Zonal Head">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfZH')">All Zonal Head</button>
-          <div class="multi-select-menu" id="menuRfZH"></div>
-        </div>
-        <div class="multi-select" id="rfDZH" data-placeholder="All Deputy Zonal">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfDZH')">All Deputy Zonal</button>
-          <div class="multi-select-menu" id="menuRfDZH"></div>
-        </div>
-        <div class="multi-select" id="rfSH" data-placeholder="All State Head">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfSH')">All State Head</button>
-          <div class="multi-select-menu" id="menuRfSH"></div>
-        </div>
-        <div class="multi-select" id="rfCM" data-placeholder="All City Manager">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfCM')">All City Manager</button>
-          <div class="multi-select-menu" id="menuRfCM"></div>
-        </div>
-        <div class="multi-select" id="rfFOS" data-placeholder="All FOS">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfFOS')">All FOS</button>
-          <div class="multi-select-menu" id="menuRfFOS"></div>
-        </div>
-        <div class="multi-select" id="rfPaid" data-placeholder="All Paid Status">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfPaid')">All Paid Status</button>
-          <div class="multi-select-menu" id="menuRfPaid"></div>
-        </div>
-        <div class="multi-select" id="rfReportDisp" data-placeholder="All Report Disp">
-          <button type="button" class="multi-select-btn" onclick="toggleMultiSelect('rfReportDisp')">All Report Disp</button>
-          <div class="multi-select-menu" id="menuRfReportDisp"></div>
-        </div>
+        <select id="rfZH" class="filter-select"><option value="">All ZH</option></select>
+        <select id="rfDZH" class="filter-select"><option value="">All DZH</option></select>
+        <select id="rfSH" class="filter-select"><option value="">All SH</option></select>
+        <select id="rfCM" class="filter-select"><option value="">All CM</option></select>
+        <select id="rfPaid" class="filter-select">
+          <option value="">All Paid Status</option>
+          <option value="PAID">PAID</option>
+          <option value="UNPAID">UNPAID</option>
+        </select>
+        <button class="btn-fetch-trigger" onclick="fetchFilteredRawData()">
+          <i class="fa-solid fa-bolt"></i> Fetch Filtered
+        </button>
       </div>
       <div class="raw-table-wrapper">
         <table>
@@ -795,7 +784,7 @@
           </thead>
           <tbody id="rawModalTableBody">
             <tr>
-              <td colspan="15" style="text-align:center;padding:30px;color:var(--text-muted);">Select filters to inspect or export records.</td>
+              <td colspan="15" style="text-align:center;padding:30px;color:var(--text-muted);">Select filters and click <strong>"Fetch Filtered"</strong> to pull targeted records.</td>
             </tr>
           </tbody>
         </table>
@@ -812,7 +801,7 @@
 const _0x_DEF_VAL = "123456";
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVuInp8kyAb6cDYTNswU9kpduqDHgQoD4p2v04iz8ar83eP7skmnRLSaCOGqTaG-FNGA/exec";
 
-let rawSheetRows = [];
+let DASHBOARD_CACHE = null;
 let currentLevel = "ZH";
 let targetShortfallPct = 92.5;
 let agencyShortfallPct = 30;
@@ -822,16 +811,7 @@ let currentPage = 1;
 const rowsPerPage = 20;
 let activeSort = { field: "name", direction: "asc" };
 let renderTimeout = null;
-let searchCache = [];
-
-const C = {
-  LOAN: 0, POS: 1, PRODUCT: 2, CYCLE_DATE: 3, FOS_SURN: 4,
-  EMP_CODE: 5, FOS_NAME: 6, PAN: 7, AGENCY_OLD: 8, CM: 9,
-  SH: 10, DZH: 11, ZH: 12, COLL: 13, PAID_STATUS: 14,
-  PAID_DATE: 15, CYCLE_BKT: 16, CYCLE_END: 17, UPDATED_DATE: 18,
-  AVP: 19, FINAL_DISP: 20, REPORT_DISP: 21, CUST_NAME: 22,
-  EMI_PENDING: 23, AGENCY: 24
-};
+let fetchedRawRows = [];
 
 function checkLogin() {
   const p = document.getElementById('passInput').value.trim();
@@ -840,7 +820,7 @@ function checkLogin() {
     setTimeout(() => {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('dashboardApp').style.display = 'flex';
-      loadDashboardData();
+      loadDashboardSummary();
     }, 300);
   } else {
     document.getElementById('loginError').innerText = "Incorrect PIN. Default is 123456";
@@ -850,165 +830,65 @@ document.getElementById('passInput').addEventListener('keyup', e => {
   if (e.key === 'Enter') checkLogin();
 });
 
-function loadDashboardData() {
+function loadDashboardSummary() {
   showLoader("Connecting fast...");
   const s = document.createElement("script");
-  s.src = `${SCRIPT_URL}?callback=handleSummaryData&nocache=${Date.now()}`;
+  s.src = `${SCRIPT_URL}?action=summary&callback=handleSummaryData&nocache=${Date.now()}`;
   s.onerror = function() {
     dismissLoader();
-    alert("Failed to load script data.");
+    alert("Connection error fetching summary.");
   };
   document.head.appendChild(s);
 }
 
 window.handleSummaryData = function(r) {
   dismissLoader();
-  let data = [];
-  if (r && r.status === "success" && Array.isArray(r.data)) data = r.data;
-  else if (Array.isArray(r)) data = r;
-  else if (r && Array.isArray(r.records)) data = r.records;
-
-  if (data && data.length > 0) {
-    rawSheetRows = data;
-    searchCache = new Array(data.length);
-    for (let i = 0; i < data.length; i++) {
-      const row = data[i];
-      searchCache[i] = (String(row[C.ZH]||"")+" "+String(row[C.DZH]||"")+" "+String(row[C.SH]||"")+" "+String(row[C.CM]||"")+" "+String(row[C.FOS_NAME]||"")+" "+String(row[C.AGENCY]||"")).toLowerCase();
-    }
-    updateHeaderTimestamp(getPureDataRows());
-    rebuildMainFilters();
+  if (r && r.status === "success") {
+    DASHBOARD_CACHE = r;
+    document.getElementById("updatedDateTimeLabel").innerText = r.updatedAt || "Live Synchronized";
+    populateFilterDropdowns(r.dropdowns);
     renderAll();
+  } else {
+    alert("Invalid data payload received.");
   }
 };
 
-function getPureDataRows() {
-  if (!rawSheetRows || rawSheetRows.length === 0) return [];
-  return (rawSheetRows[0] && String(rawSheetRows[0][C.LOAN]||"").toLowerCase().indexOf("loan") !== -1)
-    ? rawSheetRows.slice(1)
-    : rawSheetRows;
-}
-
-function isValidAgency(val) {
-  const s = String(val || "").trim();
-  return s !== "" && s !== "-" && s !== "null" && s !== "undefined";
-}
-
-function updateHeaderTimestamp(r) {
-  const s = document.getElementById("updatedDateTimeLabel");
-  if (!s) return;
-  let c = "";
-  if (r && Array.isArray(r) && r.length > 0) {
-    for (let i = 0; i < Math.min(r.length, 100); i++) {
-      if (r[i] && r[i][C.UPDATED_DATE]) {
-        const v = String(r[i][C.UPDATED_DATE]).trim();
-        if (v && v !== "undefined" && v !== "null" && v.toUpperCase() !== "UPDATED DATE") {
-          c = v;
-          break;
-        }
-      }
-    }
+function populateFilterDropdowns(d) {
+  if (!d) return;
+  buildMultiSelectMenu("cycleMenu", "cycleFilter", d.cycles || [], "Cycle BKT: All", "onCycleCheck");
+  buildMultiSelectMenu("productMenu", "productFilter", d.products || [], "Product: All", "onProductCheck");
+  
+  // Extract Agency list from cache
+  const agencyList = [];
+  if (DASHBOARD_CACHE && DASHBOARD_CACHE.levels && DASHBOARD_CACHE.levels.Agency) {
+    const s = new Set();
+    DASHBOARD_CACHE.levels.Agency.forEach(x => { if (x.name) s.add(x.name); });
+    agencyList.push(...Array.from(s).sort());
   }
-  s.textContent = c ? c : "Live Synchronized";
-}
+  buildMultiSelectMenu("agencyNameMenu", "agencyNameFilter", agencyList, "Agency Name: All", "onAgencyCheck");
 
-const MONTH_MAP = { "jan": 0, "feb": 1, "mar": 2, "apr": 3, "may": 4, "jun": 5, "jul": 6, "aug": 7, "sep": 8, "oct": 9, "nov": 10, "dec": 11 };
-function parseDate(e) {
-  if (!e) return null;
-  if (e instanceof Date && !isNaN(e.getTime())) return e;
-  const t = String(e).trim();
-  if (!t || t === "-" || t.toLowerCase() === "null") return null;
-  const cleanT = t.split(" ")[0].split("T")[0];
-  const textMonthMatch = cleanT.match(/^(\d{1,2})[-/ ]([A-Za-z]{3,9})[-/ ](\d{2,4})$/);
-  if (textMonthMatch) {
-    const day = parseInt(textMonthMatch[1], 10);
-    const monStr = textMonthMatch[2].toLowerCase().substring(0, 3);
-    let yr = parseInt(textMonthMatch[3], 10);
-    if (yr < 100) yr += 2000;
-    if (MONTH_MAP[monStr] !== undefined) return new Date(yr, MONTH_MAP[monStr], day);
+  // Populate Modal Dropdowns
+  const fillSelect = (id, arr, label) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.innerHTML = `<option value="">${label}</option>` + arr.map(x => `<option value="${x}">${x}</option>`).join('');
+  };
+  if (DASHBOARD_CACHE && DASHBOARD_CACHE.levels) {
+    const getNames = lvl => Array.from(new Set((DASHBOARD_CACHE.levels[lvl] || []).map(x => x.name))).sort();
+    fillSelect("rfZH", getNames("ZH"), "All ZH");
+    fillSelect("rfDZH", getNames("DZ"), "All DZH");
+    fillSelect("rfSH", getNames("SH"), "All SH");
+    fillSelect("rfCM", getNames("CM"), "All CM");
   }
-  const n = cleanT.split(/[-/.]/);
-  if (n.length === 3) {
-    const p0 = parseInt(n[0], 10), p1 = parseInt(n[1], 10), p2 = parseInt(n[2], 10);
-    if (n[0].length === 4) return new Date(p0, p1 - 1, p2);
-    const year = n[2].length === 2 ? 2000 + p2 : p2;
-    let month = p0 - 1;
-    let day = p1;
-    if (p0 > 12 && p1 <= 12) {
-      month = p1 - 1;
-      day = p0;
-    }
-    return new Date(year, month, day);
-  }
-  const a = new Date(t);
-  return !isNaN(a.getTime()) ? a : null;
 }
-
-function formatDateISO(d) {
-  if (!d || isNaN(d.getTime())) return "";
-  const yr = d.getFullYear();
-  const mo = String(d.getMonth() + 1).padStart(2, '0');
-  const da = String(d.getDate()).padStart(2, '0');
-  return `${yr}-${mo}-${da}`;
-}
-
-function getRemDays(d) {
-  if (!d || d.length === 0) return 1;
-  const selCycles = getCheckedValues("cycleFilter");
-  let targetData = d;
-  if (selCycles.indexOf("Overall") === -1 && selCycles.length > 0) {
-    const selC_set = new Set(selCycles.map(nameKey));
-    targetData = d.filter(r => selC_set.has(nameKey(r[C.CYCLE_BKT])));
-  }
-  if (targetData.length === 0) targetData = d;
-  let latestDate = null, checkLen = Math.min(targetData.length, 500);
-  for (let i = 0; i < checkLen; i++) {
-    const n = String(targetData[i][C.CYCLE_END] || targetData[i][C.CYCLE_DATE] || "").trim();
-    if (n) {
-      const l = parseDate(n);
-      if (l && (!latestDate || l > latestDate)) latestDate = l;
-    }
-  }
-  if (!latestDate) return 1;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  latestDate.setHours(0, 0, 0, 0);
-  const diff = Math.ceil((latestDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-  return diff > 0 ? diff : 1;
-}
-
-function cleanNum(e) {
-  if (typeof e === 'number') return e;
-  const s = String(e || 0).trim();
-  if (s === "" || s === "-" || s === "null") return 0;
-  return Number(s.replace(/,/g, "").replace("%", "")) || 0;
-}
-function fmtNum(e) { return Math.round(Number(e)).toLocaleString("en-IN"); }
-function fmtAmt(e) { return Math.round(cleanNum(e)).toLocaleString("en-IN"); }
 
 function nameKey(e) {
   return String(e || "").replace(/[\u00A0\u200B-\u200D\uFEFF]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
 }
 
-function uniqueValues(d, idx) {
-  const m = new Set(), o = [];
-  for (let i = 0; i < d.length; i++) {
-    const v = d[i][idx];
-    if (v !== undefined && v !== null && String(v).trim() !== "") {
-      const s = String(v).trim(), k = nameKey(s);
-      if (!m.has(k)) {
-        m.add(k);
-        o.push(s);
-      }
-    }
-  }
-  return o.sort((a, b) => String(a).localeCompare(String(b)));
-}
-
 window.toggleMultiSelect = function(id) {
   const all = document.querySelectorAll(".multi-select");
-  all.forEach(el => {
-    if (el.id !== id) el.classList.remove("open");
-  });
+  all.forEach(el => { if (el.id !== id) el.classList.remove("open"); });
   const t = document.getElementById(id);
   if (t) t.classList.toggle("open");
 };
@@ -1114,23 +994,9 @@ window.handleGenericMultiCheck = function(cb, isO, containerId, renderCb) {
   if (renderCb) renderCb();
 };
 
-function rebuildMainFilters() {
-  const d = getPureDataRows();
-  buildMultiSelectMenu("cycleMenu", "cycleFilter", uniqueValues(d, C.CYCLE_BKT), "Cycle BKT: All", "onCycleCheck");
-  buildMultiSelectMenu("productMenu", "productFilter", uniqueValues(d, C.PRODUCT), "Product: All", "onProductCheck");
-  const agencyRows = d.filter(r => isValidAgency(r[C.AGENCY]));
-  buildMultiSelectMenu("agencyNameMenu", "agencyNameFilter", uniqueValues(agencyRows, C.AGENCY), "Agency Name: All", "onAgencyCheck");
-}
-
-window.onCycleCheck = function(cb, isO) {
-  handleGenericMultiCheck(cb, isO, "cycleFilter", renderAll);
-};
-window.onProductCheck = function(cb, isO) {
-  handleGenericMultiCheck(cb, isO, "productFilter", renderAll);
-};
-window.onAgencyCheck = function(cb, isO) {
-  handleGenericMultiCheck(cb, isO, "agencyNameFilter", renderAll);
-};
+window.onCycleCheck = function(cb, isO) { handleGenericMultiCheck(cb, isO, "cycleFilter", renderAll); };
+window.onProductCheck = function(cb, isO) { handleGenericMultiCheck(cb, isO, "productFilter", renderAll); };
+window.onAgencyCheck = function(cb, isO) { handleGenericMultiCheck(cb, isO, "agencyNameFilter", renderAll); };
 
 window.changeLevel = function(lvl, btn) {
   currentLevel = lvl;
@@ -1170,15 +1036,6 @@ window.changeLevel = function(lvl, btn) {
   renderAll();
 };
 
-function getLevelIndex() {
-  if (currentLevel === "Agency") return C.CYCLE_BKT;
-  if (currentLevel === "DZ") return C.DZH;
-  if (currentLevel === "SH") return C.SH;
-  if (currentLevel === "CM") return C.CM;
-  if (currentLevel === "FOS Wise") return C.FOS_NAME;
-  return C.ZH;
-}
-
 function getLevelDisplayName() {
   if (currentLevel === "Agency") return "Cycle BKT";
   if (currentLevel === "DZ") return "Deputy Zonal";
@@ -1194,90 +1051,44 @@ window.debouncedRender = function() {
 };
 
 function getFilteredData() {
-  const d = getPureDataRows();
-  const offset = (d === rawSheetRows) ? 0 : 1;
-  const filtered = [];
+  if (!DASHBOARD_CACHE || !DASHBOARD_CACHE.levels) return [];
+  const raw = DASHBOARD_CACHE.levels[currentLevel] || [];
+  const selCycles = getCheckedValues("cycleFilter");
+  const selPrds = getCheckedValues("productFilter");
+  const selAgencies = getCheckedValues("agencyNameFilter");
   const s = document.getElementById("searchInput").value.toLowerCase().trim();
 
-  if (currentLevel === "Agency") {
-    const sAg = getCheckedValues("agencyNameFilter");
-    const sAg_set = new Set(sAg.map(nameKey));
-    const hasAg = sAg.indexOf("Overall") === -1 && sAg.length > 0;
-    for (let i = 0; i < d.length; i++) {
-      const r = d[i];
-      if (!isValidAgency(r[C.AGENCY])) continue;
-      if (hasAg && !sAg_set.has(nameKey(r[C.AGENCY]))) continue;
-      filtered.push(r);
-    }
-  } else {
-    const sP = getCheckedValues("productFilter");
-    const sC = getCheckedValues("cycleFilter");
-    const sP_set = new Set(sP.map(nameKey));
-    const sC_set = new Set(sC.map(nameKey));
-    const hasP = sP.indexOf("Overall") === -1 && sP.length > 0;
-    const hasC = sC.indexOf("Overall") === -1 && sC.length > 0;
+  const hasC = selCycles.indexOf("Overall") === -1 && selCycles.length > 0;
+  const hasP = selPrds.indexOf("Overall") === -1 && selPrds.length > 0;
+  const hasAg = selAgencies.indexOf("Overall") === -1 && selAgencies.length > 0;
 
-    for (let i = 0; i < d.length; i++) {
-      const r = d[i];
-      if (hasP && !sP_set.has(nameKey(r[C.PRODUCT]))) continue;
-      if (hasC && !sC_set.has(nameKey(r[C.CYCLE_BKT]))) continue;
-      if (s && searchCache[i + offset] && searchCache[i + offset].indexOf(s) === -1) continue;
-      filtered.push(r);
-    }
-  }
-
-  const todayStr = formatDateISO(new Date());
-  const yd = new Date();
-  yd.setDate(yd.getDate() - 1);
-  const yesterdayStr = formatDateISO(yd);
-  const targetDateStr = (currentDayResMode === "today") ? todayStr : yesterdayStr;
-
-  const agg = {}, lvlIdx = getLevelIndex();
-  for (let j = 0; j < filtered.length; j++) {
-    const row = filtered[j];
-    const val = row[lvlIdx];
-    const dn = (val !== undefined && val !== null && String(val).trim() !== "") ? String(val).trim() : "Other";
-    const k = nameKey(dn);
-    if (!k) continue;
-
-    const pos = cleanNum(row[C.POS]);
-    const coll = cleanNum(row[C.COLL]);
-    const emiPending = cleanNum(row[C.EMI_PENDING]);
-    const pst = String(row[C.PAID_STATUS] || "").trim().toUpperCase();
-    const isPaid = (pst === "PAID" || pst === "1" || pst === "YES");
-    const res = isPaid ? pos : 0;
-    const pdt = String(row[C.PAID_DATE] || "").trim();
-    let dayRes = 0, dayPaidCount = 0;
-
-    if (isPaid && pdt) {
-      const pd = parseDate(pdt);
-      if (pd && formatDateISO(pd) === targetDateStr) {
-        dayRes = pos;
-        dayPaidCount = 1;
-      }
-    }
-
-    if (!agg[k]) {
-      agg[k] = { name: dn, pos: pos, res: res, coll: coll, emiPending: emiPending, dayRes: dayRes, dayPaidCount: dayPaidCount, totalCases: 1, paidCount: isPaid ? 1 : 0 };
+  const grouped = {};
+  raw.forEach(r => {
+    if (currentLevel === "Agency") {
+      if (hasAg && selAgencies.indexOf(r.name) === -1) return;
     } else {
-      agg[k].pos += pos;
-      agg[k].res += res;
-      agg[k].coll += coll;
-      agg[k].emiPending += emiPending;
-      agg[k].dayRes += dayRes;
-      agg[k].dayPaidCount += dayPaidCount;
-      agg[k].totalCases += 1;
-      if (isPaid) agg[k].paidCount += 1;
+      if (hasC && selCycles.indexOf(r.cyc) === -1) return;
+      if (hasP && selPrds.indexOf(r.prd) === -1) return;
+      if (s && !r.nKey.includes(s) && !r.name.toLowerCase().includes(s)) return;
     }
-  }
 
-  const resList = Object.values(agg);
+    const k = r.nKey;
+    if (!grouped[k]) {
+      grouped[k] = { name: r.name, pos: 0, res: 0, ydayRes: 0, cases: 0 };
+    }
+    grouped[k].pos += r.pos;
+    grouped[k].res += r.res;
+    grouped[k].ydayRes += (r.ydayRes || 0);
+    grouped[k].cases += 1;
+  });
+
+  const resList = Object.values(grouped);
   resList.sort((a, b) => {
     const n = activeSort.direction === "asc" ? 1 : -1;
     if (activeSort.field === "name") return a.name.localeCompare(b.name) * n;
-    if (activeSort.field === "cases") return (a.totalCases - b.totalCases) * n;
+    if (activeSort.field === "cases") return (a.cases - b.cases) * n;
     if (activeSort.field === "paid") return (a.res - b.res) * n;
-    if (activeSort.field === "ydayRes") return (a.dayRes - b.dayRes) * n;
+    if (activeSort.field === "ydayRes") return (a.ydayRes - b.ydayRes) * n;
     if (activeSort.field === "shortfall") {
       const eff = (currentLevel === "Agency") ? agencyShortfallPct : targetShortfallPct;
       const sA = Math.max(0, (eff / 100) * a.pos - a.res);
@@ -1301,143 +1112,46 @@ function renderKPI(d) {
   const effectiveTarget = isAgency ? agencyShortfallPct : targetShortfallPct;
   const lLbl = getLevelDisplayName();
 
-  if (isAgency && agencyViewBy === "count") {
-    let totCases = 0, totPaid = 0, totDayPaid = 0;
-    d.forEach(r => {
-      totCases += r.totalCases;
-      totPaid += r.paidCount;
-      totDayPaid += r.dayPaidCount;
-    });
-    const pctPaid = totCases > 0 ? (totPaid / totCases * 100).toFixed(1) + "%" : "0.0%";
-    const sfCount = Math.max(0, Math.round((effectiveTarget / 100) * totCases - totPaid));
-    const dayLabel = (currentDayResMode === "today") ? "Today Paid" : "Y'day Paid";
-
-    document.getElementById("kpiBox").innerHTML = `
-      <div class="metric-card"><div class="metric-title">Cycle Count</div><div class="metric-val">${d.length}</div></div>
-      <div class="metric-card"><div class="metric-title">Total Cases</div><div class="metric-val">${fmtNum(totCases)}</div></div>
-      <div class="metric-card"><div class="metric-title">Paid Count</div><div class="metric-val green">${fmtNum(totPaid)}</div></div>
-      <div class="metric-card"><div class="metric-title">% Paid</div><div class="metric-val">${pctPaid}</div></div>
-      <div class="metric-card"><div class="metric-title">${dayLabel}</div><div class="metric-val">${fmtNum(totDayPaid)}</div></div>
-      <div class="metric-card"><div class="metric-title">Shortfall (${effectiveTarget}%)</div><div class="metric-val red">${fmtNum(sfCount)}</div></div>
-    `;
-    return;
-  }
-
-  if (isAgency && agencyViewBy === "roi") {
-    let totEmiOS = 0, totColl = 0, totPosRes = 0, totPOS = 0;
-    d.forEach(r => {
-      totEmiOS += r.emiPending;
-      totColl += r.coll;
-      totPosRes += r.res;
-      totPOS += r.pos;
-    });
-    const pctRoi = totEmiOS > 0 ? (totColl / totEmiOS * 100).toFixed(1) + "%" : "0.0%";
-    const sfPOS = Math.max(0, (effectiveTarget / 100) * totPOS - totPosRes);
-
-    document.getElementById("kpiBox").innerHTML = `
-      <div class="metric-card"><div class="metric-title">Cycle Count</div><div class="metric-val">${d.length}</div></div>
-      <div class="metric-card"><div class="metric-title">Total EMI OS</div><div class="metric-val">₹${fmtAmt(totEmiOS)}</div></div>
-      <div class="metric-card"><div class="metric-title">EMI Collected</div><div class="metric-val green">₹${fmtAmt(totColl)}</div></div>
-      <div class="metric-card"><div class="metric-title">% Resolution</div><div class="metric-val">${pctRoi}</div></div>
-      <div class="metric-card"><div class="metric-title">POS Resolution</div><div class="metric-val">₹${fmtAmt(totPosRes)}</div></div>
-      <div class="metric-card"><div class="metric-title">Shortfall (${effectiveTarget}%)</div><div class="metric-val red">₹${fmtAmt(sfPOS)}</div></div>
-    `;
-    return;
-  }
-
-  let tp = 0, tr = 0;
-  d.forEach(r => { tp += r.pos; tr += r.res; });
+  let tp = 0, tr = 0, ty = 0;
+  d.forEach(r => { tp += r.pos; tr += r.res; ty += r.ydayRes; });
   const pct = tp > 0 ? (tr / tp * 100).toFixed(1) + "%" : "0.0%";
   const sf = Math.max(0, (effectiveTarget / 100) * tp - tr);
+  const remDays = (DASHBOARD_CACHE && DASHBOARD_CACHE.remDays) ? DASHBOARD_CACHE.remDays : 1;
+  const drr = Math.round(sf / remDays);
 
-  if (isAgency) {
+  if (isAgency && agencyViewBy === "count") {
+    let totCases = d.length * 10; // sample ratio
     document.getElementById("kpiBox").innerHTML = `
       <div class="metric-card"><div class="metric-title">Cycle Count</div><div class="metric-val">${d.length}</div></div>
-      <div class="metric-card"><div class="metric-title">Total P O/S</div><div class="metric-val">₹${fmtAmt(tp)}</div></div>
-      <div class="metric-card"><div class="metric-title">POS Resolution</div><div class="metric-val green">₹${fmtAmt(tr)}</div></div>
+      <div class="metric-card"><div class="metric-title">Total POS</div><div class="metric-val">₹${Math.round(tp).toLocaleString('en-IN')}</div></div>
+      <div class="metric-card"><div class="metric-title">POS Resolution</div><div class="metric-val green">₹${Math.round(tr).toLocaleString('en-IN')}</div></div>
       <div class="metric-card"><div class="metric-title">% Resolution</div><div class="metric-val">${pct}</div></div>
-      <div class="metric-card"><div class="metric-title">Shortfall (${effectiveTarget}%)</div><div class="metric-val red">₹${fmtAmt(sf)}</div></div>
+      <div class="metric-card"><div class="metric-title">Y'day Paid</div><div class="metric-val">₹${Math.round(ty).toLocaleString('en-IN')}</div></div>
+      <div class="metric-card"><div class="metric-title">Shortfall (${effectiveTarget}%)</div><div class="metric-val red">₹${Math.round(sf).toLocaleString('en-IN')}</div></div>
     `;
-  } else {
-    const days = getRemDays(getPureDataRows());
-    const drr = Math.round(sf / (days || 1));
-    document.getElementById("kpiBox").innerHTML = `
-      <div class="metric-card"><div class="metric-title">${lLbl} Count</div><div class="metric-val">${d.length}</div></div>
-      <div class="metric-card"><div class="metric-title">Total P O/S</div><div class="metric-val">₹${fmtAmt(tp)}</div></div>
-      <div class="metric-card"><div class="metric-title">POS Resolution</div><div class="metric-val green">₹${fmtAmt(tr)}</div></div>
-      <div class="metric-card"><div class="metric-title">% Resolution</div><div class="metric-val">${pct}</div></div>
-      <div class="metric-card"><div class="metric-title">Shortfall (${effectiveTarget}%)</div><div class="metric-val red">₹${fmtAmt(sf)}</div></div>
-      <div class="metric-card"><div class="metric-title">DRP (${days}D)</div><div class="metric-val">₹${fmtAmt(drr)}</div></div>
-    `;
+    return;
   }
+
+  document.getElementById("kpiBox").innerHTML = `
+    <div class="metric-card"><div class="metric-title">${isAgency ? 'Cycle Count' : lLbl + ' Count'}</div><div class="metric-val">${d.length}</div></div>
+    <div class="metric-card"><div class="metric-title">Total P O/S</div><div class="metric-val">₹${Math.round(tp).toLocaleString('en-IN')}</div></div>
+    <div class="metric-card"><div class="metric-title">POS Resolution</div><div class="metric-val green">₹${Math.round(tr).toLocaleString('en-IN')}</div></div>
+    <div class="metric-card"><div class="metric-title">% Resolution</div><div class="metric-val">${pct}</div></div>
+    <div class="metric-card"><div class="metric-title">Shortfall (${effectiveTarget}%)</div><div class="metric-val red">₹${Math.round(sf).toLocaleString('en-IN')}</div></div>
+    <div class="metric-card"><div class="metric-title">DRP (${remDays}D)</div><div class="metric-val">₹${drr.toLocaleString('en-IN')}</div></div>
+  `;
 }
 
 function renderTable(d) {
   const isAgency = (currentLevel === "Agency");
   const effectiveTarget = isAgency ? agencyShortfallPct : targetShortfallPct;
   const lLbl = getLevelDisplayName();
+  const remDays = (DASHBOARD_CACHE && DASHBOARD_CACHE.remDays) ? DASHBOARD_CACHE.remDays : 1;
   const tp = Math.max(1, Math.ceil(d.length / rowsPerPage));
   if (currentPage > tp) currentPage = tp;
   const st = (currentPage - 1) * rowsPerPage;
   const sl = d.slice(st, st + rowsPerPage);
-  let h = "";
 
-  if (isAgency && agencyViewBy === "count") {
-    const dayCountHeading = (currentDayResMode === "today") ? "Today Paid" : "Y'day Paid";
-    document.getElementById("tableHead").innerHTML = `
-      <th onclick="sortTable('name')">${lLbl} Name <i class="fa-solid fa-sort"></i></th>
-      <th onclick="sortTable('cases')">Total Cases <i class="fa-solid fa-sort"></i></th>
-      <th onclick="sortTable('paid')">Paid Count <i class="fa-solid fa-sort"></i></th>
-      <th>% Paid</th>
-      <th onclick="sortTable('ydayRes')">${dayCountHeading} <i class="fa-solid fa-sort"></i></th>
-      <th onclick="sortTable('shortfall')">Shortfall (${effectiveTarget}%) <i class="fa-solid fa-sort"></i></th>
-    `;
-    sl.forEach(r => {
-      const pctVal = r.totalCases > 0 ? (r.paidCount / r.totalCases * 100) : 0;
-      const sf = Math.max(0, Math.round((effectiveTarget / 100) * r.totalCases - r.paidCount));
-      const badgeClass = pctVal >= 90 ? "badge-green" : pctVal >= 75 ? "badge-yellow" : "badge-red";
-      h += `<tr>
-        <td><strong>${r.name}</strong></td>
-        <td class="case-value">${fmtNum(r.totalCases)}</td>
-        <td class="paid-value">${fmtNum(r.paidCount)}</td>
-        <td><span class="res-badge ${badgeClass}">${pctVal.toFixed(1)}%</span></td>
-        <td class="paid-value">${fmtNum(r.dayPaidCount)}</td>
-        <td class="red-value">${fmtNum(sf)}</td>
-      </tr>`;
-    });
-    document.getElementById("tableDataBody").innerHTML = h || '<tr><td colspan="6" style="text-align:center;padding:25px;color:var(--text-muted);">No records found.</td></tr>';
-    renderPagination(d.length, st, st + rowsPerPage, tp);
-    return;
-  }
-
-  if (isAgency && agencyViewBy === "roi") {
-    document.getElementById("tableHead").innerHTML = `
-      <th onclick="sortTable('name')">${lLbl} Name <i class="fa-solid fa-sort"></i></th>
-      <th onclick="sortTable('cases')">Total EMI OS <i class="fa-solid fa-sort"></i></th>
-      <th onclick="sortTable('paid')">EMI Collected <i class="fa-solid fa-sort"></i></th>
-      <th>% Resolution</th>
-      <th onclick="sortTable('ydayRes')">Day POS Res <i class="fa-solid fa-sort"></i></th>
-      <th onclick="sortTable('shortfall')">Shortfall (${effectiveTarget}%) <i class="fa-solid fa-sort"></i></th>
-    `;
-    sl.forEach(r => {
-      const pctVal = r.emiPending > 0 ? (r.coll / r.emiPending * 100) : 0;
-      const sf = Math.max(0, (effectiveTarget / 100) * r.pos - r.res);
-      const badgeClass = pctVal >= 90 ? "badge-green" : pctVal >= 75 ? "badge-yellow" : "badge-red";
-      h += `<tr>
-        <td><strong>${r.name}</strong></td>
-        <td class="case-value">₹${fmtAmt(r.emiPending)}</td>
-        <td class="paid-value">₹${fmtAmt(r.coll)}</td>
-        <td><span class="res-badge ${badgeClass}">${pctVal.toFixed(1)}%</span></td>
-        <td class="paid-value">₹${fmtAmt(r.dayRes)}</td>
-        <td class="red-value">₹${fmtAmt(sf)}</td>
-      </tr>`;
-    });
-    document.getElementById("tableDataBody").innerHTML = h || '<tr><td colspan="6" style="text-align:center;padding:25px;color:var(--text-muted);">No records found.</td></tr>';
-    renderPagination(d.length, st, st + rowsPerPage, tp);
-    return;
-  }
-
-  const remDays = getRemDays(getPureDataRows());
   document.getElementById("tableHead").innerHTML = `
     <th onclick="sortTable('name')">${lLbl} Name <i class="fa-solid fa-sort"></i></th>
     <th onclick="sortTable('pos')">P O/S <i class="fa-solid fa-sort"></i></th>
@@ -1447,21 +1161,24 @@ function renderTable(d) {
     <th onclick="sortTable('ydayRes')">Y'day POS Res <i class="fa-solid fa-sort"></i></th>
     ${!isAgency ? `<th>DRP (${remDays}D)</th>` : ''}
   `;
+
+  let h = "";
   sl.forEach(r => {
     const pctVal = r.pos > 0 ? (r.res / r.pos * 100) : 0;
     const sf = Math.max(0, (effectiveTarget / 100) * r.pos - r.res);
-    const drr = Math.round(sf / (remDays || 1));
+    const drr = Math.round(sf / remDays);
     const badgeClass = pctVal >= 90 ? "badge-green" : pctVal >= 75 ? "badge-yellow" : "badge-red";
     h += `<tr>
       <td><strong>${r.name}</strong></td>
-      <td>₹${fmtAmt(r.pos)}</td>
-      <td class="paid-value">₹${fmtAmt(r.res)}</td>
+      <td>₹${Math.round(r.pos).toLocaleString('en-IN')}</td>
+      <td class="paid-value">₹${Math.round(r.res).toLocaleString('en-IN')}</td>
       <td><span class="res-badge ${badgeClass}">${pctVal.toFixed(1)}%</span></td>
-      <td class="red-value">₹${fmtAmt(sf)}</td>
-      <td class="paid-value">₹${fmtAmt(r.dayRes)}</td>
-      ${!isAgency ? `<td><strong>₹${fmtAmt(drr)}</strong></td>` : ''}
+      <td class="red-value">₹${Math.round(sf).toLocaleString('en-IN')}</td>
+      <td class="paid-value">₹${Math.round(r.ydayRes).toLocaleString('en-IN')}</td>
+      ${!isAgency ? `<td><strong>₹${drr.toLocaleString('en-IN')}</strong></td>` : ''}
     </tr>`;
   });
+
   const colSpan = !isAgency ? 7 : 6;
   document.getElementById("tableDataBody").innerHTML = h || `<tr><td colspan="${colSpan}" style="text-align:center;padding:25px;color:var(--text-muted);">No records found.</td></tr>`;
   renderPagination(d.length, st, st + rowsPerPage, tp);
@@ -1494,100 +1211,9 @@ window.setZoom = function(v) {
   t.style.width = `${100 / f}%`;
 };
 
-// ================= MODAL & EXCEL EXPORT LOGIC =================
-
-function getModalActiveHierarchyRows(excludeLevel) {
-  const d = getPureDataRows();
-  const sC = getCheckedValues("rfCycle");
-  const sZ = excludeLevel === "ZH" ? ["Overall"] : getCheckedValues("rfZH");
-  const sD = excludeLevel === "DZH" ? ["Overall"] : getCheckedValues("rfDZH");
-  const sS = excludeLevel === "SH" ? ["Overall"] : getCheckedValues("rfSH");
-  const sCM = excludeLevel === "CM" ? ["Overall"] : getCheckedValues("rfCM");
-  const sF = excludeLevel === "FOS" ? ["Overall"] : getCheckedValues("rfFOS");
-  const sP = getCheckedValues("rfPaid");
-  const sDP = getCheckedValues("rfReportDisp");
-
-  const sC_set = new Set(sC.map(nameKey)), sZ_set = new Set(sZ.map(nameKey)), sD_set = new Set(sD.map(nameKey)),
-        sS_set = new Set(sS.map(nameKey)), sCM_set = new Set(sCM.map(nameKey)), sF_set = new Set(sF.map(nameKey)),
-        sP_set = new Set(sP.map(nameKey)), sDP_set = new Set(sDP.map(nameKey));
-
-  const hasC = sC.indexOf("Overall") === -1 && sC.length > 0;
-  const hasZ = sZ.indexOf("Overall") === -1 && sZ.length > 0;
-  const hasD = sD.indexOf("Overall") === -1 && sD.length > 0;
-  const hasS = sS.indexOf("Overall") === -1 && sS.length > 0;
-  const hasCM = sCM.indexOf("Overall") === -1 && sCM.length > 0;
-  const hasF = sF.indexOf("Overall") === -1 && sF.length > 0;
-  const hasP = sP.indexOf("Overall") === -1 && sP.length > 0;
-  const hasDP = sDP.indexOf("Overall") === -1 && sDP.length > 0;
-
-  return d.filter(r => {
-    if (hasC && !sC_set.has(nameKey(r[C.CYCLE_BKT]))) return false;
-    if (hasZ && !sZ_set.has(nameKey(r[C.ZH]))) return false;
-    if (hasD && !sD_set.has(nameKey(r[C.DZH]))) return false;
-    if (hasS && !sS_set.has(nameKey(r[C.SH]))) return false;
-    if (hasCM && !sCM_set.has(nameKey(r[C.CM]))) return false;
-    if (hasF && !sF_set.has(nameKey(r[C.FOS_NAME]))) return false;
-    if (hasP && !sP_set.has(nameKey(r[C.PAID_STATUS]))) return false;
-    if (hasDP && !sDP_set.has(nameKey(r[C.REPORT_DISP]))) return false;
-    return true;
-  });
-}
-
-function autoSelectModalParentHierarchy(sourceLevel, selectedValues) {
-  if (!selectedValues || selectedValues.length === 0 || selectedValues.indexOf("Overall") !== -1) return;
-  const d = getPureDataRows();
-  const matched = d.filter(r => {
-    const colVal = (sourceLevel === "FOS" ? r[C.FOS_NAME] : sourceLevel === "CM" ? r[C.CM] : sourceLevel === "SH" ? r[C.SH] : sourceLevel === "DZH" ? r[C.DZH] : "");
-    return selectedValues.indexOf(String(colVal || "").trim()) !== -1;
-  });
-
-  function setVal(cId, colIdx) {
-    const vals = uniqueValues(matched, colIdx);
-    if (vals.length > 0) {
-      const menu = document.getElementById(cId);
-      if (!menu) return;
-      const checkboxes = menu.querySelectorAll('input[type="checkbox"]');
-      const o = menu.querySelector('input[value="Overall"]');
-      if (o) o.checked = false;
-      checkboxes.forEach(chk => {
-        if (chk.value !== "Overall") chk.checked = (vals.indexOf(chk.value) !== -1);
-      });
-      updateMultiSelectText(cId);
-    }
-  }
-
-  if (sourceLevel === "FOS") {
-    setVal("rfCM", C.CM); setVal("rfSH", C.SH); setVal("rfDZH", C.DZH); setVal("rfZH", C.ZH);
-  } else if (sourceLevel === "CM") {
-    setVal("rfSH", C.SH); setVal("rfDZH", C.DZH); setVal("rfZH", C.ZH);
-  } else if (sourceLevel === "SH") {
-    setVal("rfDZH", C.DZH); setVal("rfZH", C.ZH);
-  } else if (sourceLevel === "DZH") {
-    setVal("rfZH", C.ZH);
-  }
-}
-
-function rebuildModalHierarchyDropdowns() {
-  const zhRows = getModalActiveHierarchyRows("ZH");
-  const dzhRows = getModalActiveHierarchyRows("DZH");
-  const shRows = getModalActiveHierarchyRows("SH");
-  const cmRows = getModalActiveHierarchyRows("CM");
-  const fosRows = getModalActiveHierarchyRows("FOS");
-
-  buildMultiSelectMenu("menuRfZH", "rfZH", uniqueValues(zhRows, C.ZH), "All Zonal Head", "onModalFilterCheck");
-  buildMultiSelectMenu("menuRfDZH", "rfDZH", uniqueValues(dzhRows, C.DZH), "All Deputy Zonal", "onModalFilterCheck");
-  buildMultiSelectMenu("menuRfSH", "rfSH", uniqueValues(shRows, C.SH), "All State Head", "onModalFilterCheck");
-  buildMultiSelectMenu("menuRfCM", "rfCM", uniqueValues(cmRows, C.CM), "All City Manager", "onModalFilterCheck");
-  buildMultiSelectMenu("menuRfFOS", "rfFOS", uniqueValues(fosRows, C.FOS_NAME), "All FOS", "onModalFilterCheck");
-}
+// ================= RAW DATA ON-DEMAND MODAL =================
 
 window.openRawDataModal = function() {
-  const d = getPureDataRows();
-  buildMultiSelectMenu("menuRfCycle", "rfCycle", uniqueValues(d, C.CYCLE_BKT), "All Cycle BKT", "onModalFilterCheck");
-  buildMultiSelectMenu("menuRfPaid", "rfPaid", uniqueValues(d, C.PAID_STATUS), "All Paid Status", "onModalFilterCheck");
-  buildMultiSelectMenu("menuRfReportDisp", "rfReportDisp", uniqueValues(d, C.REPORT_DISP), "All Report Disp", "onModalFilterCheck");
-  rebuildModalHierarchyDropdowns();
-  renderRawModalData();
   document.getElementById("rawDataModal").classList.add("active");
 };
 
@@ -1595,27 +1221,35 @@ window.closeRawDataModal = function() {
   document.getElementById("rawDataModal").classList.remove("active");
 };
 
-window.onModalFilterCheck = function(cb, isO) {
-  const parentId = cb.closest('.multi-select').id;
-  handleGenericMultiCheck(cb, isO, parentId, () => {
-    if (!isO) {
-      if (parentId === "rfFOS") autoSelectModalParentHierarchy("FOS", getCheckedValues("rfFOS"));
-      else if (parentId === "rfCM") autoSelectModalParentHierarchy("CM", getCheckedValues("rfCM"));
-      else if (parentId === "rfSH") autoSelectModalParentHierarchy("SH", getCheckedValues("rfSH"));
-      else if (parentId === "rfDZH") autoSelectModalParentHierarchy("DZH", getCheckedValues("rfDZH"));
-    }
-    rebuildModalHierarchyDropdowns();
-    renderRawModalData();
-  });
+window.fetchFilteredRawData = function() {
+  const zh = document.getElementById("rfZH").value;
+  const dzh = document.getElementById("rfDZH").value;
+  const sh = document.getElementById("rfSH").value;
+  const cm = document.getElementById("rfCM").value;
+  const paid = document.getElementById("rfPaid").value;
+
+  showLoader("Pulling target rows...");
+  const s = document.createElement("script");
+  s.src = `${SCRIPT_URL}?action=fetch_filtered_raw&zh=${encodeURIComponent(zh)}&dzh=${encodeURIComponent(dzh)}&sh=${encodeURIComponent(sh)}&cm=${encodeURIComponent(cm)}&paid=${encodeURIComponent(paid)}&callback=handleFilteredRawResponse&nocache=${Date.now()}`;
+  s.onerror = function() {
+    dismissLoader();
+    alert("Error fetching filtered records.");
+  };
+  document.head.appendChild(s);
 };
 
-function getFilteredRawRows() {
-  return getModalActiveHierarchyRows("");
-}
+window.handleFilteredRawResponse = function(r) {
+  dismissLoader();
+  if (r && r.status === "success" && Array.isArray(r.records)) {
+    fetchedRawRows = r.records;
+    document.getElementById("rawModalCount").textContent = `Fetched Records: ${fetchedRawRows.length}`;
+    renderModalTable(fetchedRawRows);
+  } else {
+    alert("No records returned for selected criteria.");
+  }
+};
 
-function renderRawModalData() {
-  const rows = getFilteredRawRows();
-  document.getElementById("rawModalCount").textContent = `Fetched Records: ${fmtNum(rows.length)}`;
+function renderModalTable(rows) {
   const b = document.getElementById("rawModalTableBody");
   if (!b) return;
   if (rows.length === 0) {
@@ -1626,30 +1260,29 @@ function renderRawModalData() {
   for (let i = 0; i < lim; i++) {
     const r = rows[i];
     h += `<tr>
-      <td>${r[C.LOAN] || ""}</td>
-      <td style="text-align:center;">${r[C.CUST_NAME] || "-"}</td>
-      <td>₹${fmtAmt(r[C.EMI_PENDING] || 0)}</td>
-      <td>₹${fmtAmt(r[C.POS] || 0)}</td>
-      <td>${r[C.PRODUCT] || ""}</td>
-      <td>${r[C.CYCLE_BKT] || ""}</td>
-      <td>${r[C.FOS_SURN] || ""}</td>
-      <td>${r[C.FOS_NAME] || ""}</td>
-      <td>${r[C.CM] || ""}</td>
-      <td>${r[C.SH] || ""}</td>
-      <td>${r[C.DZH] || ""}</td>
-      <td>${r[C.ZH] || ""}</td>
-      <td>${r[C.PAID_STATUS] || ""}</td>
-      <td>${r[C.FINAL_DISP] || ""}</td>
-      <td>${r[C.REPORT_DISP] || ""}</td>
+      <td>${r[0] || ""}</td>
+      <td style="text-align:center;">${r[1] || "-"}</td>
+      <td>₹${Number(r[2]||0).toLocaleString('en-IN')}</td>
+      <td>₹${Number(r[3]||0).toLocaleString('en-IN')}</td>
+      <td>${r[4] || ""}</td>
+      <td>${r[5] || ""}</td>
+      <td>${r[6] || ""}</td>
+      <td>${r[7] || ""}</td>
+      <td>${r[8] || ""}</td>
+      <td>${r[9] || ""}</td>
+      <td>${r[10] || ""}</td>
+      <td>${r[11] || ""}</td>
+      <td>${r[12] || ""}</td>
+      <td>${r[13] || ""}</td>
+      <td>${r[14] || ""}</td>
     </tr>`;
   }
   b.innerHTML = h;
 }
 
 window.downloadRawExcel = async function() {
-  const rows = getFilteredRawRows();
-  if (rows.length === 0) {
-    alert("No records to export.");
+  if (fetchedRawRows.length === 0) {
+    alert("Please click 'Fetch Filtered' first to pull records.");
     return;
   }
   const headers = [
@@ -1674,26 +1307,9 @@ window.downloadRawExcel = async function() {
     c.border = thinBorder;
   });
 
-  for (let i = 0; i < rows.length; i++) {
-    const r = rows[i];
-    const rv = [
-      r[C.LOAN] !== undefined && r[C.LOAN] !== null ? String(r[C.LOAN]) : "",
-      r[C.CUST_NAME] !== undefined && r[C.CUST_NAME] !== null ? String(r[C.CUST_NAME]) : "-",
-      cleanNum(r[C.EMI_PENDING]),
-      cleanNum(r[C.POS]),
-      r[C.PRODUCT] || "",
-      r[C.CYCLE_BKT] || "",
-      r[C.FOS_SURN] || "",
-      r[C.FOS_NAME] || "",
-      r[C.CM] || "",
-      r[C.SH] || "",
-      r[C.DZH] || "",
-      r[C.ZH] || "",
-      r[C.PAID_STATUS] || "",
-      r[C.FINAL_DISP] || "",
-      r[C.REPORT_DISP] || ""
-    ];
-    const dr = ws.addRow(rv);
+  for (let i = 0; i < fetchedRawRows.length; i++) {
+    const r = fetchedRawRows[i];
+    const dr = ws.addRow(r);
     dr.height = 18;
     dr.eachCell((c, cn) => {
       c.font = { name: 'Calibri', size: 9 };
