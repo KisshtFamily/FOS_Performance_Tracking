@@ -1,1 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Agency_Potfolio(Kissht) • Executive Portal</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Outfit', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            },
+            dark: {
+              950: '#060814',
+              900: '#0b0f1f',
+              850: '#10152b',
+              800: '#161d3b',
+              700: '#232d56'
+            }
+          },
+          animation: {
+            'blob': 'blob 14s infinite alternate ease-in-out',
+            'blob-delayed': 'blob 12s infinite alternate-reverse ease-in-out 3s',
+            'fade-in': 'fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'slide-up': 'slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+            'shake': 'shake 0.4s ease-in-out',
+          },
+          keyframes: {
+            blob: {
+              '0%': { transform: 'translate(0px, 0px) scale(1)' },
+              '50%': { transform: 'translate(40px, -60px) scale(1.15)' },
+              '100%': { transform: 'translate(-30px, 30px) scale(0.9)' },
+            },
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
+            },
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(14px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            },
+            shake: {
+              '0%, 100%': { transform: 'translateX(0)' },
+              '20%, 60%': { transform: 'translateX(-8px)' },
+              '40%, 80%': { transform: 'translateX(8px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(11, 15, 31, 0.5);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(99, 102, 241, 0.3);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(99, 102, 241, 0.6);
+    }
+    
+    /* Glassmorphism styling */
+    .glass-panel {
+      background: rgba(16, 21, 43, 0.75);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    }
+    .glass-card {
+      background: rgba(22, 29, 59, 0.65);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.35);
+      box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.25);
+    }
+  </style>
+</head>
+
+<body class="bg-dark-950 text-slate-100 font-sans h-full overflow-x-hidden selection:bg-brand-500 selection:text-white">
+
+  <!-- Ambient Blurred Background Mesh -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-[15%] -left-[10%] w-[55vw] h-[55vw] rounded-full bg-brand-600/15 blur-[120px] animate-blob"></div>
+    <div class="absolute top-[40%] -right-[15%] w-[50vw] h-[50vw] rounded-full bg-purple-600/15 blur-[130px] animate-blob-delayed"></div>
+    <div class="absolute -bottom-[20%] left-[25%] w-[45vw] h-[45vw] rounded-full bg-emerald-600/10 blur-[140px] animate-blob"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:24px_24px] opacity-40"></div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 1. AUTH / LOGIN VIEW (INITIAL SCREEN)                                     -->
+  <!-- ========================================================================= -->
+  <div id="authView" class="relative z-10 min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8">
+    <div class="w-full max-w-md mx-auto">
+      
+      <!-- Brand Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-400 shadow-lg shadow-brand-500/30 mb-3 border border-white/20">
+          <i class="ph-bold ph-shield-check text-2xl text-white"></i>
+        </div>
+        <h1 class="font-display font-bold text-2xl sm:text-3xl tracking-tight text-white">
+          Agency_Potfolio<span class="text-brand-400">(Kissht)</span>
+        </h1>
+        <p class="text-slate-400 text-xs sm:text-sm mt-1">Enterprise Field & Agency Portfolio Portal</p>
+      </div>
+
+      <!-- Main Glass Modal Wrapper -->
+      <div id="authCard" class="glass-panel rounded-3xl p-6 sm:p-8 relative overflow-hidden transition-all duration-300">
+        
+        <!-- STEP 1: INITIAL ROLE SELECTION (ONLY AVP & AGENCY) -->
+        <div id="stepRoleSelect" class="space-y-4">
+          <div class="text-center pb-2">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-white/5 border border-white/10 text-brand-300 mb-2">
+              Secure Gateway
+            </span>
+            <h2 class="text-xl font-semibold text-white">Select Access Tier</h2>
+            <p class="text-slate-400 text-xs mt-1">Choose your designated credential category</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-3.5 pt-2">
+            <!-- AVP Choice Card -->
+            <button onclick="handleRoleChoose('AVP')" class="group relative flex items-center p-4 rounded-2xl bg-gradient-to-r from-white/[0.04] to-white/[0.01] hover:from-brand-600/20 hover:to-brand-600/5 border border-white/10 hover:border-brand-500/50 transition-all duration-300 text-left w-full active:scale-[0.98]">
+              <div class="w-12 h-12 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center text-brand-400 group-hover:bg-brand-500 group-hover:text-white transition-all duration-300 shrink-0">
+                <i class="ph-bold ph-crown text-2xl"></i>
+              </div>
+              <div class="ml-4 flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-semibold text-white group-hover:text-brand-300 transition-colors">AVP Login</h3>
+                  <i class="ph-bold ph-caret-right text-slate-500 group-hover:text-brand-400 group-hover:translate-x-0.5 transition-all"></i>
+                </div>
+                <p class="text-xs text-slate-400 truncate mt-0.5">Master leadership consolidated dashboard</p>
+              </div>
+            </button>
+
+            <!-- Agency Choice Card -->
+            <button onclick="handleRoleChoose('AGENCY')" class="group relative flex items-center p-4 rounded-2xl bg-gradient-to-r from-white/[0.04] to-white/[0.01] hover:from-purple-600/20 hover:to-purple-600/5 border border-white/10 hover:border-purple-500/50 transition-all duration-300 text-left w-full active:scale-[0.98]">
+              <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 group-hover:bg-purple-500 group-hover:text-white transition-all duration-300 shrink-0">
+                <i class="ph-bold ph-buildings text-2xl"></i>
+              </div>
+              <div class="ml-4 flex-1 min-w-0">
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-semibold text-white group-hover:text-purple-300 transition-colors">Agency Login</h3>
+                  <i class="ph-bold ph-caret-right text-slate-500 group-hover:text-purple-400 group-hover:translate-x-0.5 transition-all"></i>
+                </div>
+                <p class="text-xs text-slate-400 truncate mt-0.5">Isolated portal for partner agencies & teams</p>
+              </div>
+            </button>
+          </div>
+
+          <div class="pt-4 border-t border-white/5 text-center">
+            <span class="text-[11px] text-slate-500 flex items-center justify-center gap-1.5">
+              <i class="ph-bold ph-lock-key"></i> 256-bit Encrypted Session Verification
+            </span>
+          </div>
+        </div>
+
+        <!-- STEP 2: CREDENTIALS INPUT FORM (SLIDES IN) -->
+        <div id="stepCredentials" class="hidden">
+          
+          <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+            <button onclick="backToRoleSelect()" class="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors py-1 px-2 rounded-lg hover:bg-white/5 -ml-2">
+              <i class="ph-bold ph-arrow-left text-sm"></i> Back
+            </button>
+            <div id="activeRoleBadge" class="text-xs px-2.5 py-0.5 rounded-full font-semibold border flex items-center gap-1">
+              <!-- Dynamically injected -->
+            </div>
+          </div>
+
+          <form id="loginForm" onsubmit="handleAuthenticate(event)" class="space-y-4">
+            
+            <!-- Agency Select Dropdown (Visible ONLY for Agency Login) -->
+            <div id="agencySelectWrapper" class="space-y-1.5 hidden animate-fade-in">
+              <label class="block text-xs font-medium text-slate-300">Select Agency Partner</label>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="ph-bold ph-buildings text-lg"></i>
+                </div>
+                <select id="agencySelectInput" onchange="onAgencyChanged()" class="w-full bg-dark-900/90 border border-white/15 focus:border-brand-500 rounded-xl pl-10 pr-9 py-2.5 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-500 appearance-none transition-all cursor-pointer">
+                  <option value="" disabled selected>Choose assigned agency partner...</option>
+                </select>
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+                  <i class="ph-bold ph-caret-down text-sm"></i>
+                </div>
+              </div>
+            </div>
+
+            <!-- Password Input -->
+            <div class="space-y-1.5">
+              <div class="flex items-center justify-between">
+                <label id="pwdLabel" class="block text-xs font-medium text-slate-300">Access Key</label>
+                <button type="button" onclick="autoFillCurrentDemoPass()" class="text-[11px] text-brand-400 hover:text-brand-300 underline underline-offset-2 transition-colors">
+                  Auto-fill Demo Key
+                </button>
+              </div>
+              <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <i class="ph-bold ph-lock-key text-lg"></i>
+                </div>
+                <input 
+                  type="password" 
+                  id="passwordInput" 
+                  placeholder="Enter security key..." 
+                  class="w-full bg-dark-900/90 border border-white/15 focus:border-brand-500 rounded-xl pl-10 pr-10 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-brand-500 transition-all font-mono"
+                  required
+                >
+                <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-white transition-colors">
+                  <i id="pwdToggleIcon" class="ph-bold ph-eye text-base"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Demo Hint Container -->
+            <div class="bg-white/5 border border-white/10 rounded-xl p-2.5 flex items-start gap-2.5">
+              <i class="ph-bold ph-info text-brand-400 text-sm mt-0.5 shrink-0"></i>
+              <div class="text-[11px] text-slate-300 leading-tight">
+                <span class="font-medium text-slate-200">Demo Credential:</span>
+                <span id="demoHintText" class="font-mono text-brand-300 font-semibold block mt-0.5">avp@123</span>
+              </div>
+            </div>
+
+            <!-- Inline Error message (replaces alert popups) -->
+            <div id="loginErrorMessage" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 p-2.5 rounded-xl font-medium text-center"></div>
+
+            <!-- Submit Button -->
+            <button 
+              type="submit" 
+              class="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-indigo-600 hover:from-brand-500 hover:to-indigo-500 text-white font-medium text-sm flex items-center justify-center gap-2 shadow-lg shadow-brand-500/25 active:scale-[0.98] transition-all"
+            >
+              <span>Unlock Dashboard</span>
+              <i class="ph-bold ph-arrow-right"></i>
+            </button>
+          </form>
+
+        </div>
+
+      </div>
+
+      <p class="text-center text-xs text-slate-500 mt-6">
+        Agency_Potfolio(Kissht) • Enterprise Security • Production Ready
+      </p>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- 2. AUTHENTICATED DASHBOARD VIEW                                          -->
+  <!-- ========================================================================= -->
+  <div id="dashboardView" class="relative z-10 min-h-screen hidden flex-col">
+    
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-white/10 px-4 sm:px-6 py-3.5">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        
+        <!-- Brand & Context -->
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-400 flex items-center justify-center text-white shadow-md shrink-0">
+            <i class="ph-bold ph-shield-check text-xl"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="font-display font-bold text-base sm:text-lg text-white leading-tight">
+                Agency_Potfolio<span class="text-brand-400">(Kissht)</span>
+              </h1>
+              <span id="sessionBadge" class="hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold tracking-wider rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/30 uppercase">
+                MASTER AVP
+              </span>
+            </div>
+            <p id="portalScopeText" class="text-xs text-slate-400">Consolidated Network Overview</p>
+          </div>
+        </div>
+
+        <!-- Controls: Paid File Download, AVP Filter & Logout -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          
+          <!-- Dedicated "Paid File" Download Button -->
+          <button onclick="downloadPaidFile()" class="group relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-semibold shadow-lg shadow-emerald-500/20 transition-all active:scale-95 shrink-0 border border-emerald-400/30">
+            <i class="ph-bold ph-file-arrow-down text-sm"></i>
+            <span>Paid File</span>
+            <span class="hidden md:inline text-[10px] opacity-80 font-normal ml-0.5">(CSV)</span>
+          </button>
+
+          <!-- AVP Filter Controls (Visible ONLY in AVP mode) -->
+          <div id="avpFilterDropdown" class="hidden sm:flex items-center gap-2">
+            <!-- Agency Dropdown -->
+            <div class="relative">
+              <select id="avpFilterSelect" onchange="onAvpFilterChange(this.value)" class="bg-dark-900 border border-white/15 text-xs text-slate-200 rounded-lg px-3 py-1.5 pr-8 focus:outline-none focus:border-brand-500 cursor-pointer">
+                <option value="ALL">All Agencies (Portfolio)</option>
+              </select>
+              <i class="ph-bold ph-caret-down text-slate-400 absolute right-2.5 top-2.5 text-xs pointer-events-none"></i>
+            </div>
+
+            <!-- TGT Manual Input -->
+            <div class="flex items-center bg-dark-900 border border-white/15 rounded-lg px-2.5 py-1 focus-within:border-brand-500">
+              <span class="text-[11px] font-semibold text-slate-400 mr-1.5">TGT:</span>
+              <input 
+                type="number" 
+                id="avpTargetInput" 
+                min="1" 
+                max="100" 
+                value="80" 
+                oninput="onTargetInputChange(this.value)"
+                class="w-12 bg-transparent text-xs font-mono font-bold text-emerald-400 focus:outline-none text-right"
+                placeholder="80"
+              />
+              <span class="text-xs font-semibold text-slate-400 ml-0.5">%</span>
+            </div>
+          </div>
+
+          <!-- User Role Avatar Pill -->
+          <div class="hidden md:flex items-center gap-2 py-1 px-3 rounded-full bg-white/5 border border-white/10">
+            <div class="w-6 h-6 rounded-full bg-indigo-500/30 flex items-center justify-center text-indigo-300 text-xs font-bold" id="userAvatarChar">
+              A
+            </div>
+            <span id="navUserName" class="text-xs font-medium text-slate-300">AVP Master</span>
+          </div>
+
+          <!-- Logout Button -->
+          <button onclick="handleLogout()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-medium transition-all active:scale-95 shrink-0">
+            <i class="ph-bold ph-sign-out text-sm"></i>
+            <span class="hidden sm:inline">Logout</span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+
+      <!-- Mobile Controls for AVP (Shown ONLY to AVP on mobile screens) -->
+      <div id="mobileAvpFilter" class="hidden flex-col gap-2.5 bg-dark-900/80 p-3.5 rounded-2xl border border-white/10">
+        <div class="flex items-center justify-between">
+          <label class="text-xs font-medium text-slate-300">Portfolio Agency Filter:</label>
+          <div class="flex items-center gap-1">
+            <span class="text-xs text-slate-400">Target:</span>
+            <div class="flex items-center bg-dark-950 border border-white/15 rounded-md px-2 py-0.5">
+              <input 
+                type="number" 
+                id="mobileTargetInput"
+                min="1" 
+                max="100" 
+                value="80" 
+                oninput="onTargetInputChange(this.value)" 
+                class="w-10 bg-transparent text-xs font-mono font-bold text-emerald-400 focus:outline-none text-right"
+              />
+              <span class="text-xs text-slate-400 font-semibold ml-0.5">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="relative">
+          <select id="mobileAvpFilterSelect" onchange="onAvpFilterChange(this.value)" class="w-full bg-dark-950 border border-white/15 text-xs text-slate-200 rounded-xl px-3 py-2 appearance-none focus:outline-none focus:border-brand-500">
+            <option value="ALL">All Agencies (Portfolio)</option>
+          </select>
+          <i class="ph-bold ph-caret-down text-slate-400 absolute right-3 top-2.5 text-xs pointer-events-none"></i>
+        </div>
+      </div>
+
+      <!-- KPI SUMMARY CARDS -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4" id="kpiGrid">
+        
+        <!-- KPI 1: Total Case -->
+        <div class="glass-card rounded-2xl p-4 border transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-400 font-medium">Total Cases</span>
+            <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-brand-400 flex items-center justify-center">
+              <i class="ph-bold ph-folders text-base"></i>
+            </div>
+          </div>
+          <div class="text-xl sm:text-2xl font-bold font-display text-white" id="kpiTotalCase">0</div>
+          <div class="flex items-center gap-1 text-[11px] text-slate-400 mt-1">
+            <span>Allocated portfolio units</span>
+          </div>
+        </div>
+
+        <!-- KPI 2: Paid Count & Resolution % -->
+        <div class="glass-card rounded-2xl p-4 border transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-400 font-medium">Paid Count</span>
+            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center">
+              <i class="ph-bold ph-check-circle text-base"></i>
+            </div>
+          </div>
+          <div class="flex items-baseline gap-2">
+            <div class="text-xl sm:text-2xl font-bold font-display text-emerald-400" id="kpiPaidCount">0</div>
+            <div class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono" id="kpiResolutionRate">0.0%</div>
+          </div>
+          <div class="flex items-center gap-1 text-[11px] text-emerald-400 mt-1">
+            <span>Overall % Resolution</span>
+          </div>
+        </div>
+
+        <!-- KPI 3: Total Collection -->
+        <div class="glass-card rounded-2xl p-4 border transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-400 font-medium">Total Collection</span>
+            <div class="w-8 h-8 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center">
+              <i class="ph-bold ph-currency-inr text-base"></i>
+            </div>
+          </div>
+          <div class="text-xl sm:text-2xl font-bold font-display text-white" id="kpiTotalCollection">₹ 0</div>
+          <div class="flex items-center gap-1 text-[11px] text-teal-300 mt-1">
+            <span>Settled recoveries</span>
+          </div>
+        </div>
+
+        <!-- KPI 4: Target & Shortfall -->
+        <div class="glass-card rounded-2xl p-4 border transition-all">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs text-slate-400 font-medium">Target vs Shortfall</span>
+            <div class="w-8 h-8 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
+              <i class="ph-bold ph-trend-down text-base"></i>
+            </div>
+          </div>
+          <div class="text-lg sm:text-xl font-bold font-display text-rose-400" id="kpiShortfall">₹ 0</div>
+          <div class="flex items-center justify-between text-[11px] text-slate-400 mt-1">
+            <span>Target: <span id="kpiTargetAmount" class="text-slate-200 font-semibold">₹ 0</span></span>
+            <span id="targetBadgeLabel" class="font-mono text-brand-300">@ 80%</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- SUMMARY PERFORMANCE MATRIX TABLE -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-white/10">
+        
+        <!-- Table Header & Filter Search -->
+        <div class="p-4 sm:p-5 border-b border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h3 class="text-sm font-semibold text-white flex items-center gap-2">
+              <span>BKT Cycle Summary Matrix</span>
+              <span id="activeTargetBadge" class="text-[11px] px-2 py-0.5 rounded bg-brand-500/20 text-brand-300 border border-brand-500/30 font-mono">TGT: 80%</span>
+            </h3>
+            <p class="text-xs text-slate-400">Cycle-level resolution, collection figures, target requirements, and shortfall analysis</p>
+          </div>
+          
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1 sm:w-56">
+              <i class="ph-bold ph-magnifying-glass absolute left-3 top-2.5 text-xs text-slate-400"></i>
+              <input 
+                type="text" 
+                id="tableSearchInput" 
+                oninput="onTableSearch(this.value)" 
+                placeholder="Search BKT cycle..." 
+                class="w-full bg-dark-900 border border-white/10 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-brand-500"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Display -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+            <thead>
+              <tr class="bg-white/[0.04] border-b border-white/10 text-slate-400 font-semibold uppercase tracking-wider text-[11px]">
+                <th class="p-3.5 sm:px-5">Cycle BKT</th>
+                <th class="p-3.5 sm:px-5 text-right">Total case</th>
+                <th class="p-3.5 sm:px-5 text-right">Paid count</th>
+                <th class="p-3.5 sm:px-5 text-right">% Resolution</th>
+                <th class="p-3.5 sm:px-5 text-right">Total Collection</th>
+                <th class="p-3.5 sm:px-5 text-right">Target</th>
+                <th class="p-3.5 sm:px-5 text-right">Shortfall</th>
+              </tr>
+            </thead>
+            <tbody id="rosterTableBody" class="divide-y divide-white/5 text-slate-300">
+              <!-- Dynamically populated rows -->
+            </tbody>
+            <tfoot id="rosterTableFoot" class="bg-white/[0.03] border-t-2 border-white/15 font-bold text-white">
+              <!-- Summary Totals Row -->
+            </tfoot>
+          </table>
+        </div>
+
+        <div class="p-3.5 bg-dark-900/60 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+          <div class="flex items-center gap-2">
+            <span class="inline-block w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span>Real-time calculation active</span>
+          </div>
+          <div class="flex items-center gap-1.5 font-mono text-[11px] text-slate-500">
+            <span>Zero latency • Clean executive view</span>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC & STATE ENGINE                                          -->
+  <!-- ========================================================================= -->
+  <script>
+    // -------------------------------------------------------------
+    // 1. DATA CONFIGURATION (BKT BREAKDOWN PER AGENCY)
+    // -------------------------------------------------------------
+    const AGENCIES = [
+      {
+        id: 'apex',
+        name: 'Apex Operations',
+        region: 'Western Corridor',
+        password: 'apex@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 980, paidCount: 810, collection: 1215000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 920, paidCount: 710, collection: 1775000, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 590, paidCount: 400, collection: 1600000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 400, paidCount: 195, collection: 1170000, caseVal: 6000 }
+        ]
+      },
+      {
+        id: 'alpha',
+        name: 'Alpha Recoveries',
+        region: 'North Regional Zone',
+        password: 'alpha@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 1250, paidCount: 1060, collection: 1590000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 1100, paidCount: 880, collection: 2200000, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 640, paidCount: 460, collection: 1840000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 430, paidCount: 220, collection: 1320000, caseVal: 6000 }
+        ]
+      },
+      {
+        id: 'nexus',
+        name: 'Nexus Collections',
+        region: 'Metro Central',
+        password: 'nexus@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 890, paidCount: 720, collection: 1080000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 800, paidCount: 590, collection: 1475000, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 460, paidCount: 290, collection: 1160000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 300, paidCount: 135, collection: 810000, caseVal: 6000 }
+        ]
+      },
+      {
+        id: 'zenith',
+        name: 'Zenith Partners',
+        region: 'Capital District',
+        password: 'zenith@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 520, paidCount: 450, collection: 675000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 450, paidCount: 375, collection: 937500, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 260, paidCount: 195, collection: 780000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 182, paidCount: 105, collection: 630000, caseVal: 6000 }
+        ]
+      },
+      {
+        id: 'vanguard',
+        name: 'Vanguard Fin',
+        region: 'Coastal Cluster',
+        password: 'vanguard@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 420, paidCount: 360, collection: 540000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 350, paidCount: 280, collection: 700000, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 210, paidCount: 145, collection: 580000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 120, paidCount: 65, collection: 390000, caseVal: 6000 }
+        ]
+      },
+      {
+        id: 'horizon',
+        name: 'Horizon Services',
+        region: 'Southern Hub',
+        password: 'horizon@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 600, paidCount: 470, collection: 705000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 520, paidCount: 370, collection: 925000, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 310, paidCount: 180, collection: 720000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 210, paidCount: 85, collection: 510000, caseVal: 6000 }
+        ]
+      },
+      {
+        id: 'summit',
+        name: 'Summit Credit',
+        region: 'Eastern Sector',
+        password: 'summit@123',
+        bktData: [
+          { bkt: 'Pre-Overdue', totalCases: 710, paidCount: 610, collection: 915000, caseVal: 1500 },
+          { bkt: 'BKT 1', totalCases: 640, paidCount: 490, collection: 1225000, caseVal: 2500 },
+          { bkt: 'BKT 2', totalCases: 380, paidCount: 260, collection: 1040000, caseVal: 4000 },
+          { bkt: 'BKT 3', totalCases: 250, paidCount: 115, collection: 690000, caseVal: 6000 }
+        ]
+      }
+    ];
+
+    const AVP_PASSWORD = 'avp@123';
+
+    // Application State
+    let currentAuthMode = null; // 'AVP' or 'AGENCY'
+    let authenticatedUser = null; 
+    let currentTargetPct = 80; // Standard default 80%
+
+    // -------------------------------------------------------------
+    // 2. INITIALIZATION ON WINDOW LOAD
+    // -------------------------------------------------------------
+    window.addEventListener('DOMContentLoaded', () => {
+      populateAgencyDropdowns();
+    });
+
+    function populateAgencyDropdowns() {
+      const loginSelect = document.getElementById('agencySelectInput');
+      const avpNavSelect = document.getElementById('avpFilterSelect');
+      const mobileAvpSelect = document.getElementById('mobileAvpFilterSelect');
+
+      loginSelect.innerHTML = '<option value="" disabled selected>Choose assigned agency partner...</option>';
+      avpNavSelect.innerHTML = '<option value="ALL">All Agencies (Portfolio)</option>';
+      if (mobileAvpSelect) {
+        mobileAvpSelect.innerHTML = '<option value="ALL">All Agencies (Portfolio)</option>';
+      }
+
+      AGENCIES.forEach(agency => {
+        // Populate login dropdown
+        const opt = document.createElement('option');
+        opt.value = agency.id;
+        opt.textContent = `${agency.name} (${agency.region})`;
+        loginSelect.appendChild(opt);
+
+        // Populate dashboard AVP filter
+        const filterOpt = document.createElement('option');
+        filterOpt.value = agency.id;
+        filterOpt.textContent = agency.name;
+        avpNavSelect.appendChild(filterOpt);
+
+        if (mobileAvpSelect) {
+          const mOpt = filterOpt.cloneNode(true);
+          mobileAvpSelect.appendChild(mOpt);
+        }
+      });
+    }
+
+    // -------------------------------------------------------------
+    // 3. STEPPED LOGIN FLOW & ANIMATIONS
+    // -------------------------------------------------------------
+    function handleRoleChoose(role) {
+      currentAuthMode = role;
+      const step1 = document.getElementById('stepRoleSelect');
+      const step2 = document.getElementById('stepCredentials');
+      const roleBadge = document.getElementById('activeRoleBadge');
+      const agencyWrapper = document.getElementById('agencySelectWrapper');
+      const demoHint = document.getElementById('demoHintText');
+      const pwdInput = document.getElementById('passwordInput');
+      const errorMsg = document.getElementById('loginErrorMessage');
+
+      errorMsg.classList.add('hidden');
+      pwdInput.value = '';
+      document.getElementById('agencySelectInput').selectedIndex = 0;
+
+      if (role === 'AVP') {
+        roleBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold border flex items-center gap-1 bg-brand-500/20 text-brand-300 border-brand-500/40';
+        roleBadge.innerHTML = '<i class="ph-bold ph-crown"></i> AVP Login';
+        agencyWrapper.classList.add('hidden');
+        demoHint.textContent = AVP_PASSWORD;
+      } else {
+        roleBadge.className = 'text-xs px-2.5 py-0.5 rounded-full font-semibold border flex items-center gap-1 bg-purple-500/20 text-purple-300 border-purple-500/40';
+        roleBadge.innerHTML = '<i class="ph-bold ph-buildings"></i> Agency Login';
+        agencyWrapper.classList.remove('hidden');
+        demoHint.textContent = 'Select an agency above to view assigned key';
+      }
+
+      step1.classList.add('opacity-0', '-translate-x-4');
+      setTimeout(() => {
+        step1.classList.add('hidden');
+        step1.classList.remove('opacity-0', '-translate-x-4');
+
+        step2.classList.remove('hidden');
+        step2.classList.add('animate-slide-up');
+      }, 200);
+    }
+
+    function backToRoleSelect() {
+      const step1 = document.getElementById('stepRoleSelect');
+      const step2 = document.getElementById('stepCredentials');
+      const errorMsg = document.getElementById('loginErrorMessage');
+      errorMsg.classList.add('hidden');
+
+      step2.classList.add('opacity-0', 'translate-x-4');
+      setTimeout(() => {
+        step2.classList.add('hidden');
+        step2.classList.remove('opacity-0', 'translate-x-4', 'animate-slide-up');
+
+        step1.classList.remove('hidden');
+        step1.classList.add('animate-slide-up');
+        currentAuthMode = null;
+      }, 200);
+    }
+
+    function onAgencyChanged() {
+      const selectedId = document.getElementById('agencySelectInput').value;
+      const agency = AGENCIES.find(a => a.id === selectedId);
+      const demoHint = document.getElementById('demoHintText');
+      if (agency) {
+        demoHint.textContent = `${agency.password} (for ${agency.name})`;
+      }
+    }
+
+    function autoFillCurrentDemoPass() {
+      const pwdInput = document.getElementById('passwordInput');
+      if (currentAuthMode === 'AVP') {
+        pwdInput.value = AVP_PASSWORD;
+      } else {
+        const selectedId = document.getElementById('agencySelectInput').value;
+        if (!selectedId) {
+          showAuthError('Please select an agency from the dropdown first.');
+          return;
+        }
+        const agency = AGENCIES.find(a => a.id === selectedId);
+        if (agency) {
+          pwdInput.value = agency.password;
+        }
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const pwd = document.getElementById('passwordInput');
+      const icon = document.getElementById('pwdToggleIcon');
+      if (pwd.type === 'password') {
+        pwd.type = 'text';
+        icon.classList.remove('ph-eye');
+        icon.classList.add('ph-eye-slash');
+      } else {
+        pwd.type = 'password';
+        icon.classList.remove('ph-eye-slash');
+        icon.classList.add('ph-eye');
+      }
+    }
+
+    // -------------------------------------------------------------
+    // 4. AUTHENTICATION & LOGIN HANDLER
+    // -------------------------------------------------------------
+    function handleAuthenticate(e) {
+      e.preventDefault();
+      const enteredPwd = document.getElementById('passwordInput').value.trim();
+      const card = document.getElementById('authCard');
+      const errorMsg = document.getElementById('loginErrorMessage');
+      errorMsg.classList.add('hidden');
+
+      if (currentAuthMode === 'AVP') {
+        if (enteredPwd === AVP_PASSWORD) {
+          loginSuccess({ type: 'AVP' });
+        } else {
+          authFailure(card, 'Invalid AVP password. Demo key: avp@123');
+        }
+      } else if (currentAuthMode === 'AGENCY') {
+        const agencyId = document.getElementById('agencySelectInput').value;
+        if (!agencyId) {
+          authFailure(card, 'Please select your agency partner first.');
+          return;
+        }
+        const agency = AGENCIES.find(a => a.id === agencyId);
+        if (agency && enteredPwd === agency.password) {
+          loginSuccess({ type: 'AGENCY', agency: agency });
+        } else {
+          authFailure(card, `Incorrect key for ${agency ? agency.name : 'agency'}. Hint: ${agency ? agency.password : ''}`);
+        }
+      }
+    }
+
+    function showAuthError(msg) {
+      const errorMsg = document.getElementById('loginErrorMessage');
+      errorMsg.textContent = msg;
+      errorMsg.classList.remove('hidden');
+    }
+
+    function authFailure(card, msg) {
+      card.classList.add('animate-shake');
+      showAuthError(msg);
+      setTimeout(() => {
+        card.classList.remove('animate-shake');
+      }, 500);
+    }
+
+    function loginSuccess(sessionData) {
+      authenticatedUser = sessionData;
+      currentTargetPct = 80; // Standard 80% default
+      document.getElementById('avpTargetInput').value = 80;
+      if (document.getElementById('mobileTargetInput')) {
+        document.getElementById('mobileTargetInput').value = 80;
+      }
+      
+      const auth = document.getElementById('authView');
+      const dash = document.getElementById('dashboardView');
+
+      auth.classList.add('opacity-0', 'scale-95', 'transition-all', 'duration-300');
+      
+      setTimeout(() => {
+        auth.classList.add('hidden');
+        auth.classList.remove('opacity-0', 'scale-95');
+
+        dash.classList.remove('hidden');
+        dash.classList.add('flex', 'animate-fade-in');
+
+        renderDashboardScope();
+      }, 300);
+    }
+
+    function handleLogout() {
+      const auth = document.getElementById('authView');
+      const dash = document.getElementById('dashboardView');
+
+      dash.classList.add('opacity-0');
+      setTimeout(() => {
+        dash.classList.add('hidden');
+        dash.classList.remove('opacity-0', 'flex');
+
+        authenticatedUser = null;
+        backToRoleSelect();
+
+        auth.classList.remove('hidden');
+        auth.classList.add('animate-fade-in');
+      }, 250);
+    }
+
+    // -------------------------------------------------------------
+    // 5. TARGET % MANUAL INPUT HANDLER
+    // -------------------------------------------------------------
+    function onTargetInputChange(rawVal) {
+      let numericVal = parseFloat(rawVal);
+      if (isNaN(numericVal) || numericVal <= 0) {
+        numericVal = 80;
+      }
+      if (numericVal > 100) numericVal = 100;
+
+      currentTargetPct = numericVal;
+
+      // Sync desktop & mobile target inputs
+      const deskInput = document.getElementById('avpTargetInput');
+      const mobInput = document.getElementById('mobileTargetInput');
+      if (deskInput && document.activeElement !== deskInput) deskInput.value = numericVal;
+      if (mobInput && document.activeElement !== mobInput) mobInput.value = numericVal;
+
+      // Re-calculate silently with ZERO popups
+      const currentSelectedAgency = document.getElementById('avpFilterSelect') ? document.getElementById('avpFilterSelect').value : 'ALL';
+      renderDashboardScope(currentSelectedAgency);
+    }
+
+    // -------------------------------------------------------------
+    // 6. DASHBOARD RENDERING & CONTEXTUAL SWITCHING
+    // -------------------------------------------------------------
+    function renderDashboardScope(activeFilterAgencyId = 'ALL') {
+      if (!authenticatedUser) return;
+
+      const isAvp = authenticatedUser.type === 'AVP';
+      const sessionBadge = document.getElementById('sessionBadge');
+      const portalScopeText = document.getElementById('portalScopeText');
+      const avpDropdown = document.getElementById('avpFilterDropdown');
+      const mobileAvpFilter = document.getElementById('mobileAvpFilter');
+      const userAvatarChar = document.getElementById('userAvatarChar');
+      const navUserName = document.getElementById('navUserName');
+      const activeTargetBadge = document.getElementById('activeTargetBadge');
+      const targetBadgeLabel = document.getElementById('targetBadgeLabel');
+
+      let aggregatedBktList = [];
+
+      if (isAvp) {
+        // AVP CONTEXT: Has access to multi-agency filters and manual TGT modification
+        sessionBadge.textContent = 'MASTER AVP VIEW';
+        sessionBadge.className = 'hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold tracking-wider rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/30 uppercase';
+        avpDropdown.classList.remove('hidden');
+        avpDropdown.classList.add('sm:flex');
+        mobileAvpFilter.classList.remove('hidden');
+        mobileAvpFilter.classList.add('flex');
+        userAvatarChar.textContent = 'A';
+        navUserName.textContent = 'AVP Leadership';
+
+        activeTargetBadge.textContent = `TGT: ${currentTargetPct}%`;
+        targetBadgeLabel.textContent = `@ ${currentTargetPct}%`;
+
+        if (activeFilterAgencyId === 'ALL') {
+          portalScopeText.textContent = 'Consolidated Multi-Agency Network';
+          aggregatedBktList = compileBktData(AGENCIES);
+        } else {
+          const single = AGENCIES.find(a => a.id === activeFilterAgencyId);
+          portalScopeText.textContent = `Filtered: ${single ? single.name : ''}`;
+          aggregatedBktList = compileBktData(single ? [single] : AGENCIES);
+        }
+      } else {
+        // AGENCY CONTEXT: STRICT ISOLATION!
+        // No filter dropdowns, no Target modification, only their own agency data
+        const agency = authenticatedUser.agency;
+        currentTargetPct = 80; // Standard 80% fixed for Agency login
+        aggregatedBktList = compileBktData([agency]);
+
+        sessionBadge.textContent = 'AGENCY ISOLATED';
+        sessionBadge.className = 'hidden sm:inline-block px-2 py-0.5 text-[10px] font-bold tracking-wider rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30 uppercase';
+        
+        avpDropdown.classList.add('hidden');
+        avpDropdown.classList.remove('sm:flex');
+        mobileAvpFilter.classList.add('hidden');
+        mobileAvpFilter.classList.remove('flex');
+
+        userAvatarChar.textContent = agency.name.charAt(0);
+        navUserName.textContent = agency.name;
+        portalScopeText.textContent = `${agency.name} • ${agency.region}`;
+
+        activeTargetBadge.textContent = 'TGT: 80% (Fixed)';
+        targetBadgeLabel.textContent = '@ 80%';
+      }
+
+      // Update KPI Cards and Summary Table
+      renderSummaryMatrix(aggregatedBktList);
+    }
+
+    // -------------------------------------------------------------
+    // 7. COMPILE BKT SUMMARY DATA
+    // -------------------------------------------------------------
+    function compileBktData(agencyArray) {
+      const bktOrder = ['Pre-Overdue', 'BKT 1', 'BKT 2', 'BKT 3'];
+      const map = {};
+
+      bktOrder.forEach(bktName => {
+        map[bktName] = {
+          bkt: bktName,
+          totalCases: 0,
+          paidCount: 0,
+          collection: 0,
+          totalCaseVal: 0
+        };
+      });
+
+      agencyArray.forEach(agency => {
+        agency.bktData.forEach(row => {
+          if (!map[row.bkt]) {
+            map[row.bkt] = { bkt: row.bkt, totalCases: 0, paidCount: 0, collection: 0, totalCaseVal: 0 };
+          }
+          map[row.bkt].totalCases += row.totalCases;
+          map[row.bkt].paidCount += row.paidCount;
+          map[row.bkt].collection += row.collection;
+          map[row.bkt].totalCaseVal += (row.totalCases * row.caseVal);
+        });
+      });
+
+      return Object.values(map);
+    }
+
+    // -------------------------------------------------------------
+    // 8. RENDER SUMMARY MATRIX TABLE & KPIS
+    // -------------------------------------------------------------
+    function renderSummaryMatrix(bktList) {
+      const tbody = document.getElementById('rosterTableBody');
+      const tfoot = document.getElementById('rosterTableFoot');
+      tbody.innerHTML = '';
+      tfoot.innerHTML = '';
+
+      let grandTotalCases = 0;
+      let grandPaidCount = 0;
+      let grandCollection = 0;
+      let grandTarget = 0;
+      let grandShortfall = 0;
+
+      bktList.forEach(item => {
+        const resolutionPct = item.totalCases > 0 ? ((item.paidCount / item.totalCases) * 100) : 0;
+        
+        // Target calculation based on currentTargetPct of total book value for that BKT
+        const targetAmount = Math.round(item.totalCaseVal * (currentTargetPct / 100));
+        // Shortfall = Target - Actual Collection (if collection >= target, shortfall is 0)
+        const shortfallAmount = Math.max(0, targetAmount - item.collection);
+
+        grandTotalCases += item.totalCases;
+        grandPaidCount += item.paidCount;
+        grandCollection += item.collection;
+        grandTarget += targetAmount;
+        grandShortfall += shortfallAmount;
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-white/[0.03] transition-colors';
+
+        const isMet = resolutionPct >= currentTargetPct;
+        const resolutionBadgeClass = isMet ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' : 'text-amber-400 bg-amber-500/10 border-amber-500/20';
+
+        tr.innerHTML = `
+          <td class="p-3.5 sm:px-5 font-semibold text-white flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full ${isMet ? 'bg-emerald-400' : 'bg-amber-400'}"></span>
+            <span>${item.bkt}</span>
+          </td>
+          <td class="p-3.5 sm:px-5 text-right font-mono text-slate-200">${item.totalCases.toLocaleString()}</td>
+          <td class="p-3.5 sm:px-5 text-right font-mono text-emerald-400 font-semibold">${item.paidCount.toLocaleString()}</td>
+          <td class="p-3.5 sm:px-5 text-right">
+            <span class="inline-block px-2 py-0.5 rounded border font-mono font-semibold text-xs ${resolutionBadgeClass}">
+              ${resolutionPct.toFixed(1)}%
+            </span>
+          </td>
+          <td class="p-3.5 sm:px-5 text-right font-mono text-white font-semibold">₹ ${item.collection.toLocaleString('en-IN')}</td>
+          <td class="p-3.5 sm:px-5 text-right font-mono text-slate-300">₹ ${targetAmount.toLocaleString('en-IN')}</td>
+          <td class="p-3.5 sm:px-5 text-right font-mono font-semibold ${shortfallAmount > 0 ? 'text-rose-400' : 'text-emerald-400'}">
+            ${shortfallAmount > 0 ? '- ₹ ' + shortfallAmount.toLocaleString('en-IN') : '₹ 0 (Met)'}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Compute Overall Grand Total Metrics
+      const grandResolutionPct = grandTotalCases > 0 ? ((grandPaidCount / grandTotalCases) * 100) : 0;
+
+      // Update KPI Cards
+      document.getElementById('kpiTotalCase').textContent = grandTotalCases.toLocaleString();
+      document.getElementById('kpiPaidCount').textContent = grandPaidCount.toLocaleString();
+      document.getElementById('kpiResolutionRate').textContent = `${grandResolutionPct.toFixed(1)}%`;
+      document.getElementById('kpiTotalCollection').textContent = `₹ ${(grandCollection / 100000).toFixed(2)} L`;
+      document.getElementById('kpiTargetAmount').textContent = `₹ ${(grandTarget / 100000).toFixed(2)} L`;
+      document.getElementById('kpiShortfall').textContent = grandShortfall > 0 ? `- ₹ ${(grandShortfall / 100000).toFixed(2)} L` : '₹ 0 (Met)';
+
+      // Render Grand Total Row in Table Footer
+      const footTr = document.createElement('tr');
+      footTr.innerHTML = `
+        <td class="p-3.5 sm:px-5 font-bold uppercase tracking-wider text-brand-300">Total Portfolio Summary</td>
+        <td class="p-3.5 sm:px-5 text-right font-mono font-bold text-white">${grandTotalCases.toLocaleString()}</td>
+        <td class="p-3.5 sm:px-5 text-right font-mono font-bold text-emerald-400">${grandPaidCount.toLocaleString()}</td>
+        <td class="p-3.5 sm:px-5 text-right font-mono font-bold text-emerald-300">${grandResolutionPct.toFixed(1)}%</td>
+        <td class="p-3.5 sm:px-5 text-right font-mono font-bold text-white">₹ ${grandCollection.toLocaleString('en-IN')}</td>
+        <td class="p-3.5 sm:px-5 text-right font-mono font-bold text-slate-200">₹ ${grandTarget.toLocaleString('en-IN')}</td>
+        <td class="p-3.5 sm:px-5 text-right font-mono font-bold ${grandShortfall > 0 ? 'text-rose-400' : 'text-emerald-400'}">
+          ${grandShortfall > 0 ? '- ₹ ' + grandShortfall.toLocaleString('en-IN') : '₹ 0 (Met)'}
+        </td>
+      `;
+      tfoot.appendChild(footTr);
+    }
+
+    // -------------------------------------------------------------
+    // 9. PAID FILE DOWNLOAD ENGINE (CSV EXPORT)
+    // -------------------------------------------------------------
+    function downloadPaidFile() {
+      if (!authenticatedUser) return;
+
+      const isAvp = authenticatedUser.type === 'AVP';
+      let exportItems = [];
+      let filenameScope = '';
+
+      if (isAvp) {
+        const activeFilter = document.getElementById('avpFilterSelect').value;
+        if (activeFilter === 'ALL') {
+          exportItems = AGENCIES;
+          filenameScope = 'Kissht_PaidFile_Consolidated_All';
+        } else {
+          const selected = AGENCIES.find(a => a.id === activeFilter);
+          exportItems = selected ? [selected] : AGENCIES;
+          filenameScope = `Kissht_PaidFile_${selected ? selected.id : 'agency'}`;
+        }
+      } else {
+        // Agency can strictly download ONLY their own file
+        exportItems = [authenticatedUser.agency];
+        filenameScope = `Kissht_PaidFile_${authenticatedUser.agency.id}`;
+      }
+
+      // Build CSV Data conforming to the Summary Columns
+      let csvContent = 'data:text/csv;charset=utf-8,';
+      csvContent += 'Agency,Cycle BKT,Total case,Paid count,% Resolution,Total Collection,Target,Shortfall\r\n';
+
+      exportItems.forEach(ag => {
+        ag.bktData.forEach(row => {
+          const resPct = row.totalCases > 0 ? ((row.paidCount / row.totalCases) * 100).toFixed(1) : '0.0';
+          const tgt = Math.round((row.totalCases * row.caseVal) * (currentTargetPct / 100));
+          const shortfall = Math.max(0, tgt - row.collection);
+          
+          const line = [
+            `"${ag.name}"`,
+            `"${row.bkt}"`,
+            row.totalCases,
+            row.paidCount,
+            `"${resPct}%"`,
+            `"₹ ${row.collection}"`,
+            `"₹ ${tgt}"`,
+            `"₹ ${shortfall}"`
+          ];
+          csvContent += line.join(',') + '\r\n';
+        });
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `${filenameScope}_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // SILENT FILTER CHANGE (Zero popup / toast)
+    function onAvpFilterChange(val) {
+      document.getElementById('avpFilterSelect').value = val;
+      const mSelect = document.getElementById('mobileAvpFilterSelect');
+      if (mSelect) mSelect.value = val;
+
+      renderDashboardScope(val);
+    }
+
+    function onTableSearch(query) {
+      const q = query.toLowerCase().trim();
+      const rows = document.querySelectorAll('#rosterTableBody tr');
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>
