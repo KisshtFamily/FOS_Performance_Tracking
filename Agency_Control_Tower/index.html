@@ -1,36 +1,291 @@
-function doGet(e) {
-  var action = e.parameter.action; // 'summary' ya 'paid_file'
-  var agency = e.parameter.agency; // 'ALL', 'ALPHA', 'APEX', etc.
-  var metric = e.parameter.metric || 'COUNT'; // 'COUNT', 'POW', 'ROI'
-  
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  
-  if (action === "summary") {
-    // Sirf dashboard ki summary table ka aggregated JSON return karega (No heavy raw rows)
-    var summarySheet = ss.getSheetByName("Dashboard_Summary");
-    var data = summarySheet.getDataRange().getValues();
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Agency Business Overview(Kissht)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+      color: #f1f5f9;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .glass-card {
+      background: rgba(17, 24, 39, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-input {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+    .glass-input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+    }
+    .custom-scroll::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <!-- Background Ambient Lights -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse"></div>
+    <div class="absolute top-1/2 -right-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-blue-600/15 rounded-full blur-[120px] animate-pulse" style="animation-delay: 4s;"></div>
+  </div>
+
+  <!-- ==================== 1. LOGIN SECTION ==================== -->
+  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md glass-card rounded-2xl p-7 md:p-8 shadow-2xl relative overflow-hidden transition-all duration-300">
+      
+      <!-- Top Branding -->
+      <div class="text-center mb-7">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/25 mb-4">
+          <i class="fa-solid fa-chart-line text-white text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-extrabold tracking-tight text-white">Agency Business Overview(Kissht)</h1>
+        <p class="text-xs text-slate-400 mt-1.5 font-medium">Operations & Portfolio Command Center</p>
+      </div>
+
+      <!-- Step 1: Role Chooser -->
+      <div id="roleChooser" class="space-y-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold text-center mb-2">Select Portal Gateway</p>
+        
+        <button onclick="selectLoginRole('AVP')" class="w-full group flex items-center justify-between p-4 rounded-xl bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/60 hover:border-cyan-500/50 transition-all shadow-sm">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-user-shield text-lg"></i>
+            </div>
+            <div class="text-left">
+              <div class="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">AVP Login</div>
+              <div class="text-xs text-slate-400">Master Portfolio Oversight</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-500 group-hover:text-cyan-400 transition-colors"></i>
+        </button>
+
+        <button onclick="selectLoginRole('AGENCY')" class="w-full group flex items-center justify-between p-4 rounded-xl bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/60 hover:border-emerald-500/50 transition-all shadow-sm">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
+              <i class="fa-solid fa-building-user text-lg"></i>
+            </div>
+            <div class="text-left">
+              <div class="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Agency Login</div>
+              <div class="text-xs text-slate-400">Isolated Partner Environment</div>
+            </div>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-500 group-hover:text-emerald-400 transition-colors"></i>
+        </button>
+      </div>
+
+      <!-- Step 2: Password Form -->
+      <div id="credentialForm" class="hidden space-y-4">
+        <div class="flex items-center justify-between mb-2">
+          <button onclick="backToRoleSelect()" class="text-xs text-slate-400 hover:text-white flex items-center space-x-1.5 transition-colors">
+            <i class="fa-solid fa-chevron-left text-[10px]"></i>
+            <span>Back</span>
+          </button>
+          <span id="roleBadge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">AVP Mode</span>
+        </div>
+
+        <!-- Agency Selector (Agency login ke liye) -->
+        <div id="agencySelectBox" class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-300">Choose Agency</label>
+          <div class="relative">
+            <select id="loginAgencySelect" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none appearance-none cursor-pointer">
+            </select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
+              <i class="fa-solid fa-chevron-down text-xs"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-300">Access Key Password</label>
+          <div class="relative">
+            <input type="password" id="loginPassword" placeholder="Enter security key" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400 hover:text-white">
+              <i id="eyeIcon" class="fa-solid fa-eye text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Error Msg -->
+        <div id="loginErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-2 rounded-lg text-center font-medium">
+          Invalid password credentials!
+        </div>
+
+        <!-- Demo Keys Helper Chips -->
+        <div class="pt-2 text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800">
+          <span id="demoHintText">AVP Demo: avp@123</span>
+          <button type="button" onclick="autoFillDemoPassword()" class="text-cyan-400 hover:underline">Auto-fill</button>
+        </div>
+
+        <!-- Submit Button -->
+        <button onclick="handleLoginSubmit()" class="w-full py-2.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all">
+          Authorize Access
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ==================== 2. MAIN DASHBOARD ==================== -->
+  <main id="dashboardSection" class="hidden flex-1 flex flex-col min-h-screen">
     
-    return ContentService.createTextOutput(JSON.stringify({
-      status: "success",
-      agency: agency,
-      metric: metric,
-      data: data
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-  
-  if (action === "paid_file") {
-    // Sirf jab user "Paid File" par click karega, tabhi direct CSV format me download hoga
-    var rawSheet = ss.getSheetByName("Raw_Paid_Data");
-    var rawData = rawSheet.getDataRange().getValues();
-    
-    // Agency filter condition
-    var filtered = rawData.filter(function(row, idx) {
-      if (idx === 0) return true; // headers
-      if (agency === "ALL") return true;
-      return row[1] === agency; // Column B: Agency ID
-    });
-    
-    var csvContent = filtered.map(function(r){ return r.join(","); }).join("\n");
-    return ContentService.createTextOutput(csvContent).setMimeType(ContentService.MimeType.CSV);
-  }
-}
+    <!-- Header -->
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 md:px-8 py-3.5">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        
+        <div class="flex items-center space-x-3 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md flex-shrink-0">
+            <i class="fa-solid fa-shield text-white text-sm"></i>
+          </div>
+          <div class="min-w-0">
+            <h2 class="text-sm md:text-base font-extrabold text-white truncate">Agency Business Overview(Kissht)</h2>
+            <p id="sessionIdentityTag" class="text-[11px] text-slate-400 truncate">Loading Session...</p>
+          </div>
+        </div>
+
+        <!-- Right Side: Paid File + Logout -->
+        <div class="flex items-center space-x-2.5">
+          <button onclick="downloadPaidFile()" class="inline-flex items-center space-x-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md shadow-emerald-500/20 active:scale-95">
+            <i class="fa-solid fa-file-arrow-down text-sm"></i>
+            <span class="whitespace-nowrap font-black">Paid File</span>
+          </button>
+
+          <button onclick="logoutSession()" title="Logout" class="p-2 rounded-xl glass-input text-slate-400 hover:text-rose-400 hover:border-rose-500/40 transition-colors">
+            <i class="fa-solid fa-right-from-bracket text-sm"></i>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Workspace -->
+    <div class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
+      
+      <!-- Filter Bar -->
+      <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- View Metric Dropdown -->
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-semibold text-slate-300 whitespace-nowrap">View Metric:</label>
+            <div class="relative">
+              <select id="metricTypeDropdown" onchange="onMetricTypeChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-semibold text-cyan-300 focus:outline-none appearance-none cursor-pointer">
+                <option value="COUNT">Count wise</option>
+                <option value="POW">POW wise</option>
+                <option value="ROI">ROI wise</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+          </div>
+
+          <!-- AVP Agency Filter (Agency login me hidden rahega) -->
+          <div id="avpAgencyFilterContainer" class="hidden flex items-center space-x-2">
+            <label class="text-xs font-semibold text-slate-300 whitespace-nowrap">Agency:</label>
+            <div class="relative">
+              <select id="avpAgencyFilter" onchange="onAvpAgencyChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-medium text-white focus:outline-none appearance-none cursor-pointer max-w-[200px]">
+                <option value="ALL">All Combined Agencies</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Input (Default 80%, manually editable) -->
+        <div class="flex items-center justify-end space-x-2">
+          <label class="text-xs font-semibold text-slate-300">Target:</label>
+          <div class="flex items-center glass-input rounded-xl px-2.5 py-1">
+            <input type="text" id="targetPercentageInput" value="80" oninput="onTargetInputChanged(this.value)" class="w-10 bg-transparent text-xs font-bold text-cyan-400 text-right focus:outline-none" placeholder="80">
+            <span class="text-xs font-bold text-slate-400 ml-1">%</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- KPI Snapshot Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
+        <div class="glass-card rounded-2xl p-4">
+          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Case Volume</div>
+          <div id="kpiTotalCase" class="text-lg md:text-2xl font-black text-white">0</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4">
+          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Paid Count</div>
+          <div id="kpiPaidCount" class="text-lg md:text-2xl font-black text-emerald-400">0</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4">
+          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Resolution Rate</div>
+          <div id="kpiResolution" class="text-lg md:text-2xl font-black text-cyan-400">0.0%</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4">
+          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Collection</div>
+          <div id="kpiCollection" class="text-lg md:text-2xl font-black text-indigo-300">₹0</div>
+        </div>
+      </div>
+
+      <!-- Main Summary Table -->
+      <div class="glass-card rounded-2xl overflow-hidden shadow-xl">
+        <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
+            <h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-200">Portfolio Performance Matrix</h3>
+          </div>
+          <span id="activeViewIndicator" class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium">Count wise</span>
+        </div>
+
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs md:text-sm">
+            <thead class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800 font-semibold">
+              <tr>
+                <th class="py-3 px-4">Cycle BKT</th>
+                <th class="py-3 px-4 text-right">Total case</th>
+                <th class="py-3 px-4 text-right">Paid count</th>
+                <th class="py-3 px-4 text-right">% Resolution</th>
+                <th class="py-3 px-4 text-right">Total Collection</th>
+                <th class="py-3 px-4 text-right">Target</th>
+                <th class="py-3 px-4 text-right">Shortfall</th>
+              </tr>
+            </thead>
+            <tbody id="summaryTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-200">
+            </tbody>
+            <tfoot id="summaryTableFoot" class="bg-slate-900/90 font-bold border-t-2 border-slate-700 text-white">
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script>
+    // Agencies List & Credentials
+    const AGENCIES = [
+      { id: 'ALPHA', name: 'Alpha Agency', key: 'alpha@123' },
+      { id: 'APEX', name: 'Apex Operations', key: 'apex@123' },
+      { id: 'NEXUS', name: 'Nexus Recovery', key: 'nexus@123' },
+      { id: 'VERTEX', name: 'Vertex Resolvers', key: 'vertex@123' },
+      { id: 'OMEGA', name: 'Omega Collections', key: 'omega@123' }
+    ];
+    const AVP_PASSWORD = 'avp@123';
+    const BUCKETS = ['Pre-Overdue', 'BKT 1', 'BKT 2', 'BKT 3'];
+
+    // Prototype JSON Data Store
+    const SUMMARY_DATA_STORE = {
+      'ALPHA': {
+        COUNT:
