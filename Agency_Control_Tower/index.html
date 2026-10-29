@@ -295,18 +295,19 @@
     const GOOGLE_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwulGxF6qSGTgYdEqYmXK6RIVI9IAoj2_OaCtu7BqNAcbqFwt-B5mn9XAMzQBGnV1MoQw/exec";
 
     // Global Session States
-    let currentRole = null;          // 'AVP' or 'AGENCY'
-    let currentAgencyName = "";      // User's authenticated agency
-    let currentSessionPassword = "";  // Stored for secured on-demand CSV requests
-    let activeFilterAgency = "ALL";  // For AVP switching
-    let currentMetricType = "COUNT";  // 'COUNT', 'POW', 'ROI'
-    let currentTargetPercent = 80;   // Default 80%
-    let liveSummaryCache = null;     // Stores { COUNT: [], POW: [], ROI: [] }
+    let currentRole = null;
+    let currentAgencyName = "";
+    let currentSessionPassword = "";
+    let activeFilterAgency = "ALL";
+    let currentMetricType = "COUNT";
+    let currentTargetPercent = 80;
+    let liveSummaryCache = null;
 
     // Init & Fetch Available Agencies from Google Sheet
     async function loadAgenciesFromSheet() {
       try {
-        const response = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?action=get_agencies`);
+        const nocache = new Date().getTime();
+        const response = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?action=get_agencies&_nc=${nocache}`);
         const result = await response.json();
         
         if (result.status === "success" && result.agencies) {
@@ -397,11 +398,13 @@
       submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Validating...</span>`;
 
       try {
+        const nocache = new Date().getTime();
         const queryParams = new URLSearchParams({
           action: 'login',
           role: currentRole,
           agencyName: agencyName,
-          password: password
+          password: password,
+          _nc: nocache
         });
 
         const res = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?${queryParams.toString()}`);
@@ -413,7 +416,6 @@
           activeFilterAgency = (currentRole === 'AVP') ? 'ALL' : agencyName;
           launchDashboard();
         } else {
-          // Galat password ya unauthorized agency par "Contact our Admin"
           showAdminModal(data.message || "Contact our Admin");
         }
       } catch (err) {
@@ -439,7 +441,7 @@
         document.getElementById('avpAgencyFilter').value = 'ALL';
       } else {
         sessionTag.textContent = `Authenticated: ${currentAgencyName} (Strict Tenant)`;
-        avpFilter.classList.add('hidden'); // Agency ko filter option bilkul nahi dikhega
+        avpFilter.classList.add('hidden');
       }
 
       fetchSummaryData();
@@ -455,7 +457,7 @@
       backToRoleSelect();
     }
 
-    // Fetch Aggregated Summary JSON from Google Sheet
+    // Fetch Aggregated Summary JSON from Google Sheet (No-Cache Guaranteed)
     async function fetchSummaryData() {
       const loader = document.getElementById('dataLoader');
       const table = document.getElementById('tableContainer');
@@ -466,12 +468,14 @@
       kpis.classList.add('opacity-40');
 
       try {
+        const nocache = new Date().getTime();
         const queryParams = new URLSearchParams({
           action: 'get_summary',
           role: currentRole,
           agencyName: currentAgencyName,
           filterAgency: activeFilterAgency,
-          password: currentSessionPassword
+          password: currentSessionPassword,
+          _nc: nocache
         });
 
         const res = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?${queryParams.toString()}`);
@@ -591,14 +595,15 @@
     // Direct On-Demand Paid CSV Download
     function triggerPaidFileDownload() {
       const targetAgency = (currentRole === 'AVP') ? activeFilterAgency : currentAgencyName;
+      const nocache = new Date().getTime();
       
       const downloadUrl = `${GOOGLE_SCRIPT_WEB_APP_URL}?action=download_paid_file`
         + `&role=${encodeURIComponent(currentRole)}`
         + `&agencyName=${encodeURIComponent(currentAgencyName)}`
         + `&filterAgency=${encodeURIComponent(targetAgency)}`
-        + `&password=${encodeURIComponent(currentSessionPassword)}`;
+        + `&password=${encodeURIComponent(currentSessionPassword)}`
+        + `&_nc=${nocache}`;
 
-      // Direct trigger
       window.location.href = downloadUrl;
     }
 
