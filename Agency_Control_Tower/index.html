@@ -40,14 +40,28 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
 
-  <!-- Background Ambient Lights -->
+  <!-- Background Animated Ambient Gradients -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
     <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse"></div>
     <div class="absolute top-1/2 -right-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] animate-pulse" style="animation-delay: 2s;"></div>
     <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-blue-600/15 rounded-full blur-[120px] animate-pulse" style="animation-delay: 4s;"></div>
   </div>
 
-  <!-- ==================== 1. LOGIN SECTION ==================== -->
+  <!-- ==================== 1. CONTACT ADMIN POPUP MODAL ==================== -->
+  <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+    <div class="glass-card max-w-sm w-full rounded-2xl p-6 text-center shadow-2xl border border-rose-500/30 relative">
+      <div class="w-14 h-14 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-4">
+        <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-2">Access Denied</h3>
+      <p id="adminModalText" class="text-sm text-slate-300 font-medium mb-5">Contact our Admin</p>
+      <button onclick="closeAdminModal()" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors">
+        Dismiss
+      </button>
+    </div>
+  </div>
+
+  <!-- ==================== 2. LOGIN SCREEN ==================== -->
   <section id="loginSection" class="min-h-screen flex items-center justify-center p-4">
     <div class="w-full max-w-md glass-card rounded-2xl p-7 md:p-8 shadow-2xl relative overflow-hidden transition-all duration-300">
       
@@ -56,7 +70,7 @@
         <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/25 mb-4">
           <i class="fa-solid fa-chart-line text-white text-2xl"></i>
         </div>
-        <h1 class="text-2xl font-extrabold tracking-tight text-white">Agency Business Overview(Kissht)</h1>
+        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-white">Agency Business Overview(Kissht)</h1>
         <p class="text-xs text-slate-400 mt-1.5 font-medium">Operations & Portfolio Command Center</p>
       </div>
 
@@ -101,11 +115,12 @@
           <span id="roleBadge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">AVP Mode</span>
         </div>
 
-        <!-- Agency Selector (Agency login ke liye) -->
+        <!-- Agency Selector -->
         <div id="agencySelectBox" class="space-y-1.5">
           <label class="block text-xs font-semibold text-slate-300">Choose Agency</label>
           <div class="relative">
             <select id="loginAgencySelect" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none appearance-none cursor-pointer">
+              <!-- Dynamically populated from Google Apps Script -->
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
               <i class="fa-solid fa-chevron-down text-xs"></i>
@@ -124,33 +139,23 @@
           </div>
         </div>
 
-        <!-- Error Msg -->
-        <div id="loginErrorMsg" class="hidden text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 px-3 py-2 rounded-lg text-center font-medium">
-          Invalid password credentials!
-        </div>
-
-        <!-- Demo Keys Helper Chips -->
-        <div class="pt-2 text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800">
-          <span id="demoHintText">AVP Demo: avp@123</span>
-          <button type="button" onclick="autoFillDemoPassword()" class="text-cyan-400 hover:underline">Auto-fill</button>
-        </div>
-
         <!-- Submit Button -->
-        <button onclick="handleLoginSubmit()" class="w-full py-2.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all">
-          Authorize Access
+        <button id="loginSubmitBtn" onclick="handleLoginSubmit()" class="w-full py-2.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all flex items-center justify-center space-x-2">
+          <span>Authorize Access</span>
         </button>
       </div>
 
     </div>
   </section>
 
-  <!-- ==================== 2. MAIN DASHBOARD ==================== -->
+  <!-- ==================== 3. MAIN DASHBOARD ==================== -->
   <main id="dashboardSection" class="hidden flex-1 flex flex-col min-h-screen">
     
-    <!-- Header -->
+    <!-- Top Global Header -->
     <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 md:px-8 py-3.5">
       <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
         
+        <!-- Left: Logo & Role -->
         <div class="flex items-center space-x-3 min-w-0">
           <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md flex-shrink-0">
             <i class="fa-solid fa-shield text-white text-sm"></i>
@@ -161,13 +166,15 @@
           </div>
         </div>
 
-        <!-- Right Side: Paid File + Logout -->
+        <!-- Right Action Controls -->
         <div class="flex items-center space-x-2.5">
-          <button onclick="downloadPaidFile()" class="inline-flex items-center space-x-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md shadow-emerald-500/20 active:scale-95">
+          <!-- Paid File Button -->
+          <button id="downloadPaidBtn" onclick="triggerPaidFileDownload()" class="inline-flex items-center space-x-2 px-3 py-1.5 md:px-4 md:py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md shadow-emerald-500/20 active:scale-95">
             <i class="fa-solid fa-file-arrow-down text-sm"></i>
             <span class="whitespace-nowrap font-black">Paid File</span>
           </button>
 
+          <!-- Logout Button -->
           <button onclick="logoutSession()" title="Logout" class="p-2 rounded-xl glass-input text-slate-400 hover:text-rose-400 hover:border-rose-500/40 transition-colors">
             <i class="fa-solid fa-right-from-bracket text-sm"></i>
           </button>
@@ -176,14 +183,14 @@
       </div>
     </header>
 
-    <!-- Workspace -->
+    <!-- Content Workspace -->
     <div class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
       
       <!-- Filter Bar -->
       <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
         
         <div class="flex flex-wrap items-center gap-3">
-          <!-- View Metric Dropdown -->
+          <!-- View Metric Dropdown (Count wise / POW wise / ROI wise) -->
           <div class="flex items-center space-x-2">
             <label class="text-xs font-semibold text-slate-300 whitespace-nowrap">View Metric:</label>
             <div class="relative">
@@ -196,19 +203,20 @@
             </div>
           </div>
 
-          <!-- AVP Agency Filter (Agency login me hidden rahega) -->
+          <!-- AVP Agency Filter (Strictly hidden for Agency Logins) -->
           <div id="avpAgencyFilterContainer" class="hidden flex items-center space-x-2">
             <label class="text-xs font-semibold text-slate-300 whitespace-nowrap">Agency:</label>
             <div class="relative">
-              <select id="avpAgencyFilter" onchange="onAvpAgencyChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-medium text-white focus:outline-none appearance-none cursor-pointer max-w-[200px]">
+              <select id="avpAgencyFilter" onchange="onAvpAgencyFilterChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-medium text-white focus:outline-none appearance-none cursor-pointer max-w-[200px]">
                 <option value="ALL">All Combined Agencies</option>
+                <!-- Dynamically populated from Google Apps Script -->
               </select>
               <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
             </div>
           </div>
         </div>
 
-        <!-- Target Input (Default 80%, manually editable) -->
+        <!-- Target Input (Default 80%) -->
         <div class="flex items-center justify-end space-x-2">
           <label class="text-xs font-semibold text-slate-300">Target:</label>
           <div class="flex items-center glass-input rounded-xl px-2.5 py-1">
@@ -219,8 +227,14 @@
 
       </div>
 
+      <!-- Loading State Indicator -->
+      <div id="dataLoader" class="hidden flex items-center justify-center py-12 space-x-3 text-cyan-400 font-semibold text-sm">
+        <i class="fa-solid fa-circle-notch fa-spin text-xl"></i>
+        <span>Fetching real-time portfolio metrics from Google Sheets...</span>
+      </div>
+
       <!-- KPI Snapshot Cards -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
+      <div id="kpiContainer" class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
         <div class="glass-card rounded-2xl p-4">
           <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Case Volume</div>
           <div id="kpiTotalCase" class="text-lg md:text-2xl font-black text-white">0</div>
@@ -240,7 +254,7 @@
       </div>
 
       <!-- Main Summary Table -->
-      <div class="glass-card rounded-2xl overflow-hidden shadow-xl">
+      <div id="tableContainer" class="glass-card rounded-2xl overflow-hidden shadow-xl">
         <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
           <div class="flex items-center space-x-2">
             <div class="w-2 h-2 rounded-full bg-cyan-400"></div>
@@ -263,8 +277,10 @@
               </tr>
             </thead>
             <tbody id="summaryTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-200">
+              <!-- Dynamically populated -->
             </tbody>
             <tfoot id="summaryTableFoot" class="bg-slate-900/90 font-bold border-t-2 border-slate-700 text-white">
+              <!-- Totals dynamically populated -->
             </tfoot>
           </table>
         </div>
@@ -273,19 +289,321 @@
     </div>
   </main>
 
+  <!-- ==================== 4. LIVE INTEGRATION SCRIPT ==================== -->
   <script>
-    // Agencies List & Credentials
-    const AGENCIES = [
-      { id: 'ALPHA', name: 'Alpha Agency', key: 'alpha@123' },
-      { id: 'APEX', name: 'Apex Operations', key: 'apex@123' },
-      { id: 'NEXUS', name: 'Nexus Recovery', key: 'nexus@123' },
-      { id: 'VERTEX', name: 'Vertex Resolvers', key: 'vertex@123' },
-      { id: 'OMEGA', name: 'Omega Collections', key: 'omega@123' }
-    ];
-    const AVP_PASSWORD = 'avp@123';
-    const BUCKETS = ['Pre-Overdue', 'BKT 1', 'BKT 2', 'BKT 3'];
+    // Live Google Apps Script Web App Endpoint
+    const GOOGLE_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwulGxF6qSGTgYdEqYmXK6RIVI9IAoj2_OaCtu7BqNAcbqFwt-B5mn9XAMzQBGnV1MoQw/exec";
 
-    // Prototype JSON Data Store
-    const SUMMARY_DATA_STORE = {
-      'ALPHA': {
-        COUNT:
+    // Global Session States
+    let currentRole = null;          // 'AVP' or 'AGENCY'
+    let currentAgencyName = "";      // User's authenticated agency
+    let currentSessionPassword = "";  // Stored for secured on-demand CSV requests
+    let activeFilterAgency = "ALL";  // For AVP switching
+    let currentMetricType = "COUNT";  // 'COUNT', 'POW', 'ROI'
+    let currentTargetPercent = 80;   // Default 80%
+    let liveSummaryCache = null;     // Stores { COUNT: [], POW: [], ROI: [] }
+
+    // Init & Fetch Available Agencies from Google Sheet
+    async function loadAgenciesFromSheet() {
+      try {
+        const response = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?action=get_agencies`);
+        const result = await response.json();
+        
+        if (result.status === "success" && result.agencies) {
+          const loginSelect = document.getElementById('loginAgencySelect');
+          const avpFilterSelect = document.getElementById('avpAgencyFilter');
+          
+          loginSelect.innerHTML = '';
+          avpFilterSelect.innerHTML = '<option value="ALL">All Combined Agencies</option>';
+          
+          result.agencies.forEach(ag => {
+            const opt1 = document.createElement('option');
+            opt1.value = ag.name;
+            opt1.textContent = ag.name;
+            loginSelect.appendChild(opt1);
+
+            const opt2 = document.createElement('option');
+            opt2.value = ag.name;
+            opt2.textContent = ag.name;
+            avpFilterSelect.appendChild(opt2);
+          });
+        }
+      } catch (err) {
+        console.warn("Could not pre-fetch agency list:", err);
+      }
+    }
+
+    // Modal Helper
+    function showAdminModal(customMessage) {
+      document.getElementById('adminModalText').textContent = customMessage || "Contact our Admin";
+      document.getElementById('adminModal').classList.remove('hidden');
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+    }
+
+    // Role Selection
+    function selectLoginRole(role) {
+      currentRole = role;
+      document.getElementById('roleChooser').classList.add('hidden');
+      document.getElementById('credentialForm').classList.remove('hidden');
+      document.getElementById('loginPassword').value = '';
+
+      const agencyBox = document.getElementById('agencySelectBox');
+      const roleBadge = document.getElementById('roleBadge');
+
+      if (role === 'AVP') {
+        agencyBox.classList.add('hidden');
+        roleBadge.textContent = 'AVP Master Mode';
+        roleBadge.className = 'text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
+      } else {
+        agencyBox.classList.remove('hidden');
+        roleBadge.textContent = 'Agency Partner Mode';
+        roleBadge.className = 'text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+      }
+    }
+
+    function backToRoleSelect() {
+      document.getElementById('credentialForm').classList.add('hidden');
+      document.getElementById('roleChooser').classList.remove('hidden');
+      currentRole = null;
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('loginPassword');
+      const icon = document.getElementById('eyeIcon');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+      }
+    }
+
+    // Authentication Submit
+    async function handleLoginSubmit() {
+      const password = document.getElementById('loginPassword').value.trim();
+      const agencyName = (currentRole === 'AGENCY') ? document.getElementById('loginAgencySelect').value : "";
+
+      if (!password) {
+        showAdminModal("Please enter your access password.");
+        return;
+      }
+
+      const submitBtn = document.getElementById('loginSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i><span>Validating...</span>`;
+
+      try {
+        const queryParams = new URLSearchParams({
+          action: 'login',
+          role: currentRole,
+          agencyName: agencyName,
+          password: password
+        });
+
+        const res = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?${queryParams.toString()}`);
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          currentAgencyName = agencyName;
+          currentSessionPassword = password;
+          activeFilterAgency = (currentRole === 'AVP') ? 'ALL' : agencyName;
+          launchDashboard();
+        } else {
+          // Galat password ya unauthorized agency par "Contact our Admin"
+          showAdminModal(data.message || "Contact our Admin");
+        }
+      } catch (err) {
+        console.error(err);
+        showAdminModal("Network connection error. Contact our Admin.");
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Authorize Access</span>`;
+      }
+    }
+
+    // Launch Dashboard
+    function launchDashboard() {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('dashboardSection').classList.remove('hidden');
+
+      const sessionTag = document.getElementById('sessionIdentityTag');
+      const avpFilter = document.getElementById('avpAgencyFilterContainer');
+
+      if (currentRole === 'AVP') {
+        sessionTag.textContent = 'Authenticated: Master AVP Command';
+        avpFilter.classList.remove('hidden');
+        document.getElementById('avpAgencyFilter').value = 'ALL';
+      } else {
+        sessionTag.textContent = `Authenticated: ${currentAgencyName} (Strict Tenant)`;
+        avpFilter.classList.add('hidden'); // Agency ko filter option bilkul nahi dikhega
+      }
+
+      fetchSummaryData();
+    }
+
+    function logoutSession() {
+      currentRole = null;
+      currentAgencyName = "";
+      currentSessionPassword = "";
+      liveSummaryCache = null;
+      document.getElementById('dashboardSection').classList.add('hidden');
+      document.getElementById('loginSection').classList.remove('hidden');
+      backToRoleSelect();
+    }
+
+    // Fetch Aggregated Summary JSON from Google Sheet
+    async function fetchSummaryData() {
+      const loader = document.getElementById('dataLoader');
+      const table = document.getElementById('tableContainer');
+      const kpis = document.getElementById('kpiContainer');
+
+      loader.classList.remove('hidden');
+      table.classList.add('opacity-40');
+      kpis.classList.add('opacity-40');
+
+      try {
+        const queryParams = new URLSearchParams({
+          action: 'get_summary',
+          role: currentRole,
+          agencyName: currentAgencyName,
+          filterAgency: activeFilterAgency,
+          password: currentSessionPassword
+        });
+
+        const res = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?${queryParams.toString()}`);
+        const result = await res.json();
+
+        if (result.status === 'success') {
+          liveSummaryCache = result.data;
+          renderDashboardView();
+        } else {
+          showAdminModal(result.message || "Contact our Admin");
+        }
+      } catch (err) {
+        console.error("Error fetching summary data:", err);
+        showAdminModal("Failed to retrieve dashboard JSON. Contact our Admin.");
+      } finally {
+        loader.classList.add('hidden');
+        table.classList.remove('opacity-40');
+        kpis.classList.remove('opacity-40');
+      }
+    }
+
+    // Render Table & Metrics
+    function renderDashboardView() {
+      if (!liveSummaryCache) return;
+
+      const dataset = liveSummaryCache[currentMetricType] || [];
+      const tbody = document.getElementById('summaryTableBody');
+      const tfoot = document.getElementById('summaryTableFoot');
+
+      let grandTotalCase = 0;
+      let grandPaidCount = 0;
+      let grandCollection = 0;
+      let grandTarget = 0;
+
+      let rowsHtml = '';
+
+      dataset.forEach(row => {
+        grandTotalCase += row.totalCase;
+        grandPaidCount += row.paidCount;
+        grandCollection += row.totalCollection;
+
+        const resolutionPercent = row.totalCase > 0 ? ((row.paidCount / row.totalCase) * 100).toFixed(1) : 0;
+        const rowTarget = Math.round(row.totalCollection * (currentTargetPercent / 100) * 1.15);
+        grandTarget += rowTarget;
+
+        const shortfall = rowTarget - row.totalCollection;
+        const shortfallDisplay = shortfall <= 0 
+          ? `<span class="text-emerald-400 font-bold">₹0 (Met)</span>`
+          : `<span class="text-rose-400 font-bold">-₹${shortfall.toLocaleString('en-IN')}</span>`;
+
+        rowsHtml += `
+          <tr class="hover:bg-slate-800/40 transition-colors">
+            <td class="py-3 px-4 font-semibold text-white">${row.bkt}</td>
+            <td class="py-3 px-4 text-right">${row.totalCase.toLocaleString('en-IN')}</td>
+            <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${row.paidCount.toLocaleString('en-IN')}</td>
+            <td class="py-3 px-4 text-right text-cyan-400 font-bold">${resolutionPercent}%</td>
+            <td class="py-3 px-4 text-right">₹${row.totalCollection.toLocaleString('en-IN')}</td>
+            <td class="py-3 px-4 text-right text-slate-300">₹${rowTarget.toLocaleString('en-IN')}</td>
+            <td class="py-3 px-4 text-right">${shortfallDisplay}</td>
+          </tr>
+        `;
+      });
+
+      tbody.innerHTML = rowsHtml || `<tr><td colspan="7" class="py-6 text-center text-slate-500">No active cases found for this selection.</td></tr>`;
+
+      // Grand Totals
+      const overallResolution = grandTotalCase > 0 ? ((grandPaidCount / grandTotalCase) * 100).toFixed(1) : 0;
+      const grandShortfall = grandTarget - grandCollection;
+      const grandShortfallDisplay = grandShortfall <= 0 
+        ? `<span class="text-emerald-400 font-black">₹0 (Achieved)</span>`
+        : `<span class="text-rose-400 font-black">-₹${grandShortfall.toLocaleString('en-IN')}</span>`;
+
+      tfoot.innerHTML = `
+        <tr>
+          <td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td>
+          <td class="py-3.5 px-4 text-right font-black">${grandTotalCase.toLocaleString('en-IN')}</td>
+          <td class="py-3.5 px-4 text-right font-black text-emerald-400">${grandPaidCount.toLocaleString('en-IN')}</td>
+          <td class="py-3.5 px-4 text-right font-black text-cyan-400">${overallResolution}%</td>
+          <td class="py-3.5 px-4 text-right font-black">₹${grandCollection.toLocaleString('en-IN')}</td>
+          <td class="py-3.5 px-4 text-right font-black">₹${grandTarget.toLocaleString('en-IN')}</td>
+          <td class="py-3.5 px-4 text-right font-black">${grandShortfallDisplay}</td>
+        </tr>
+      `;
+
+      // KPI Cards
+      document.getElementById('kpiTotalCase').textContent = grandTotalCase.toLocaleString('en-IN');
+      document.getElementById('kpiPaidCount').textContent = grandPaidCount.toLocaleString('en-IN');
+      document.getElementById('kpiResolution').textContent = `${overallResolution}%`;
+      document.getElementById('kpiCollection').textContent = `₹${grandCollection.toLocaleString('en-IN')}`;
+    }
+
+    // Change Handlers
+    function onMetricTypeChange() {
+      currentMetricType = document.getElementById('metricTypeDropdown').value;
+      const metricLabels = {
+        COUNT: 'Count wise',
+        POW: 'POW wise',
+        ROI: 'ROI wise'
+      };
+      document.getElementById('activeViewIndicator').textContent = metricLabels[currentMetricType] || currentMetricType;
+      renderDashboardView();
+    }
+
+    function onAvpAgencyFilterChange() {
+      if (currentRole !== 'AVP') return;
+      activeFilterAgency = document.getElementById('avpAgencyFilter').value;
+      fetchSummaryData();
+    }
+
+    function onTargetInputChanged(val) {
+      const cleanVal = val.replace(/[^0-9.]/g, '');
+      const num = parseFloat(cleanVal);
+      currentTargetPercent = isNaN(num) || num <= 0 ? 80 : num;
+      renderDashboardView();
+    }
+
+    // Direct On-Demand Paid CSV Download
+    function triggerPaidFileDownload() {
+      const targetAgency = (currentRole === 'AVP') ? activeFilterAgency : currentAgencyName;
+      
+      const downloadUrl = `${GOOGLE_SCRIPT_WEB_APP_URL}?action=download_paid_file`
+        + `&role=${encodeURIComponent(currentRole)}`
+        + `&agencyName=${encodeURIComponent(currentAgencyName)}`
+        + `&filterAgency=${encodeURIComponent(targetAgency)}`
+        + `&password=${encodeURIComponent(currentSessionPassword)}`;
+
+      // Direct trigger
+      window.location.href = downloadUrl;
+    }
+
+    // Startup
+    window.addEventListener('DOMContentLoaded', loadAgenciesFromSheet);
+  </script>
+</body>
+</html>
