@@ -40,13 +40,13 @@
 </head>
 <body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
 
-  <!-- Background Animated Meshes -->
+  <!-- Background Ambient Glow -->
   <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
     <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse"></div>
     <div class="absolute top-1/2 -right-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] animate-pulse"></div>
   </div>
 
-  <!-- Fast Minimal Blur Loading -->
+  <!-- Loading Overlay -->
   <div id="globalLoader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md hidden transition-opacity">
     <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-400 rounded-full animate-spin mb-3"></div>
     <p class="text-sm font-bold tracking-wide text-white">Loading...</p>
@@ -123,7 +123,6 @@
           <label class="block text-xs font-semibold text-slate-300">Choose Agency</label>
           <div class="relative">
             <select id="loginAgencySelect" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none appearance-none cursor-pointer">
-              <!-- Populated directly from Col O -->
             </select>
             <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400">
               <i class="fa-solid fa-chevron-down text-xs"></i>
@@ -149,7 +148,7 @@
     </div>
   </section>
 
-  <!-- ==================== DASHBOARD ==================== -->
+  <!-- ==================== MAIN DASHBOARD ==================== -->
   <main id="dashboardSection" class="hidden flex-1 flex flex-col min-h-screen">
     
     <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 md:px-8 py-3.5">
@@ -166,6 +165,7 @@
         </div>
 
         <div class="flex items-center space-x-2.5">
+          <!-- Strict 6-col Paid File Button -->
           <button onclick="triggerPaidFileDownload()" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md shadow-emerald-500/20 active:scale-95">
             <i class="fa-solid fa-file-arrow-down text-sm"></i>
             <span class="whitespace-nowrap font-black">Paid File</span>
@@ -191,7 +191,7 @@
             <div class="relative">
               <select id="metricTypeDropdown" onchange="onMetricTypeChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-semibold text-cyan-300 focus:outline-none appearance-none cursor-pointer">
                 <option value="COUNT">Count wise</option>
-                <option value="POW">POW wise</option>
+                <option value="POS">POS wise</option>
                 <option value="ROI">ROI wise</option>
               </select>
               <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
@@ -215,24 +215,24 @@
       <!-- KPI Snapshot Cards -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
         <div class="glass-card rounded-2xl p-4">
-          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Case Volume</div>
-          <div id="kpiTotalCase" class="text-lg md:text-2xl font-black text-white">0</div>
+          <div id="kpiLabel1" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Case Volume</div>
+          <div id="kpiVal1" class="text-lg md:text-2xl font-black text-white">0</div>
         </div>
         <div class="glass-card rounded-2xl p-4">
-          <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Paid Count</div>
-          <div id="kpiPaidCount" class="text-lg md:text-2xl font-black text-emerald-400">0</div>
+          <div id="kpiLabel2" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Paid Count</div>
+          <div id="kpiVal2" class="text-lg md:text-2xl font-black text-emerald-400">0</div>
         </div>
         <div class="glass-card rounded-2xl p-4">
           <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Resolution Rate</div>
-          <div id="kpiResolution" class="text-lg md:text-2xl font-black text-cyan-400">0.0%</div>
+          <div id="kpiVal3" class="text-lg md:text-2xl font-black text-cyan-400">0.0%</div>
         </div>
         <div class="glass-card rounded-2xl p-4">
           <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">Total Collection</div>
-          <div id="kpiCollection" class="text-lg md:text-2xl font-black text-indigo-300">₹0</div>
+          <div id="kpiVal4" class="text-lg md:text-2xl font-black text-indigo-300">₹0</div>
         </div>
       </div>
 
-      <!-- Main Summary Table -->
+      <!-- Dynamic Matrix Table -->
       <div class="glass-card rounded-2xl overflow-hidden shadow-xl">
         <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -244,16 +244,8 @@
 
         <div class="overflow-x-auto custom-scroll">
           <table class="w-full text-left text-xs md:text-sm">
-            <thead class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800 font-semibold">
-              <tr>
-                <th class="py-3 px-4">Cycle BKT</th>
-                <th class="py-3 px-4 text-right">Total case</th>
-                <th class="py-3 px-4 text-right">Paid count</th>
-                <th class="py-3 px-4 text-right">% Resolution</th>
-                <th class="py-3 px-4 text-right">Total Collection</th>
-                <th class="py-3 px-4 text-right">Target</th>
-                <th class="py-3 px-4 text-right">Shortfall</th>
-              </tr>
+            <thead id="summaryTableHead" class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800 font-semibold">
+              <!-- Dynamically switched columns -->
             </thead>
             <tbody id="summaryTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-200">
             </tbody>
@@ -273,7 +265,7 @@
     let currentAgencyName = "";
     let currentSessionPassword = "";
     let activeFilterAgency = "ALL";
-    let currentMetricType = "COUNT";
+    let currentMetricType = "COUNT"; // 'COUNT', 'POS', 'ROI'
     let liveSummaryCache = null;
 
     function showLoading() {
@@ -284,6 +276,7 @@
       document.getElementById('globalLoader').classList.add('hidden');
     }
 
+    // Fast Pre-fetch for Login
     async function loadAgenciesFromSheet() {
       try {
         const response = await fetch(`${GOOGLE_SCRIPT_WEB_APP_URL}?action=get_agencies&_nc=${Date.now()}`);
@@ -454,74 +447,198 @@
       }
     }
 
+    // Dynamic Render for COUNT, POS, ROI
     function renderDashboardView() {
       if (!liveSummaryCache) return;
 
-      const dataset = liveSummaryCache[currentMetricType] || [];
+      const thead = document.getElementById('summaryTableHead');
       const tbody = document.getElementById('summaryTableBody');
       const tfoot = document.getElementById('summaryTableFoot');
 
-      let grandTotalCase = 0;
-      let grandPaidCount = 0;
-      let grandCollection = 0;
-      let grandTarget = 0;
-      let grandShortfall = 0;
-
-      let rowsHtml = '';
-
-      dataset.forEach(row => {
-        grandTotalCase += row.totalCase;
-        grandPaidCount += row.paidCount;
-        grandCollection += row.totalCollection;
-        grandTarget += row.target;
-        grandShortfall += row.shortfall;
-
-        const resolutionPercent = row.totalCase > 0 ? ((row.paidCount / row.totalCase) * 100).toFixed(1) : "0.0";
-        const shortfallDisplay = row.shortfall <= 0 
-          ? `<span class="text-emerald-400 font-bold">0</span>`
-          : `<span class="text-rose-400 font-bold">${row.shortfall.toLocaleString('en-IN')}</span>`;
-
-        rowsHtml += `
-          <tr class="hover:bg-slate-800/40 transition-colors">
-            <td class="py-3 px-4 font-semibold text-white">${row.bkt}</td>
-            <td class="py-3 px-4 text-right">${row.totalCase.toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${row.paidCount.toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-right text-cyan-400 font-bold">${resolutionPercent}%</td>
-            <td class="py-3 px-4 text-right">₹${row.totalCollection.toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-right text-slate-300">${row.target.toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-right">${shortfallDisplay}</td>
+      if (currentMetricType === 'COUNT') {
+        // COUNT HEADERS
+        thead.innerHTML = `
+          <tr>
+            <th class="py-3 px-4">Cycle BKT</th>
+            <th class="py-3 px-4 text-right">Total case</th>
+            <th class="py-3 px-4 text-right">Paid count</th>
+            <th class="py-3 px-4 text-right">% Resolution</th>
+            <th class="py-3 px-4 text-right">Total Collection</th>
+            <th class="py-3 px-4 text-right">Target</th>
+            <th class="py-3 px-4 text-right">Shortfall</th>
           </tr>
         `;
-      });
 
-      tbody.innerHTML = rowsHtml || `<tr><td colspan="7" class="py-6 text-center text-slate-500">No active cases found.</td></tr>`;
+        document.getElementById('kpiLabel1').textContent = "TOTAL CASE VOLUME";
+        document.getElementById('kpiLabel2').textContent = "PAID COUNT";
 
-      const overallResolution = grandTotalCase > 0 ? ((grandPaidCount / grandTotalCase) * 100).toFixed(1) : "0.0";
-      const grandShortfallDisplay = grandShortfall <= 0 
-        ? `<span class="text-emerald-400 font-black">0</span>`
-        : `<span class="text-rose-400 font-black">${grandShortfall.toLocaleString('en-IN')}</span>`;
+        const dataset = liveSummaryCache.COUNT || [];
+        let tCases = 0, tPaid = 0, tColl = 0, tTgt = 0, tSf = 0;
+        let rowsHtml = '';
 
-      tfoot.innerHTML = `
-        <tr>
-          <td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td>
-          <td class="py-3.5 px-4 text-right font-black">${grandTotalCase.toLocaleString('en-IN')}</td>
-          <td class="py-3.5 px-4 text-right font-black text-emerald-400">${grandPaidCount.toLocaleString('en-IN')}</td>
-          <td class="py-3.5 px-4 text-right font-black text-cyan-400">${overallResolution}%</td>
-          <td class="py-3.5 px-4 text-right font-black">₹${grandCollection.toLocaleString('en-IN')}</td>
-          <td class="py-3.5 px-4 text-right font-black">${grandTarget.toLocaleString('en-IN')}</td>
-          <td class="py-3.5 px-4 text-right font-black">${grandShortfallDisplay}</td>
-        </tr>
-      `;
+        dataset.forEach(r => {
+          tCases += r.totalCase;
+          tPaid += r.paidCount;
+          tColl += r.totalCollection;
+          tTgt += r.target;
+          tSf += r.shortfall;
 
-      document.getElementById('kpiTotalCase').textContent = grandTotalCase.toLocaleString('en-IN');
-      document.getElementById('kpiPaidCount').textContent = grandPaidCount.toLocaleString('en-IN');
-      document.getElementById('kpiResolution').textContent = `${overallResolution}%`;
-      document.getElementById('kpiCollection').textContent = `₹${grandCollection.toLocaleString('en-IN')}`;
+          rowsHtml += `
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-semibold text-white">${r.bkt}</td>
+              <td class="py-3 px-4 text-right">${r.totalCase.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-emerald-400 font-semibold">${r.paidCount.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-cyan-400 font-bold">${r.resolution}%</td>
+              <td class="py-3 px-4 text-right">₹${r.totalCollection.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-slate-300">${r.target.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right">${r.shortfall <= 0 ? '<span class="text-emerald-400 font-bold">0</span>' : `<span class="text-rose-400 font-bold">${r.shortfall.toLocaleString('en-IN')}</span>`}</td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = rowsHtml || `<tr><td colspan="7" class="py-6 text-center text-slate-500">No active records.</td></tr>`;
+        const overallRes = tCases > 0 ? ((tPaid / tCases) * 100).toFixed(1) : "0.0";
+
+        tfoot.innerHTML = `
+          <tr>
+            <td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td>
+            <td class="py-3.5 px-4 text-right font-black">${tCases.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black text-emerald-400">${tPaid.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black text-cyan-400">${overallRes}%</td>
+            <td class="py-3.5 px-4 text-right font-black">₹${tColl.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black">${tTgt.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black">${tSf <= 0 ? '<span class="text-emerald-400">0</span>' : `<span class="text-rose-400">${tSf.toLocaleString('en-IN')}</span>`}</td>
+          </tr>
+        `;
+
+        document.getElementById('kpiVal1').textContent = tCases.toLocaleString('en-IN');
+        document.getElementById('kpiVal2').textContent = tPaid.toLocaleString('en-IN');
+        document.getElementById('kpiVal3').textContent = `${overallRes}%`;
+        document.getElementById('kpiVal4').textContent = `₹${tColl.toLocaleString('en-IN')}`;
+
+      } else if (currentMetricType === 'POS') {
+        // POS HEADERS: (Total POS, POS Res, Resolution%, Total collection, Target, Shortfall)
+        thead.innerHTML = `
+          <tr>
+            <th class="py-3 px-4">Cycle BKT</th>
+            <th class="py-3 px-4 text-right">Total POS</th>
+            <th class="py-3 px-4 text-right">POS Res</th>
+            <th class="py-3 px-4 text-right">Resolution%</th>
+            <th class="py-3 px-4 text-right">Total collection</th>
+            <th class="py-3 px-4 text-right">Target</th>
+            <th class="py-3 px-4 text-right">Shortfall</th>
+          </tr>
+        `;
+
+        document.getElementById('kpiLabel1').textContent = "TOTAL POS";
+        document.getElementById('kpiLabel2').textContent = "POS RESOLUTION";
+
+        const dataset = liveSummaryCache.POS || [];
+        let tPos = 0, tPosRes = 0, tColl = 0, tTgt = 0, tSf = 0;
+        let rowsHtml = '';
+
+        dataset.forEach(r => {
+          tPos += r.totalPos;
+          tPosRes += r.posRes;
+          tColl += r.totalCollection;
+          tTgt += r.target;
+          tSf += r.shortfall;
+
+          rowsHtml += `
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-semibold text-white">${r.bkt}</td>
+              <td class="py-3 px-4 text-right">₹${r.totalPos.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-emerald-400 font-semibold">₹${r.posRes.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-cyan-400 font-bold">${r.resolution}%</td>
+              <td class="py-3 px-4 text-right">₹${r.totalCollection.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-slate-300">₹${r.target.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right">${r.shortfall <= 0 ? '<span class="text-emerald-400 font-bold">0</span>' : `<span class="text-rose-400 font-bold">₹${r.shortfall.toLocaleString('en-IN')}</span>`}</td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = rowsHtml || `<tr><td colspan="7" class="py-6 text-center text-slate-500">No active records.</td></tr>`;
+        const overallRes = tPos > 0 ? ((tPosRes / tPos) * 100).toFixed(1) : "0.0";
+
+        tfoot.innerHTML = `
+          <tr>
+            <td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td>
+            <td class="py-3.5 px-4 text-right font-black">₹${tPos.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black text-emerald-400">₹${tPosRes.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black text-cyan-400">${overallRes}%</td>
+            <td class="py-3.5 px-4 text-right font-black">₹${tColl.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black">₹${tTgt.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black">${tSf <= 0 ? '<span class="text-emerald-400">0</span>' : `<span class="text-rose-400">₹${tSf.toLocaleString('en-IN')}</span>`}</td>
+          </tr>
+        `;
+
+        document.getElementById('kpiVal1').textContent = `₹${tPos.toLocaleString('en-IN')}`;
+        document.getElementById('kpiVal2').textContent = `₹${tPosRes.toLocaleString('en-IN')}`;
+        document.getElementById('kpiVal3').textContent = `${overallRes}%`;
+        document.getElementById('kpiVal4').textContent = `₹${tColl.toLocaleString('en-IN')}`;
+
+      } else if (currentMetricType === 'ROI') {
+        // ROI HEADERS: (EMI AMT Pending, Total collection, Resolution%, Target, Shortfall)
+        thead.innerHTML = `
+          <tr>
+            <th class="py-3 px-4">Cycle BKT</th>
+            <th class="py-3 px-4 text-right">EMI AMT Pending</th>
+            <th class="py-3 px-4 text-right">Total collection</th>
+            <th class="py-3 px-4 text-right">Resolution%</th>
+            <th class="py-3 px-4 text-right">Target</th>
+            <th class="py-3 px-4 text-right">Shortfall</th>
+          </tr>
+        `;
+
+        document.getElementById('kpiLabel1').textContent = "EMI AMT PENDING";
+        document.getElementById('kpiLabel2').textContent = "TOTAL COLLECTION";
+
+        const dataset = liveSummaryCache.ROI || [];
+        let tEmi = 0, tColl = 0, tTgt = 0, tSf = 0;
+        let rowsHtml = '';
+
+        dataset.forEach(r => {
+          tEmi += r.emiPending;
+          tColl += r.totalCollection;
+          tTgt += r.target;
+          tSf += r.shortfall;
+
+          rowsHtml += `
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="py-3 px-4 font-semibold text-white">${r.bkt}</td>
+              <td class="py-3 px-4 text-right">₹${r.emiPending.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-emerald-400 font-semibold">₹${r.totalCollection.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right text-cyan-400 font-bold">${r.resolution}%</td>
+              <td class="py-3 px-4 text-right text-slate-300">₹${r.target.toLocaleString('en-IN')}</td>
+              <td class="py-3 px-4 text-right">${r.shortfall <= 0 ? '<span class="text-emerald-400 font-bold">0</span>' : `<span class="text-rose-400 font-bold">₹${r.shortfall.toLocaleString('en-IN')}</span>`}</td>
+            </tr>
+          `;
+        });
+
+        tbody.innerHTML = rowsHtml || `<tr><td colspan="6" class="py-6 text-center text-slate-500">No active records.</td></tr>`;
+        const overallRes = tEmi > 0 ? ((tColl / tEmi) * 100).toFixed(1) : "0.0";
+
+        tfoot.innerHTML = `
+          <tr>
+            <td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td>
+            <td class="py-3.5 px-4 text-right font-black">₹${tEmi.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black text-emerald-400">₹${tColl.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black text-cyan-400">${overallRes}%</td>
+            <td class="py-3.5 px-4 text-right font-black">₹${tTgt.toLocaleString('en-IN')}</td>
+            <td class="py-3.5 px-4 text-right font-black">${tSf <= 0 ? '<span class="text-emerald-400">0</span>' : `<span class="text-rose-400">₹${tSf.toLocaleString('en-IN')}</span>`}</td>
+          </tr>
+        `;
+
+        document.getElementById('kpiVal1').textContent = `₹${tEmi.toLocaleString('en-IN')}`;
+        document.getElementById('kpiVal2').textContent = `₹${tColl.toLocaleString('en-IN')}`;
+        document.getElementById('kpiVal3').textContent = `${overallRes}%`;
+        document.getElementById('kpiVal4').textContent = `₹${tColl.toLocaleString('en-IN')}`;
+      }
     }
 
     function onMetricTypeChange() {
       currentMetricType = document.getElementById('metricTypeDropdown').value;
-      const labels = { COUNT: 'Count wise', POW: 'POW wise', ROI: 'ROI wise' };
+      const labels = { COUNT: 'Count wise', POS: 'POS wise', ROI: 'ROI wise' };
       document.getElementById('activeViewIndicator').textContent = labels[currentMetricType] || currentMetricType;
       renderDashboardView();
     }
@@ -532,6 +649,7 @@
       fetchSummaryData();
     }
 
+    // Direct On-Demand Paid File Download (Strictly 6 Columns)
     function triggerPaidFileDownload() {
       showLoading();
       const targetAgency = (currentRole === 'AVP') ? activeFilterAgency : currentAgencyName;
@@ -543,7 +661,7 @@
         + `&_nc=${Date.now()}`;
 
       window.location.href = downloadUrl;
-      setTimeout(hideLoading, 2500);
+      setTimeout(hideLoading, 2000);
     }
 
     window.addEventListener('DOMContentLoaded', loadAgenciesFromSheet);
