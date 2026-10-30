@@ -1,1 +1,352 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Agency Business Overview(Kiss
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Agency Business Overview(Kissht)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body{font-family:'Plus Jakarta Sans',sans-serif;background-color:#0b0f19;color:#f1f5f9;-webkit-tap-highlight-color:transparent;}
+    .glass-card{background:rgba(17,24,39,0.75);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.08);}
+    .glass-input{background:rgba(15,23,42,0.6);border:1px solid rgba(255,255,255,0.12);}
+    .glass-input:focus{border-color:#38bdf8;box-shadow:0 0 15px rgba(56,189,248,0.2);}
+    .custom-scroll::-webkit-scrollbar{height:6px;width:6px;}
+    .custom-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:9999px;}
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+
+  <div class="fixed inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/20 rounded-full blur-[120px] animate-pulse"></div>
+    <div class="absolute top-1/2 -right-40 w-96 h-96 bg-cyan-600/20 rounded-full blur-[120px] animate-pulse"></div>
+  </div>
+
+  <div id="globalLoader" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md hidden transition-opacity">
+    <div class="w-12 h-12 border-4 border-cyan-500/20 border-t-cyan-400 rounded-full animate-spin mb-3"></div>
+    <p class="text-sm font-bold tracking-wide text-white">Loading...</p>
+  </div>
+
+  <div id="adminModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm hidden">
+    <div class="glass-card max-w-sm w-full rounded-2xl p-6 text-center shadow-2xl border border-rose-500/30">
+      <div class="w-12 h-12 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center mx-auto mb-3.5">
+        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+      </div>
+      <h3 class="text-base font-bold text-white mb-1.5">Access Denied</h3>
+      <p id="adminModalText" class="text-xs text-slate-300 font-medium mb-4">Contact our Admin</p>
+      <button onclick="closeAdminModal()" class="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-xs transition-colors">Dismiss</button>
+    </div>
+  </div>
+
+  <section id="loginSection" class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-md glass-card rounded-2xl p-7 md:p-8 shadow-2xl relative overflow-hidden">
+      <div class="text-center mb-7">
+        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-tr from-cyan-500 to-indigo-600 shadow-lg shadow-cyan-500/25 mb-4">
+          <i class="fa-solid fa-chart-line text-white text-2xl"></i>
+        </div>
+        <h1 class="text-xl md:text-2xl font-extrabold tracking-tight text-white">Agency Business Overview(Kissht)</h1>
+        <p class="text-xs text-slate-400 mt-1.5 font-medium">Operations & Portfolio Command Center</p>
+      </div>
+
+      <div id="roleChooser" class="space-y-4">
+        <p class="text-xs uppercase tracking-wider text-slate-400 font-semibold text-center mb-2">Select Portal Gateway</p>
+        <button onclick="selectLoginRole('AVP')" class="w-full group flex items-center justify-between p-4 rounded-xl bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/60 hover:border-cyan-500/50 transition-all shadow-sm">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-lg bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold"><i class="fa-solid fa-user-shield text-lg"></i></div>
+            <div class="text-left"><div class="text-sm font-bold text-white group-hover:text-cyan-400 transition-colors">AVP Login</div><div class="text-xs text-slate-400">Master Portfolio Oversight</div></div>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-500 group-hover:text-cyan-400 transition-colors"></i>
+        </button>
+        <button onclick="selectLoginRole('AGENCY')" class="w-full group flex items-center justify-between p-4 rounded-xl bg-slate-800/60 hover:bg-slate-800/90 border border-slate-700/60 hover:border-emerald-500/50 transition-all shadow-sm">
+          <div class="flex items-center space-x-3.5">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold"><i class="fa-solid fa-building-user text-lg"></i></div>
+            <div class="text-left"><div class="text-sm font-bold text-white group-hover:text-emerald-400 transition-colors">Agency Login</div><div class="text-xs text-slate-400">Isolated Partner Environment</div></div>
+          </div>
+          <i class="fa-solid fa-arrow-right text-slate-500 group-hover:text-emerald-400 transition-colors"></i>
+        </button>
+      </div>
+
+      <div id="credentialForm" class="hidden space-y-4">
+        <div class="flex items-center justify-between mb-2">
+          <button onclick="backToRoleSelect()" class="text-xs text-slate-400 hover:text-white flex items-center space-x-1.5 transition-colors"><i class="fa-solid fa-chevron-left text-[10px]"></i><span>Back</span></button>
+          <span id="roleBadge" class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">AVP Mode</span>
+        </div>
+        <div id="agencySelectBox" class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-300">Choose Agency</label>
+          <div class="relative">
+            <select id="loginAgencySelect" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none appearance-none cursor-pointer"></select>
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400"><i class="fa-solid fa-chevron-down text-xs"></i></div>
+          </div>
+        </div>
+        <div class="space-y-1.5">
+          <label class="block text-xs font-semibold text-slate-300">Access Key Password</label>
+          <div class="relative">
+            <input type="password" id="loginPassword" placeholder="Enter security key" class="w-full glass-input rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none">
+            <button type="button" onclick="togglePasswordVisibility()" class="absolute inset-y-0 right-0 flex items-center px-3.5 text-slate-400 hover:text-white"><i id="eyeIcon" class="fa-solid fa-eye text-xs"></i></button>
+          </div>
+        </div>
+        <button id="loginSubmitBtn" onclick="handleLoginSubmit()" class="w-full py-2.5 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 shadow-lg shadow-cyan-500/20 active:scale-[0.98] transition-all"><span>Authorize Access</span></button>
+      </div>
+    </div>
+  </section>
+
+  <main id="dashboardSection" class="hidden flex-1 flex flex-col min-h-screen">
+    <header class="sticky top-0 z-40 glass-card border-b border-slate-800/80 px-4 md:px-8 py-3.5">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+        <div class="flex items-center space-x-3 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center shadow-md flex-shrink-0"><i class="fa-solid fa-shield text-white text-sm"></i></div>
+          <div class="min-w-0">
+            <h2 class="text-sm md:text-base font-extrabold text-white truncate">Agency Business Overview(Kissht)</h2>
+            <p id="sessionIdentityTag" class="text-[11px] text-slate-400 truncate">Loading Session...</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2.5">
+          <button onclick="triggerPaidFileDownload()" class="inline-flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md shadow-emerald-500/20 active:scale-95"><i class="fa-solid fa-file-arrow-down text-sm"></i><span class="whitespace-nowrap font-black">Paid File</span></button>
+          <button onclick="logoutSession()" title="Logout" class="p-2 rounded-xl glass-input text-slate-400 hover:text-rose-400 transition-colors"><i class="fa-solid fa-right-from-bracket text-sm"></i></button>
+        </div>
+      </div>
+    </header>
+
+    <div class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-8 space-y-6">
+      <div class="glass-card rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex flex-wrap items-center gap-3">
+          <div class="flex items-center space-x-2">
+            <label class="text-xs font-semibold text-slate-300 whitespace-nowrap">View Metric:</label>
+            <div class="relative">
+              <select id="metricTypeDropdown" onchange="onMetricTypeChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-semibold text-cyan-300 focus:outline-none appearance-none cursor-pointer">
+                <option value="COUNT">Count wise</option>
+                <option value="POS">POS wise</option>
+                <option value="ROI">ROI wise</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+          </div>
+          <div id="avpAgencyFilterContainer" class="hidden flex items-center space-x-2">
+            <label class="text-xs font-semibold text-slate-300 whitespace-nowrap">Agency:</label>
+            <div class="relative">
+              <select id="avpAgencyFilter" onchange="onAvpAgencyFilterChange()" class="glass-input rounded-xl pl-3 pr-8 py-1.5 text-xs font-medium text-white focus:outline-none appearance-none cursor-pointer max-w-[200px]">
+                <option value="ALL">All Combined Agencies</option>
+              </select>
+              <i class="fa-solid fa-chevron-down absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-400 pointer-events-none"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5">
+        <div class="glass-card rounded-2xl p-4"><div id="kpiLabel1" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">TOTAL CASE VOLUME</div><div id="kpiVal1" class="text-lg md:text-2xl font-black text-white">0</div></div>
+        <div class="glass-card rounded-2xl p-4"><div id="kpiLabel2" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">PAID COUNT</div><div id="kpiVal2" class="text-lg md:text-2xl font-black text-emerald-400">0</div></div>
+        <div class="glass-card rounded-2xl p-4"><div id="kpiLabel3" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">RESOLUTION RATE</div><div id="kpiVal3" class="text-lg md:text-2xl font-black text-cyan-400">0.0%</div></div>
+        <div class="glass-card rounded-2xl p-4"><div id="kpiLabel4" class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">TOTAL COLLECTION</div><div id="kpiVal4" class="text-lg md:text-2xl font-black text-indigo-300">₹0</div></div>
+      </div>
+
+      <div class="glass-card rounded-2xl overflow-hidden shadow-xl">
+        <div class="px-5 py-3.5 border-b border-slate-800 flex items-center justify-between">
+          <div class="flex items-center space-x-2"><div class="w-2 h-2 rounded-full bg-cyan-400"></div><h3 class="text-xs md:text-sm font-bold uppercase tracking-wider text-slate-200">Portfolio Performance Matrix</h3></div>
+          <span id="activeViewIndicator" class="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-400 font-medium">Count wise</span>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+          <table class="w-full text-left text-xs md:text-sm">
+            <thead id="summaryTableHead" class="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800 font-semibold"></thead>
+            <tbody id="summaryTableBody" class="divide-y divide-slate-800/60 font-medium text-slate-200"></tbody>
+            <tfoot id="summaryTableFoot" class="bg-slate-900/90 font-bold border-t-2 border-slate-700 text-white"></tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- OBFUSCATED & ENCRYPTED BUSINESS LOGIC -->
+  <script>
+    (function(_0x1a2b,_0x3c4d){const _0x5e6f=function(_0x7a8b){while(--_0x7a8b){_0x1a2b['push'](_0x1a2b['shift']());}};_0x5e6f(++_0x3c4d);}(['_0x98f1','https://script.google.com/macros/s/AKfycbwulGxF6qSGTgYdEqYmXK6RIVI9IAoj2_OaCtu7BqNAcbqFwt-B5mn9XAMzQBGnV1MoQw/exec','getElementById','classList','remove','hidden','add','value','innerHTML','createElement','appendChild','textContent','trim','ALL','COUNT','POS','ROI'],0x12a));
+    const _0x4d3e=function(_0x1b2c){return ['https://script.google.com/macros/s/AKfycbwulGxF6qSGTgYdEqYmXK6RIVI9IAoj2_OaCtu7BqNAcbqFwt-B5mn9XAMzQBGnV1MoQw/exec','getElementById','classList','remove','hidden','add','value','innerHTML','createElement','appendChild','textContent','trim','ALL','COUNT','POS','ROI'][_0x1b2c];};
+
+    var _k_url=_0x4d3e(0x0),_c_role=null,_c_ag='',_c_pwd='',_act_ag=_0x4d3e(0xc),_c_met=_0x4d3e(0xd),_c_cache=null;
+
+    function showLoading(){document[_0x4d3e(0x1)]('globalLoader')[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));}
+    function hideLoading(){document[_0x4d3e(0x1)]('globalLoader')[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));}
+
+    async function loadAgenciesFromSheet(){
+      try{
+        var _r=await fetch(_k_url+'?action=get_agencies&_nc='+Date.now());
+        var _d=await _r.json();
+        if(_d.status==='success'&&_d.agencies){
+          var _s1=document[_0x4d3e(0x1)]('loginAgencySelect'),_s2=document[_0x4d3e(0x1)]('avpAgencyFilter');
+          _s1[_0x4d3e(0x7)]='';_s2[_0x4d3e(0x7)]='<option value="ALL">All Combined Agencies</option>';
+          _d.agencies.forEach(function(_a){
+            var _o1=document[_0x4d3e(0x8)]('option');_o1[_0x4d3e(0x6)]=_a.name;_o1[_0x4d3e(0xa)]=_a.name;_s1[_0x4d3e(0x9)](_o1);
+            var _o2=document[_0x4d3e(0x8)]('option');_o2[_0x4d3e(0x6)]=_a.name;_o2[_0x4d3e(0xa)]=_a.name;_s2[_0x4d3e(0x9)](_o2);
+          });
+        }
+      }catch(_e){console.warn('Init error');}
+    }
+
+    function showAdminModal(_m){document[_0x4d3e(0x1)]('adminModalText')[_0x4d3e(0xa)]=_m||'Contact our Admin';document[_0x4d3e(0x1)]('adminModal')[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));}
+    function closeAdminModal(){document[_0x4d3e(0x1)]('adminModal')[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));}
+
+    function selectLoginRole(_r){
+      _c_role=_r;document[_0x4d3e(0x1)]('roleChooser')[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));
+      document[_0x4d3e(0x1)]('credentialForm')[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));
+      document[_0x4d3e(0x1)]('loginPassword')[_0x4d3e(0x6)]='';
+      var _b=document[_0x4d3e(0x1)]('agencySelectBox'),_rb=document[_0x4d3e(0x1)]('roleBadge');
+      if(_r==='AVP'){
+        _b[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));_rb[_0x4d3e(0xa)]='AVP Master Mode';
+        _rb.className='text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20';
+      }else{
+        _b[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));_rb[_0x4d3e(0xa)]='Agency Partner Mode';
+        _rb.className='text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+      }
+    }
+
+    function backToRoleSelect(){
+      document[_0x4d3e(0x1)]('credentialForm')[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));
+      document[_0x4d3e(0x1)]('roleChooser')[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));_c_role=null;
+    }
+
+    function togglePasswordVisibility(){
+      var _i=document[_0x4d3e(0x1)]('loginPassword'),_ic=document[_0x4d3e(0x1)]('eyeIcon');
+      if(_i.type==='password'){_i.type='text';_ic[_0x4d3e(0x2)].replace('fa-eye','fa-eye-slash');}
+      else{_i.type='password';_ic[_0x4d3e(0x2)].replace('fa-eye-slash','fa-eye');}
+    }
+
+    async function handleLoginSubmit(){
+      var _p=document[_0x4d3e(0x1)]('loginPassword')[_0x4d3e(0x6)][_0x4d3e(0xb)]();
+      var _ag=(_c_role==='AGENCY')?document[_0x4d3e(0x1)]('loginAgencySelect')[_0x4d3e(0x6)]:'';
+      if(!_p){showAdminModal('Please enter your access password.');return;}
+      showLoading();
+      try{
+        var _q=new URLSearchParams({action:'login',role:_c_role,agencyName:_ag,password:_p,_nc:Date.now()});
+        var _res=await fetch(_k_url+'?'+_q.toString());var _dt=await _res.json();
+        if(_dt.status==='success'){
+          _c_ag=_ag;_c_pwd=_p;_act_ag=(_c_role==='AVP')?_0x4d3e(0xc):_ag;
+          launchDashboard();
+        }else{
+          hideLoading();showAdminModal(_dt.message||'Contact our Admin');
+        }
+      }catch(_e){hideLoading();showAdminModal('Network connection error.');}
+    }
+
+    function launchDashboard(){
+      document[_0x4d3e(0x1)]('loginSection')[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));
+      document[_0x4d3e(0x1)]('dashboardSection')[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));
+      var _tag=document[_0x4d3e(0x1)]('sessionIdentityTag'),_avp=document[_0x4d3e(0x1)]('avpAgencyFilterContainer');
+      if(_c_role==='AVP'){
+        _tag[_0x4d3e(0xa)]='Authenticated: Master AVP Command';
+        _avp[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));
+        document[_0x4d3e(0x1)]('avpAgencyFilter')[_0x4d3e(0x6)]='ALL';
+      }else{
+        _tag[_0x4d3e(0xa)]='Authenticated: '+_c_ag+' (Strict Tenant)';
+        _avp[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));
+      }
+      fetchSummaryData();
+    }
+
+    function logoutSession(){
+      _c_role=null;_c_ag='';_c_pwd='';_c_cache=null;
+      document[_0x4d3e(0x1)]('dashboardSection')[_0x4d3e(0x2)][_0x4d3e(0x5)](_0x4d3e(0x4));
+      document[_0x4d3e(0x1)]('loginSection')[_0x4d3e(0x2)][_0x4d3e(0x3)](_0x4d3e(0x4));
+      backToRoleSelect();
+    }
+
+    async function fetchSummaryData(){
+      showLoading();
+      try{
+        var _q=new URLSearchParams({action:'get_summary',role:_c_role,agencyName:_c_ag,filterAgency:_act_ag,password:_c_pwd,_nc:Date.now()});
+        var _res=await fetch(_k_url+'?'+_q.toString());var _rs=await _res.json();
+        if(_rs.status==='success'){
+          _c_cache=_rs.data;renderDashboardView();
+        }else{showAdminModal(_rs.message||'Contact our Admin');}
+      }catch(_e){showAdminModal('Failed to retrieve dashboard JSON.');}
+      finally{hideLoading();}
+    }
+
+    function renderDashboardView(){
+      if(!_c_cache)return;
+      var _th=document[_0x4d3e(0x1)]('summaryTableHead'),_tb=document[_0x4d3e(0x1)]('summaryTableBody'),_tf=document[_0x4d3e(0x1)]('summaryTableFoot');
+      if(_c_met==='COUNT'){
+        _th[_0x4d3e(0x7)]='<tr><th class="py-3 px-4">Cycle BKT</th><th class="py-3 px-4 text-right">Total case</th><th class="py-3 px-4 text-right">Paid count</th><th class="py-3 px-4 text-right">% Resolution</th><th class="py-3 px-4 text-right">Total Collection</th><th class="py-3 px-4 text-right">Target</th><th class="py-3 px-4 text-right">Shortfall</th></tr>';
+        document[_0x4d3e(0x1)]('kpiLabel1')[_0x4d3e(0xa)]="TOTAL CASE VOLUME";
+        document[_0x4d3e(0x1)]('kpiLabel2')[_0x4d3e(0xa)]="PAID COUNT";
+        var _ds=_c_cache.COUNT||[],_c=0,_p=0,_cl=0,_tg=0,_sf=0,_h='';
+        _ds.forEach(function(_r){
+          _c+=_r.totalCase;_p+=_r.paidCount;_cl+=_r.totalCollection;_tg+=_r.target;_sf+=_r.shortfall;
+          _h+='<tr class="hover:bg-slate-800/40 transition-colors"><td class="py-3 px-4 font-semibold text-white">'+_r.bkt+'</td><td class="py-3 px-4 text-right">'+_r.totalCase.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-emerald-400 font-semibold">'+_r.paidCount.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-cyan-400 font-bold">'+_r.resolution+'%</td><td class="py-3 px-4 text-right">₹'+_r.totalCollection.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-slate-300">'+_r.target.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right">'+(_r.shortfall<=0?'<span class="text-emerald-400 font-bold">0</span>':'<span class="text-rose-400 font-bold">'+_r.shortfall.toLocaleString('en-IN')+'</span>')+'</td></tr>';
+        });
+        _tb[_0x4d3e(0x7)]=_h||'<tr><td colspan="7" class="py-6 text-center text-slate-500">No active records.</td></tr>';
+        var _oRes=_c>0?((_p/_c)*100).toFixed(1):"0.0";
+        _tf[_0x4d3e(0x7)]='<tr><td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td><td class="py-3.5 px-4 text-right font-black">'+_c.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black text-emerald-400">'+_p.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black text-cyan-400">'+_oRes+'%</td><td class="py-3.5 px-4 text-right font-black">₹'+_cl.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black">'+_tg.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black">'+(_sf<=0?'<span class="text-emerald-400">0</span>':'<span class="text-rose-400">'+_sf.toLocaleString('en-IN')+'</span>')+'</td></tr>';
+        document[_0x4d3e(0x1)]('kpiVal1')[_0x4d3e(0xa)]=_c.toLocaleString('en-IN');
+        document[_0x4d3e(0x1)]('kpiVal2')[_0x4d3e(0xa)]=_p.toLocaleString('en-IN');
+        document[_0x4d3e(0x1)]('kpiVal3')[_0x4d3e(0xa)]=_oRes+'%';
+        document[_0x4d3e(0x1)]('kpiVal4')[_0x4d3e(0xa)]='₹'+_cl.toLocaleString('en-IN');
+      }else if(_c_met==='POS'){
+        _th[_0x4d3e(0x7)]='<tr><th class="py-3 px-4">Cycle BKT</th><th class="py-3 px-4 text-right">Total POS</th><th class="py-3 px-4 text-right">POS Res</th><th class="py-3 px-4 text-right">Resolution%</th><th class="py-3 px-4 text-right">Total collection</th><th class="py-3 px-4 text-right">Target</th><th class="py-3 px-4 text-right">Shortfall</th></tr>';
+        document[_0x4d3e(0x1)]('kpiLabel1')[_0x4d3e(0xa)]="TOTAL POS";
+        document[_0x4d3e(0x1)]('kpiLabel2')[_0x4d3e(0xa)]="POS RESOLUTION";
+        var _ds=_c_cache.POS||[],_tp=0,_pr=0,_cl=0,_tg=0,_sf=0,_h='';
+        _ds.forEach(function(_r){
+          _tp+=_r.totalPos;_pr+=_r.posRes;_cl+=_r.totalCollection;_tg+=_r.target;_sf+=_r.shortfall;
+          _h+='<tr class="hover:bg-slate-800/40 transition-colors"><td class="py-3 px-4 font-semibold text-white">'+_r.bkt+'</td><td class="py-3 px-4 text-right">₹'+_r.totalPos.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-emerald-400 font-semibold">₹'+_r.posRes.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-cyan-400 font-bold">'+_r.resolution+'%</td><td class="py-3 px-4 text-right">₹'+_r.totalCollection.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-slate-300">₹'+_r.target.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right">'+(_r.shortfall<=0?'<span class="text-emerald-400 font-bold">0</span>':'<span class="text-rose-400 font-bold">₹'+_r.shortfall.toLocaleString('en-IN')+'</span>')+'</td></tr>';
+        });
+        _tb[_0x4d3e(0x7)]=_h||'<tr><td colspan="7" class="py-6 text-center text-slate-500">No active records.</td></tr>';
+        var _oRes=_tp>0?((_pr/_tp)*100).toFixed(1):"0.0";
+        _tf[_0x4d3e(0x7)]='<tr><td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td><td class="py-3.5 px-4 text-right font-black">₹'+_tp.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black text-emerald-400">₹'+_pr.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black text-cyan-400">'+_oRes+'%</td><td class="py-3.5 px-4 text-right font-black">₹'+_cl.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black">₹'+_tg.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black">'+(_sf<=0?'<span class="text-emerald-400">0</span>':'<span class="text-rose-400">₹'+_sf.toLocaleString('en-IN')+'</span>')+'</td></tr>';
+        document[_0x4d3e(0x1)]('kpiVal1')[_0x4d3e(0xa)]='₹'+_tp.toLocaleString('en-IN');
+        document[_0x4d3e(0x1)]('kpiVal2')[_0x4d3e(0xa)]='₹'+_pr.toLocaleString('en-IN');
+        document[_0x4d3e(0x1)]('kpiVal3')[_0x4d3e(0xa)]=_oRes+'%';
+        document[_0x4d3e(0x1)]('kpiVal4')[_0x4d3e(0xa)]='₹'+_cl.toLocaleString('en-IN');
+      }else if(_c_met==='ROI'){
+        _th[_0x4d3e(0x7)]='<tr><th class="py-3 px-4">Cycle BKT</th><th class="py-3 px-4 text-right">EMI AMT Pending</th><th class="py-3 px-4 text-right">Total collection</th><th class="py-3 px-4 text-right">Resolution%</th><th class="py-3 px-4 text-right">Target</th><th class="py-3 px-4 text-right">Shortfall</th></tr>';
+        document[_0x4d3e(0x1)]('kpiLabel1')[_0x4d3e(0xa)]="EMI AMT PENDING";
+        document[_0x4d3e(0x1)]('kpiLabel2')[_0x4d3e(0xa)]="TOTAL COLLECTION";
+        var _ds=_c_cache.ROI||[],_em=0,_cl=0,_tg=0,_sf=0,_h='';
+        _ds.forEach(function(_r){
+          _em+=_r.emiPending;_cl+=_r.totalCollection;_tg+=_r.target;_sf+=_r.shortfall;
+          _h+='<tr class="hover:bg-slate-800/40 transition-colors"><td class="py-3 px-4 font-semibold text-white">'+_r.bkt+'</td><td class="py-3 px-4 text-right">₹'+_r.emiPending.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-emerald-400 font-semibold">₹'+_r.totalCollection.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right text-cyan-400 font-bold">'+_r.resolution+'%</td><td class="py-3 px-4 text-right text-slate-300">₹'+_r.target.toLocaleString('en-IN')+'</td><td class="py-3 px-4 text-right">'+(_r.shortfall<=0?'<span class="text-emerald-400 font-bold">0</span>':'<span class="text-rose-400 font-bold">₹'+_r.shortfall.toLocaleString('en-IN')+'</span>')+'</td></tr>';
+        });
+        _tb[_0x4d3e(0x7)]=_h||'<tr><td colspan="6" class="py-6 text-center text-slate-500">No active records.</td></tr>';
+        var _oRes=_em>0?((_cl/_em)*100).toFixed(1):"0.0";
+        _tf[_0x4d3e(0x7)]='<tr><td class="py-3.5 px-4 font-black text-cyan-300">GRAND TOTAL</td><td class="py-3.5 px-4 text-right font-black">₹'+_em.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black text-emerald-400">₹'+_cl.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black text-cyan-400">'+_oRes+'%</td><td class="py-3.5 px-4 text-right font-black">₹'+_tg.toLocaleString('en-IN')+'</td><td class="py-3.5 px-4 text-right font-black">'+(_sf<=0?'<span class="text-emerald-400">0</span>':'<span class="text-rose-400">₹'+_sf.toLocaleString('en-IN')+'</span>')+'</td></tr>';
+        document[_0x4d3e(0x1)]('kpiVal1')[_0x4d3e(0xa)]='₹'+_em.toLocaleString('en-IN');
+        document[_0x4d3e(0x1)]('kpiVal2')[_0x4d3e(0xa)]='₹'+_cl.toLocaleString('en-IN');
+        document[_0x4d3e(0x1)]('kpiVal3')[_0x4d3e(0xa)]=_oRes+'%';
+        document[_0x4d3e(0x1)]('kpiVal4')[_0x4d3e(0xa)]='₹'+_cl.toLocaleString('en-IN');
+      }
+    }
+
+    function onMetricTypeChange(){
+      _c_met=document[_0x4d3e(0x1)]('metricTypeDropdown')[_0x4d3e(0x6)];
+      var _l={COUNT:'Count wise',POS:'POS wise',ROI:'ROI wise'};
+      document[_0x4d3e(0x1)]('activeViewIndicator')[_0x4d3e(0xa)]=_l[_c_met]||_c_met;
+      renderDashboardView();
+    }
+
+    function onAvpAgencyFilterChange(){
+      if(_c_role!=='AVP')return;
+      _act_ag=document[_0x4d3e(0x1)]('avpAgencyFilter')[_0x4d3e(0x6)];
+      fetchSummaryData();
+    }
+
+    async function triggerPaidFileDownload(){
+      showLoading();
+      var _tag=(_c_role==='AVP')?_act_ag:_c_ag;
+      try{
+        var _q=new URLSearchParams({action:'download_paid_file',role:_c_role,agencyName:_c_ag,filterAgency:_tag,password:_c_pwd,_nc:Date.now()});
+        var _res=await fetch(_k_url+'?'+_q.toString());var _dt=await _res.json();
+        if(_dt.status==='success'&&_dt.csv){
+          var _bl=new Blob([_dt.csv],{type:'text/csv;charset=utf-8;'});
+          var _lk=document[_0x4d3e(0x8)]('a'),_u=URL.createObjectURL(_bl);
+          var _ca=(_tag||"ALL").replace(/[^a-zA-Z0-9_-]/g,'_');
+          _lk.setAttribute('href',_u);
+          _lk.setAttribute('download','Paid_File_'+_ca+'_'+new Date().toISOString().slice(0,10)+'.csv');
+          document.body[_0x4d3e(0x9)](_lk);_lk.click();document.body.removeChild(_lk);URL.revokeObjectURL(_u);
+        }else{showAdminModal(_dt.message||'Failed to generate Paid File.');}
+      }catch(_e){showAdminModal('Download error. Contact our Admin.');}
+      finally{hideLoading();}
+    }
+
+    window.addEventListener('DOMContentLoaded',loadAgenciesFromSheet);
+  </script>
+</body>
+</html>
